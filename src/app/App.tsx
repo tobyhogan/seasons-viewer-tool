@@ -93,6 +93,19 @@ const App = () => {
         drawCircleAndDot(newDayOfYear, totalDays);
       }
 
+      // Function to set the program to today's day
+      function setToToday() {
+        const today = new Date();
+        const totalDays = getTotalDaysInYear(today);
+        const currentDayOfYear = Math.floor(
+          (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        setFormattedDate(formatDate(currentDayOfYear, today.getFullYear()));
+        setSunlightPercentage(calculateSunlightPercentage(currentDayOfYear, totalDays));
+        drawCircleAndDot(currentDayOfYear, totalDays);
+      }
+
       // Add event listener for dragging
       canvas.addEventListener('mousedown', () => {
         canvas.addEventListener('mousemove', handleDrag);
@@ -107,13 +120,7 @@ const App = () => {
       });
 
       // Initial draw
-      const today = new Date();
-      const totalDays = getTotalDaysInYear(today);
-      const currentDayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-
-      setFormattedDate(formatDate(currentDayOfYear, today.getFullYear()));
-      setSunlightPercentage(calculateSunlightPercentage(currentDayOfYear, totalDays));
-      drawCircleAndDot(currentDayOfYear, totalDays);
+      setToToday();
     }
   }, []);
 
@@ -126,8 +133,37 @@ const App = () => {
           {formattedDate}
         </div>
         <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
-          Sunlight Percentage: {sunlightPercentage}%
+          Peak Relative Sun Intensity: {sunlightPercentage}%
         </div>
+        <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
+          Relative Day Length: {sunlightPercentage}%
+        </div>
+        <button
+          onClick={() => {
+            const today = new Date();
+            const totalDays = getTotalDaysInYear(today);
+            const currentDayOfYear = Math.floor(
+              (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
+            );
+
+            setFormattedDate(formatDate(currentDayOfYear, today.getFullYear()));
+            setSunlightPercentage(calculateSunlightPercentage(currentDayOfYear, totalDays));
+            drawCircleAndDot(currentDayOfYear, totalDays);
+          }}
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            fontSize: '1rem',
+            fontWeight: 'bold',
+            color: '#fff',
+            backgroundColor: '#3498db',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Set to Today
+        </button>
       </div>
     </div>
   );
