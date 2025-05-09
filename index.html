@@ -3,10 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NewProject</title>
+    <title>Intuitive Seasons Viewer</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      #seasonsCanvas {
+        display: block;
+      }
+
+      #dateSlider {
+        width: 50%; /* Default size for desktop */
+        margin: 20px auto;
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        #dateSlider {
+          width: 80%; /* Adjust size for mobile */
+        }
+      }
+    </style>
   </head>
   <body>
+
     <div id="root"></div>
+
     <script type="module" src="/src/app/main.tsx"></script>
+
+    
   </body>
 </html>
