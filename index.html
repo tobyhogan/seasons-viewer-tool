@@ -12,31 +12,62 @@
         align-items: center;
         height: 100vh;
         margin: 0;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        color: #333;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #2c3e50;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       }
 
       #seasonsCanvas {
         display: block;
+        border: 2px solid #2c3e50;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer; /* Add pointer cursor for interactivity */
       }
 
-      #dateSlider {
-        width: 50%; /* Default size for desktop */
-        margin: 20px auto;
+      #resetButton {
         display: block;
+        margin: 10px auto;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        background: #3498db;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      #resetButton:hover {
+        background: #2980b9;
+      }
+
+      #dayOfYear {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        text-align: center;
       }
 
       @media (max-width: 768px) {
-        #dateSlider {
-          width: 80%; /* Adjust size for mobile */
+        h1 {
+          font-size: 2rem;
         }
       }
     </style>
   </head>
   <body>
-
     <div id="root"></div>
-
     <script type="module" src="/src/app/main.tsx"></script>
-
-    
   </body>
 </html>

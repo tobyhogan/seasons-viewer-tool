@@ -1,8 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../styles/App.css';
 
 const App = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [sunlightPercentage, setSunlightPercentage] = useState(0);
+  const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -13,21 +15,35 @@ const App = () => {
       const centerY = canvas.height / 2;
       const radius = 200;
 
-      // Function to calculate the day of the year
-      function getDayOfYear(date: Date): number {
-        const start = new Date(date.getFullYear(), 0, 0);
-        const diff = date.getTime() - start.getTime();
-        const oneDay = 1000 * 60 * 60 * 24;
-        return Math.floor(diff / oneDay);
-      }
-
       // Function to calculate the total number of days in the year
       function getTotalDaysInYear(date: Date): number {
         const year = date.getFullYear();
         return (new Date(year, 11, 31).getDate() === 31) ? 366 : 365;
       }
 
-      // Function to draw the circle and red dot based on the day of the year
+      // Function to calculate sunlight percentage
+      function calculateSunlightPercentage(dayOfYear: number, totalDays: number): number {
+        const maxSunlightDay = totalDays / 2;
+        const sunlight = Math.cos(((dayOfYear - maxSunlightDay) / totalDays) * 2 * Math.PI);
+
+        // Normalize sunlight to range from 47% to 100%
+        const normalizedSunlight = ((sunlight + 1) / 2) * (100 - 47) + 47;
+        return Math.round(normalizedSunlight);
+      }
+
+      // Function to format the date as "9th of June 2016"
+      function formatDate(dayOfYear: number, year: number): string {
+        const startOfYear = new Date(year, 0, 0);
+        const date = new Date(startOfYear.getTime() + dayOfYear * 24 * 60 * 60 * 1000);
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'long' });
+        const daySuffix = (day % 10 === 1 && day !== 11) ? 'st' :
+                          (day % 10 === 2 && day !== 12) ? 'nd' :
+                          (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+        return `${day}${daySuffix} of ${month} ${year}`;
+      }
+
+      // Function to draw the circle and red dot
       function drawCircleAndDot(dayOfYear: number, totalDays: number) {
         if (ctx) {
           // Clear the canvas
@@ -38,8 +54,10 @@ const App = () => {
           ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
           ctx.stroke();
 
-          // Calculate the angle based on the day of the year
-          const angle = (dayOfYear / totalDays) * 2 * Math.PI + Math.PI / 2;
+          // Adjust the angle so June 21st is at the top and December 21st is at the bottom
+          const december21st = 355; // December 21st is approximately day 355
+          const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI; // Align December 21st to the bottom
+          const angle = ((dayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
 
           // Calculate the dot's position
           const dotX = centerX + radius * Math.cos(angle);
@@ -53,56 +71,49 @@ const App = () => {
         }
       }
 
-      // Function to update the displayed date
-      function updateDisplayedDate(dayOfYear: number) {
-        const dayOfYearDiv = document.getElementById('dayOfYear');
-        if (dayOfYearDiv) {
-          const startOfYear = new Date(new Date().getFullYear(), 0, 0);
-          const selectedDate = new Date(startOfYear.getTime() + dayOfYear * 24 * 60 * 60 * 1000);
-          const day = selectedDate.getDate();
-          const month = selectedDate.toLocaleString('default', { month: 'long' });
-          const year = selectedDate.getFullYear();
+      // Function to handle dragging the red dot
+      function handleDrag(event: MouseEvent) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
 
-          // Format the day with the appropriate suffix
-          const daySuffix = (day % 10 === 1 && day !== 11) ? 'st' :
-                            (day % 10 === 2 && day !== 12) ? 'nd' :
-                            (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+        const dx = mouseX - centerX;
+        const dy = mouseY - centerY;
+        const angle = Math.atan2(dy, dx);
 
-          dayOfYearDiv.textContent = `${day}${daySuffix} of ${month} ${year}`;
-        }
+        const totalDays = getTotalDaysInYear(new Date());
+        const december21st = 355; // December 21st offset
+        const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI; // Align December 21st to the bottom
+        let newDayOfYear = Math.round(((angle - angleOffset + 2 * Math.PI) % (2 * Math.PI)) / (2 * Math.PI) * totalDays);
+
+        if (newDayOfYear < 0) newDayOfYear += totalDays;
+
+        setFormattedDate(formatDate(newDayOfYear, new Date().getFullYear()));
+        setSunlightPercentage(calculateSunlightPercentage(newDayOfYear, totalDays));
+        drawCircleAndDot(newDayOfYear, totalDays);
       }
 
-      // Initialize slider and button functionality
-      const dateSlider = document.getElementById('dateSlider') as HTMLInputElement;
-      const resetButton = document.getElementById('resetButton') as HTMLButtonElement;
+      // Add event listener for dragging
+      canvas.addEventListener('mousedown', () => {
+        canvas.addEventListener('mousemove', handleDrag);
+      });
 
-      if (dateSlider && resetButton) {
-        const today = new Date();
-        const totalDays = getTotalDaysInYear(today);
+      canvas.addEventListener('mouseup', () => {
+        canvas.removeEventListener('mousemove', handleDrag);
+      });
 
-        // Set slider to current day of the year
-        dateSlider.value = getDayOfYear(today).toString();
+      canvas.addEventListener('mouseleave', () => {
+        canvas.removeEventListener('mousemove', handleDrag);
+      });
 
-        // Add event listener for slider
-        dateSlider.addEventListener('input', () => {
-          const dayOfYear = parseInt(dateSlider.value, 10);
-          drawCircleAndDot(dayOfYear, totalDays);
-          updateDisplayedDate(dayOfYear);
-        });
+      // Initial draw
+      const today = new Date();
+      const totalDays = getTotalDaysInYear(today);
+      const currentDayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
 
-        // Add event listener for reset button
-        resetButton.addEventListener('click', () => {
-          const currentDayOfYear = getDayOfYear(new Date());
-          dateSlider.value = currentDayOfYear.toString();
-          drawCircleAndDot(currentDayOfYear, totalDays);
-          updateDisplayedDate(currentDayOfYear);
-        });
-
-        // Initial draw
-        const currentDayOfYear = getDayOfYear(today);
-        drawCircleAndDot(currentDayOfYear, totalDays);
-        updateDisplayedDate(currentDayOfYear);
-      }
+      setFormattedDate(formatDate(currentDayOfYear, today.getFullYear()));
+      setSunlightPercentage(calculateSunlightPercentage(currentDayOfYear, totalDays));
+      drawCircleAndDot(currentDayOfYear, totalDays);
     }
   }, []);
 
@@ -111,9 +122,12 @@ const App = () => {
       <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Seasons Viewer</h1>
       <div>
         <canvas id="seasonsCanvas" ref={canvasRef} width="500" height="500"></canvas>
-        <input id="dateSlider" type="range" min="1" max="365" defaultValue="1" />
-        <button id="resetButton">Set to Current Date</button>
-        <div id="dayOfYear"></div>
+        <div id="formattedDate" style={{ marginTop: '20px', fontSize: '1.2rem', textAlign: 'center' }}>
+          {formattedDate}
+        </div>
+        <div style={{ marginTop: '10px', fontSize: '1.2rem', textAlign: 'center' }}>
+          Sunlight Percentage: {sunlightPercentage}%
+        </div>
       </div>
     </>
   );
