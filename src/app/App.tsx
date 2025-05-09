@@ -118,18 +118,18 @@ const App = () => {
   }, []);
 
   return (
-    <>
-      <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Seasons Viewer</h1>
+    <div style={{ marginTop: '-100px', textAlign: 'center' }}>
+      <h1 style={{ marginBottom: '20px' }}>Seasons Viewer</h1>
       <div>
         <canvas id="seasonsCanvas" ref={canvasRef} width="500" height="500"></canvas>
-        <div id="formattedDate" style={{ marginTop: '20px', fontSize: '1.2rem', textAlign: 'center' }}>
+        <div id="formattedDate" style={{ fontSize: '1.2rem' }}>
           {formattedDate}
         </div>
-        <div style={{ marginTop: '10px', fontSize: '1.2rem', textAlign: 'center' }}>
+        <div style={{ marginTop: '10px', fontSize: '1.2rem' }}>
           Sunlight Percentage: {sunlightPercentage}%
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
