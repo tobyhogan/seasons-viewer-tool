@@ -8,6 +8,8 @@ const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const radius = 200;
 
+let isDragging = false;
+
 // Function to calculate the total number of days in the year
 function getTotalDaysInYear(date) {
   const year = date.getFullYear();
@@ -61,6 +63,14 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.fill();
 }
 
+// Function to calculate the day of the year based on the angle
+function calculateDayOfYearFromAngle(angle, totalDays) {
+  const december21st = 355; // December 21st is approximately day 355
+  const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI; // Align December 21st to the bottom
+  const adjustedAngle = (angle - angleOffset + 2 * Math.PI) % (2 * Math.PI);
+  return Math.round((adjustedAngle / (2 * Math.PI)) * totalDays);
+}
+
 // Function to set the program to today's day
 function setToToday() {
   const today = new Date();
@@ -76,6 +86,42 @@ function setToToday() {
 
 // Add event listener for the "Set to Today" button
 setToTodayButton.addEventListener('click', setToToday);
+
+// Event listener for mouse down
+canvas.addEventListener('mousedown', (event) => {
+  isDragging = true;
+});
+
+// Event listener for mouse move
+canvas.addEventListener('mousemove', (event) => {
+  if (!isDragging) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left;
+  const mouseY = event.clientY - rect.top;
+
+  const dx = mouseX - centerX;
+  const dy = mouseY - centerY;
+  const angle = Math.atan2(dy, dx);
+
+  const today = new Date();
+  const totalDays = getTotalDaysInYear(today);
+  const newDayOfYear = calculateDayOfYearFromAngle(angle, totalDays);
+
+  formattedDateDiv.textContent = formatDate(newDayOfYear, today.getFullYear());
+  sunlightPercentageDiv.textContent = `Sunlight Percentage: ${calculateSunlightPercentage(newDayOfYear, totalDays)}%`;
+  drawCircleAndDot(newDayOfYear, totalDays);
+});
+
+// Event listener for mouse up
+canvas.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+// Event listener for mouse leave
+canvas.addEventListener('mouseleave', () => {
+  isDragging = false;
+});
 
 // Initial draw
 setToToday();
