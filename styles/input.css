@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 * {
-
   margin: 0;
   padding: 0;
+}
 
-  
+h1 {
+
+  text: blue;
+
+  border: 12px solid green;
 }
