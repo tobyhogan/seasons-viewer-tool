@@ -148,7 +148,11 @@ const App = () => {
 
             setFormattedDate(formatDate(currentDayOfYear, today.getFullYear()));
             setSunlightPercentage(calculateSunlightPercentage(currentDayOfYear, totalDays));
-            drawCircleAndDot(currentDayOfYear, totalDays);
+            const canvas = canvasRef.current;
+            const ctx = canvas?.getContext('2d');
+            if (ctx) {
+              drawCircleAndDot(currentDayOfYear, totalDays);
+            }
           }}
           style={{
             marginTop: '20px',
