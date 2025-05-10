@@ -4,33 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Seasons Viewer</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./dist/styles.css" />
   </head>
-  <body>
-    <div class="container">
-
-      <div id="center-column">
-        
-        <h1>Seasons Viewer</h1>
-        <canvas id="seasonsCanvas" width="500" height="500"></canvas>
-
-        <div id="bottom-features">
-          <button id="setToTodayButton">Set to Today</button>
-          <div id="formattedDate" class="info"></div>
-          <div id="sunlightPercentage" class="info"></div>
-          <div id="daylightPercentage" class="info"></div>
-
-        </div>
-
+  <body class="bg-white text-gray-800 flex justify-center items-center h-screen overflow-hidden">
+    <div class="container flex flex-row items-center justify-center">
+      <div id="center-column" class="text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Seasons Viewer</h1>
+        <canvas id="seasonsCanvas" width="400" height="400" class="border-2 border-gray-800 rounded-lg shadow-md mx-auto"></canvas>
+        <button id="setToTodayButton" class="mt-4 px-6 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition">
+          Set to Today
+        </button>
+        <div id="formattedDate" class="mt-4 text-lg font-medium"></div>
+        <div id="sunlightPercentage" class="mt-2 text-lg font-medium"></div>
+        <div id="daylightPercentage" class="mt-2 text-lg font-medium"></div>
       </div>
-
-
-      <div class="right-column">
-        <p>(Max Daylight Time: 16hrs 32mins)</p>
-        <p> </p>
+      <div class="right-column ml-10 w-52 h-96 p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-md text-center">
+        <p>placeholder text</p>
       </div>
-
     </div>
-    <script src="./main.js"></script>
   </body>
 </html>
