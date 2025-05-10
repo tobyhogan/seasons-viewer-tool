@@ -63,6 +63,12 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.fill();
 }
 
+// Function to check if the mouse is over the red dot
+function isMouseOverDot(mouseX, mouseY, dotX, dotY) {
+  const distance = Math.sqrt((mouseX - dotX) ** 2 + (mouseY - dotY) ** 2);
+  return distance <= 10; // 10 is the radius of the red dot
+}
+
 // Function to calculate the day of the year based on the angle
 function calculateDayOfYearFromAngle(angle, totalDays) {
   const december21st = 355; // December 21st is approximately day 355
@@ -111,6 +117,32 @@ canvas.addEventListener('mousemove', (event) => {
   formattedDateDiv.textContent = formatDate(newDayOfYear, today.getFullYear());
   sunlightPercentageDiv.textContent = `Sunlight Percentage: ${calculateSunlightPercentage(newDayOfYear, totalDays)}%`;
   drawCircleAndDot(newDayOfYear, totalDays);
+});
+
+// Event listener for mouse move to change the cursor
+canvas.addEventListener('mousemove', (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left;
+  const mouseY = event.clientY - rect.top;
+
+  const today = new Date();
+  const totalDays = getTotalDaysInYear(today);
+  const dayOfYear = Math.floor(
+    (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  const december21st = 355; // December 21st is approximately day 355
+  const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI;
+  const angle = ((dayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
+
+  const dotX = centerX + radius * Math.cos(angle);
+  const dotY = centerY + radius * Math.sin(angle);
+
+  if (isMouseOverDot(mouseX, mouseY, dotX, dotY)) {
+    canvas.style.cursor = 'pointer';
+  } else {
+    canvas.style.cursor = 'default';
+  }
 });
 
 // Event listener for mouse up
