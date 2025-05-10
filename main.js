@@ -14,6 +14,7 @@ const centerY = canvasWidth / 2;
 const radius = canvasWidth * 0.4; // Circle radius is 40% of the canvas width
 
 let isDragging = false;
+let currentDayOfYear = 0; // Track the current day of the year dynamically
 
 // Function to calculate the total number of days in the year
 function getTotalDaysInYear(date) {
@@ -86,84 +87,84 @@ function calculateDayOfYearFromAngle(angle, totalDays) {
 function updateDisplay(dayOfYear, totalDays, year) {
   formattedDateDiv.textContent = formatDate(dayOfYear, year);
   const sunlightPercentage = calculateSunlightPercentage(dayOfYear, totalDays);
-  sunlightPercentageDiv.textContent = `Sunlight Percentage: ${sunlightPercentage}%`;
+  sunlightPercentageDiv.textContent = `Max Sun Intensity: ${sunlightPercentage}%`;
   daylightPercentageDiv.textContent = `Daylight Time Length: ${sunlightPercentage}%`;
   drawCircleAndDot(dayOfYear, totalDays);
 }
 
-// Function to set the program to today's day
-function setToToday() {
-  const today = new Date();
-  const totalDays = getTotalDaysInYear(today);
-  const currentDayOfYear = Math.floor(
-    (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
-  );
-
-  updateDisplay(currentDayOfYear, totalDays, today.getFullYear());
-}
-
-// Add event listener for the "Set to Today" button
-setToTodayButton.addEventListener('click', setToToday);
-
 // Event listener for mouse down
-canvas.addEventListener('mousedown', () => {
-  isDragging = true;
-});
-
-// Event listener for mouse move
-canvas.addEventListener('mousemove', (event) => {
-  if (!isDragging) return;
-
+canvas.addEventListener('mousedown', (event) => {
   const rect = canvas.getBoundingClientRect();
   const mouseX = event.clientX - rect.left;
   const mouseY = event.clientY - rect.top;
 
-  const dx = mouseX - centerX;
-  const dy = mouseY - centerY;
-  const angle = Math.atan2(dy, dx);
-
-  const today = new Date();
-  const totalDays = getTotalDaysInYear(today);
-  const newDayOfYear = calculateDayOfYearFromAngle(angle, totalDays);
-
-  updateDisplay(newDayOfYear, totalDays, today.getFullYear());
-});
-
-// Event listener for mouse move to change the cursor
-canvas.addEventListener('mousemove', (event) => {
-  const rect = canvas.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
-
-  const today = new Date();
-  const totalDays = getTotalDaysInYear(today);
-  const dayOfYear = Math.floor(
-    (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
-  );
-
-  const december21st = 355; // December 21st is approximately day 355
-  const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI;
-  const angle = ((dayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
+  const totalDays = getTotalDaysInYear(new Date());
+  const angleOffset = Math.PI / 2 - (355 / totalDays) * 2 * Math.PI; // December 21st offset
+  const angle = ((currentDayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
 
   const dotX = centerX + radius * Math.cos(angle);
   const dotY = centerY + radius * Math.sin(angle);
 
   if (isMouseOverDot(mouseX, mouseY, dotX, dotY)) {
-    canvas.style.cursor = 'pointer';
+    isDragging = true;
+    canvas.style.cursor = 'grabbing'; // Change cursor to grabbing when dragging starts
+  }
+});
+
+// Event listener for mouse move
+canvas.addEventListener('mousemove', (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const mouseX = event.clientX - rect.left;
+  const mouseY = event.clientY - rect.top;
+
+  const totalDays = getTotalDaysInYear(new Date());
+  const angleOffset = Math.PI / 2 - (355 / totalDays) * 2 * Math.PI; // December 21st offset
+  const angle = ((currentDayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
+
+  const dotX = centerX + radius * Math.cos(angle);
+  const dotY = centerY + radius * Math.sin(angle);
+
+  if (isMouseOverDot(mouseX, mouseY, dotX, dotY)) {
+    canvas.style.cursor = isDragging ? 'grabbing' : 'pointer'; // Show pointer or grabbing cursor
   } else {
-    canvas.style.cursor = 'default';
+    canvas.style.cursor = 'default'; // Reset cursor to default if not over the dot
+  }
+
+  if (isDragging) {
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+    const newAngle = Math.atan2(dy, dx);
+    currentDayOfYear = calculateDayOfYearFromAngle(newAngle, totalDays); // Update the current day of the year
+
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
   }
 });
 
 // Event listener for mouse up
 canvas.addEventListener('mouseup', () => {
   isDragging = false;
+  canvas.style.cursor = 'default'; // Reset cursor to default after dragging ends
 });
 
 // Event listener for mouse leave
 canvas.addEventListener('mouseleave', () => {
   isDragging = false;
+  canvas.style.cursor = 'default'; // Reset cursor to default after leaving the canvas
 });
+
+// Function to set the program to today's day
+setToToday = () => {
+  const today = new Date();
+  const totalDays = getTotalDaysInYear(today);
+  currentDayOfYear = Math.floor(
+    (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
+  );
+
+  updateDisplay(currentDayOfYear, totalDays, today.getFullYear());
+};
+
+// Add event listener for the "Set to Today" button
+setToTodayButton.addEventListener('click', setToToday);
 
 // Initial draw
 setToToday();
