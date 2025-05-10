@@ -7,25 +7,27 @@
     <link rel="stylesheet" href="./dist/output.css" />
   </head>
   <body>
-    <div class="container">
+    <div class="container flex flex-row border-2 border-black justify-center">
 
-      <div id="center-column">
+      <div id="center-column" class="border-2 border-black w-fit ml-[200px]">
         
-        <h1>Seasons Viewer</h1>
-        <canvas id="seasonsCanvas" width="500" height="500"></canvas>
+        <h1 class="mx-auto text-center text-2xl">Seasons Viewer</h1>
+        <canvas id="seasonsCanvas" class="border-red-500 border-2"></canvas>
 
-        <div id="bottom-features">
-          <button id="setToTodayButton">Set to Today</button>
-          <div id="formattedDate" class="info"></div>
-          <div id="sunlightPercentage" class="info"></div>
-          <div id="daylightPercentage" class="info"></div>
+        <div id="bottom-features flex flex-row justify-center mb-[10px]">
+
+          <button id="setToTodayButton" class="px-5 py-2  bg-blue-500 rounded-md text-white">Set to Today</button>
+
+          <div id="formattedDate" class="info text-center"></div>
+          <div id="sunlightPercentage" class="info text-center"></div>
+          <div id="daylightPercentage" class="info text-center"></div>
 
         </div>
 
       </div>
 
 
-      <div class="right-column">
+      <div class="border-2 border-black h-fit mt-24 ml-4">
         <p>Max Daylight Time: 16hrs 32mins</p>
         <p>Lowest Daylight Time: 6hrs 32mins</p>
         <p>Lowest Sunlight Intensity</p>

@@ -3,44 +3,50 @@
 
 
 
-* {
-  margin: 0;
-  padding: 0;
 
 
 
-}
 
+
+
+
+
+
+
+
+
+
+
+/*
 
 body {
   margin: 0;
   font-family: 'Roboto', Arial, sans-serif;
-  background: #ffffff; /* White background */
+  background: #ffffff;
   color: #333;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  overflow: hidden; /* Remove scrollbar */
-  position: relative; /* Allow absolute positioning for the box */
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
 }
 
 .container {
   text-align: left;
-  background: none; /* Remove background color */
+  background: none;
   padding: 0;
-  border-radius: 0; /* Remove rounded corners */
+  border-radius: 0;
   border: 1px solid black;
-  box-shadow: none; /* Remove shadow */
+  box-shadow: none;
 
   display: flex;
-  flex-direction: row; /* Stack the tool vertically */
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 
-  margin: 0 0 0 250px
+  margin: 0 0 0 250px;
 }
-
 
 h1 {
   font-size: 2.5rem;
@@ -85,7 +91,6 @@ info {
 }
 
 #center-column {
-
 }
 
 .right-column {
@@ -102,18 +107,12 @@ info {
   color: #333;
 }
 
-
 #bottom-features {
-
   border: 1px solid red;
-
   text-align: left;
-
   width: fit-content;
-
   margin: 0 auto;
-
-
-
-
 }
+
+
+*/
