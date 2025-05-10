@@ -1,12 +1,17 @@
+const canvasWidth = 400; // Controls the size of the canvas and circle
 const canvas = document.getElementById('seasonsCanvas');
+canvas.width = canvasWidth;
+canvas.height = canvasWidth;
+
 const ctx = canvas.getContext('2d');
 const formattedDateDiv = document.getElementById('formattedDate');
 const sunlightPercentageDiv = document.getElementById('sunlightPercentage');
+const daylightPercentageDiv = document.getElementById('daylightPercentage');
 const setToTodayButton = document.getElementById('setToTodayButton');
 
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const radius = 200;
+const centerX = canvasWidth / 2;
+const centerY = canvasWidth / 2;
+const radius = canvasWidth * 0.4; // Circle radius is 40% of the canvas width
 
 let isDragging = false;
 
@@ -58,7 +63,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
   // Draw the dot
   ctx.beginPath();
-  ctx.arc(dotX, dotY, 10, 0, 2 * Math.PI);
+  ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI); // Dot size is 5% of the radius
   ctx.fillStyle = 'red';
   ctx.fill();
 }
@@ -66,7 +71,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 // Function to check if the mouse is over the red dot
 function isMouseOverDot(mouseX, mouseY, dotX, dotY) {
   const distance = Math.sqrt((mouseX - dotX) ** 2 + (mouseY - dotY) ** 2);
-  return distance <= 10; // 10 is the radius of the red dot
+  return distance <= radius * 0.05; // Dot size is 5% of the radius
 }
 
 // Function to calculate the day of the year based on the angle
@@ -77,6 +82,15 @@ function calculateDayOfYearFromAngle(angle, totalDays) {
   return Math.round((adjustedAngle / (2 * Math.PI)) * totalDays);
 }
 
+// Function to update the displayed information
+function updateDisplay(dayOfYear, totalDays, year) {
+  formattedDateDiv.textContent = formatDate(dayOfYear, year);
+  const sunlightPercentage = calculateSunlightPercentage(dayOfYear, totalDays);
+  sunlightPercentageDiv.textContent = `Sunlight Percentage: ${sunlightPercentage}%`;
+  daylightPercentageDiv.textContent = `Daylight Time Length: ${sunlightPercentage}%`;
+  drawCircleAndDot(dayOfYear, totalDays);
+}
+
 // Function to set the program to today's day
 function setToToday() {
   const today = new Date();
@@ -85,16 +99,14 @@ function setToToday() {
     (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
   );
 
-  formattedDateDiv.textContent = formatDate(currentDayOfYear, today.getFullYear());
-  sunlightPercentageDiv.textContent = `Sunlight Percentage: ${calculateSunlightPercentage(currentDayOfYear, totalDays)}%`;
-  drawCircleAndDot(currentDayOfYear, totalDays);
+  updateDisplay(currentDayOfYear, totalDays, today.getFullYear());
 }
 
 // Add event listener for the "Set to Today" button
 setToTodayButton.addEventListener('click', setToToday);
 
 // Event listener for mouse down
-canvas.addEventListener('mousedown', (event) => {
+canvas.addEventListener('mousedown', () => {
   isDragging = true;
 });
 
@@ -114,9 +126,7 @@ canvas.addEventListener('mousemove', (event) => {
   const totalDays = getTotalDaysInYear(today);
   const newDayOfYear = calculateDayOfYearFromAngle(angle, totalDays);
 
-  formattedDateDiv.textContent = formatDate(newDayOfYear, today.getFullYear());
-  sunlightPercentageDiv.textContent = `Sunlight Percentage: ${calculateSunlightPercentage(newDayOfYear, totalDays)}%`;
-  drawCircleAndDot(newDayOfYear, totalDays);
+  updateDisplay(newDayOfYear, totalDays, today.getFullYear());
 });
 
 // Event listener for mouse move to change the cursor
