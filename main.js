@@ -1,7 +1,8 @@
-const canvasWidth = 400; // Controls the size of the canvas and circle
+const canvasWidth = 450; // Controls the size of the canvas and circle
+const canvasHeight = 400;
 const canvas = document.getElementById('seasonsCanvas');
 canvas.width = canvasWidth;
-canvas.height = canvasWidth;
+canvas.height = canvasHeight;
 
 const ctx = canvas.getContext('2d');
 const formattedDateDiv = document.getElementById('formattedDate');
@@ -13,8 +14,8 @@ const sunElevationAngleDiv = document.getElementById('sunElevationAngle');
 const setToTodayButton = document.getElementById('setToTodayButton');
 
 const centerX = canvasWidth / 2;
-const centerY = canvasWidth / 2;
-const radius = canvasWidth * 0.4; // Circle radius is 40% of the canvas width
+const centerY = canvasHeight / 2;
+const radius = canvasHeight * 0.4; // Circle radius is 40% of the canvas width
 
 let isDragging = false;
 let currentDayOfYear = 0; // Track the current day of the year dynamically
@@ -62,17 +63,23 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
   // Draw the circle
   ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+  ctx.arc(centerX - 0, centerY, radius, 0, 2 * Math.PI);
   ctx.stroke();
 
-  // Draw "100%" 95% to the left and 98% to the top of the canvas
+  // Draw "June 21st" 95% to the left and 98% to the top of the canvas
   ctx.font = `${radius * 0.1}px Arial`; // Font size is 10% of the radius
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
-  ctx.fillText('100%', centerX - radius * 0.95, centerY - radius * 0.98);
+  ctx.fillText('Jun 21st', centerX - radius * 0.95, centerY - radius * 0.98);
 
-  // Draw "47%" about 95% to the left of the canvas and another 5% higher
-  ctx.fillText('19.7%', centerX - radius * 0.95, centerY + radius + radius * 0.07);
+  // Draw "100%" at the same level as "June 21st" on the opposite side
+  ctx.fillText("100% Peak S.I.", centerX + radius * 0.95, centerY - radius * 0.98);
+
+  // Draw "December 21st" about 95% to the left of the canvas and 5% higher
+  ctx.fillText('Dec 21st', centerX - radius * 0.95, centerY + radius + radius * 0.07);
+
+  // Draw "47%" at the same level as "December 21st" on the opposite side
+  ctx.fillText('19.7% Peak S.I.', centerX + radius * 0.95, centerY + radius + radius * 0.07);
 
   // Adjust the angle so June 21st is at the top and December 21st is at the bottom
   const december21st = 355; // December 21st is approximately day 355
@@ -113,7 +120,7 @@ function updateDisplay(dayOfYear, totalDays, year) {
   sunlightPercentageDiv.textContent = `Peak Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * sunlightCoeff)), 1)}%`;
 
 
-  avgSunlightPercentageDiv.textContent = `Average Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * sunlightCoeff)), 1)}%`;
+  avgSunlightPercentageDiv.textContent = `Average Sun Intensity: ${roundSpec((12.5 + ((63.7 - 12.5) * sunlightCoeff)), 1)}%`;
 
   // daylightPercentageDiv.textContent = `Daylight Time Length: ${sunlightPercentage}%`;
 
