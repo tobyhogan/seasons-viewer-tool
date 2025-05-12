@@ -283,7 +283,7 @@
 }
 @media only screen and (min-width: 1100px) {
   .container1 {
-    padding: 0 0 0 15vw;
+    padding: 0 0 0 10vw;
   }
 }
 @property --tw-border-style {
