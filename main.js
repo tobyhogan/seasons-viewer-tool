@@ -6,6 +6,7 @@ canvas.height = canvasWidth;
 const ctx = canvas.getContext('2d');
 const formattedDateDiv = document.getElementById('formattedDate');
 const sunlightPercentageDiv = document.getElementById('sunlightPercentage');
+const avgSunlightPercentageDiv = document.getElementById('avgSunlightPercentage');
 const daylightPercentageDiv = document.getElementById('daylightPercentage');
 const daylightLengthDiv = document.getElementById('daylightLength');
 const sunElevationAngleDiv = document.getElementById('sunElevationAngle');
@@ -71,7 +72,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.fillText('100%', centerX - radius * 0.95, centerY - radius * 0.98);
 
   // Draw "47%" about 95% to the left of the canvas and another 5% higher
-  ctx.fillText('47%', centerX - radius * 0.95, centerY + radius + radius * 0.07);
+  ctx.fillText('19.7%', centerX - radius * 0.95, centerY + radius + radius * 0.07);
 
   // Adjust the angle so June 21st is at the top and December 21st is at the bottom
   const december21st = 355; // December 21st is approximately day 355
@@ -85,7 +86,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   // Draw the dot
   ctx.beginPath();
   ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI); // Dot size is 5% of the radius
-  ctx.fillStyle = 'red';
+  ctx.fillStyle = '#06ba48';
   ctx.fill();
 }
 
@@ -109,11 +110,15 @@ function updateDisplay(dayOfYear, totalDays, year) {
 
   const sunlightCoeff = calculateSunlightPercentage(dayOfYear, totalDays);
 
-  sunlightPercentageDiv.textContent = `Peak Sun Intensity: ${roundSpec((47 + ((100 - 47) * sunlightCoeff)), 1)}%`;
+  sunlightPercentageDiv.textContent = `Peak Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * sunlightCoeff)), 1)}%`;
+
+
+  avgSunlightPercentageDiv.textContent = `Average Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * sunlightCoeff)), 1)}%`;
 
   // daylightPercentageDiv.textContent = `Daylight Time Length: ${sunlightPercentage}%`;
 
-  daylightPercentageDiv.textContent = `Daylight Time Length: ${roundSpec((sunlightCoeff * 16.5), 1)} Hours`;
+  daylightPercentageDiv.textContent = `Daylight Time Length: ${roundSpec((6.5 + (sunlightCoeff * (16.5 - 6.5))), 1)} Hours`;
+
   sunElevationAngleDiv.textContent = `Highest Sun Elevation: ${roundSpec((15.5 + sunlightCoeff * (61.5 - 15.5)), 1)}°`;
   drawCircleAndDot(dayOfYear, totalDays);
 }
