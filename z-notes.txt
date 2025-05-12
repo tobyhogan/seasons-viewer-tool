@@ -1,0 +1,25 @@
+
+Current version I'm working on:
+
+
+=====================================================
+
+
+- Currently working on the "gh-pages-ver-2"
+
+
+=====================================================
+
+  - this has the most up to date stuff
+
+
+
+Other verisons:
+
+- main:
+  - this just uses react, from the beginning of the project
+
+
+- gh-pages-compatible-ver: this was when I initially moved from react to vanilla js
+
+- gh-pages-tailwind-ver: this is when I initally tried tailwind, gh-pages-ver-2 is the second attempt, and the successful one I use currently
