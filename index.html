@@ -6,35 +6,62 @@
     <title>Seasons Viewer</title>
     <link rel="stylesheet" href="./dist/output.css" />
   </head>
-  <body>
-    <div class="container flex flex-row border-2 border-black justify-center">
+  <body class="">
+    <div class="container w-screen flex flex-row justify-center mx-auto">
 
-      <div id="center-column" class="border-2 border-black w-fit ml-[200px]">
+      <div id="center-column" class="mt-4 w-fit ml-[200px] rounded-lg">
         
-        <h1 class="mx-auto text-center text-2xl mt-4">Seasons Viewer</h1>
-        <canvas id="seasonsCanvas" class="border-red-500 border-2"></canvas>
+        <h1 class="mx-auto text-center text-2xl mt-4 mb-4">Seasons Viewer</h1>
 
-        <div id="bottom-features" class="border-2 border-red-700 pb-6 rounded-lg">
+        <div class="rounded-lg border-2 border-black">
 
-          <div class="mx-auto w-fit mt-4 mb-2">
-            <button id="setToTodayButton" class=" px-5 py-2  bg-blue-500 rounded-md text-white">Set to Today</button>
+          <canvas id="seasonsCanvas" class=" border-x-2 border-t-2 rounded-lg border-white"></canvas>
+
+          <div class="border-t-2"></div>
+  
+          <div id="bottom-features" class="border-x-2 border-b-2 pb-6 rounded-lg border-white">
+  
+            <div class="mx-auto w-fit mt-4 mb-2.5">
+              <button id="setToTodayButton" class=" px-5 py-2 bg-blue-500 rounded-md text-white cursor-pointer">Set to Today</button>
+            </div>
+  
+            <div id="formattedDate" class="info text-center mt-1 mb-1"></div>
+            <div id="sunlightPercentage" class="info text-center"></div>
+            <div id="daylightPercentage" class="info text-center"></div>
+            <div id="daylightLength" class="info text-center"></div>
+            <div id="sunElevationAngle" class="info text-center"></div>
+  
           </div>
+          
+        </div>
 
-          <div id="formattedDate" class="info text-center"></div>
-          <div id="sunlightPercentage" class="info text-center"></div>
-          <div id="daylightPercentage" class="info text-center"></div>
+
+      </div>
+
+      <div class="right-column">
+
+        <div class="border-2 h-fit mt-20 ml-4 rounded-lg p-4">
+          <p>Highest Daylight Time: 16hrs 32mins</p>
+          <p>Lowest Daylight Time: 6hrs 32mins</p>
+          <p class="mt-4">Highest Sunlight Intensity: 100%</p>
+          <p>Lowest Sunlight Intensity: 47%</p>
+          <p class="mt-4">Highest Peak Sun Elevation: 61.5°</p>
+          <p class="">Lowest Peak Sun Elevation: 15.5°</p>
+        </div>
+
+        <div class="border-2 h-fit ml-4 mt-4 rounded-lg p-4">
+          <p>Three variables to track:</p>
+          <p>- Maximum Intensity of Sun</p>
+          <p>- Day Length</p>
+          <p>- Maximum Height of Sun in Sky</p>
 
         </div>
 
+
+
       </div>
 
 
-      <div class="border-2 border-black h-fit mt-24 ml-4 rounded-lg p-4">
-        <p>Highest Daylight Time: 16hrs 32mins</p>
-        <p>Lowest Daylight Time: 6hrs 32mins</p>
-        <p class="mt-4">Highest Sunlight Intensity: 100%</p>
-        <p>Lowest Sunlight Intensity: 47%</p>
-      </div>
 
     </div>
     <script src="./main.js"></script>

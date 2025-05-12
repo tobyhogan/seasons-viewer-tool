@@ -7,6 +7,8 @@ const ctx = canvas.getContext('2d');
 const formattedDateDiv = document.getElementById('formattedDate');
 const sunlightPercentageDiv = document.getElementById('sunlightPercentage');
 const daylightPercentageDiv = document.getElementById('daylightPercentage');
+const daylightLengthDiv = document.getElementById('daylightLength');
+const sunElevationAngleDiv = document.getElementById('sunElevationAngle');
 const setToTodayButton = document.getElementById('setToTodayButton');
 
 const centerX = canvasWidth / 2;
@@ -17,6 +19,12 @@ let isDragging = false;
 let currentDayOfYear = 0; // Track the current day of the year dynamically
 
 // Function to calculate the total number of days in the year
+
+function roundSpec(num, decimals) {
+    const factor = Math.pow(10, decimals);
+    return Math.round(num * factor) / factor;
+}
+
 function getTotalDaysInYear(date) {
   const year = date.getFullYear();
   return (new Date(year, 11, 31).getDate() === 31) ? 366 : 365;
@@ -28,8 +36,11 @@ function calculateSunlightPercentage(dayOfYear, totalDays) {
   const sunlight = Math.cos(((dayOfYear - maxSunlightDay) / totalDays) * 2 * Math.PI);
 
   // Normalize sunlight to range from 47% to 100%
-  const normalizedSunlight = ((sunlight + 1) / 2) * (100 - 47) + 47;
-  return Math.round(normalizedSunlight);
+
+  const sunlightCoeff = ((sunlight + 1) / 2);
+
+
+  return sunlightCoeff;
 }
 
 // Function to format the date as "9th of June 2016"
@@ -95,9 +106,15 @@ function calculateDayOfYearFromAngle(angle, totalDays) {
 // Function to update the displayed information
 function updateDisplay(dayOfYear, totalDays, year) {
   formattedDateDiv.textContent = formatDate(dayOfYear, year);
-  const sunlightPercentage = calculateSunlightPercentage(dayOfYear, totalDays);
-  sunlightPercentageDiv.textContent = `Max Sun Intensity: ${sunlightPercentage}%`;
-  daylightPercentageDiv.textContent = `Daylight Time Length: ${sunlightPercentage}%`;
+
+  const sunlightCoeff = calculateSunlightPercentage(dayOfYear, totalDays);
+
+  sunlightPercentageDiv.textContent = `Peak Sun Intensity: ${roundSpec((47 + ((100 - 47) * sunlightCoeff)), 1)}%`;
+
+  // daylightPercentageDiv.textContent = `Daylight Time Length: ${sunlightPercentage}%`;
+
+  daylightPercentageDiv.textContent = `Daylight Time Length: ${roundSpec((sunlightCoeff * 16.5), 1)} Hours`;
+  sunElevationAngleDiv.textContent = `Highest Sun Elevation: ${roundSpec((15.5 + sunlightCoeff * (61.5 - 15.5)), 1)}°`;
   drawCircleAndDot(dayOfYear, totalDays);
 }
 
