@@ -44,7 +44,7 @@ function formatDate(dayOfYear, year) {
   return `${day}${daySuffix} of ${month} ${year}`;
 }
 
-// Function to draw the circle and red dot
+// Function to draw the circle, red dot, and text labels
 function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -52,6 +52,15 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
   ctx.stroke();
+
+  // Draw "100%" 95% to the left and 98% to the top of the canvas
+  ctx.font = `${radius * 0.1}px Arial`; // Font size is 10% of the radius
+  ctx.fillStyle = 'black';
+  ctx.textAlign = 'center';
+  ctx.fillText('100%', centerX - radius * 0.95, centerY - radius * 0.98);
+
+  // Draw "47%" about 95% to the left of the canvas and another 5% higher
+  ctx.fillText('47%', centerX - radius * 0.95, centerY + radius + radius * 0.07);
 
   // Adjust the angle so June 21st is at the top and December 21st is at the bottom
   const december21st = 355; // December 21st is approximately day 355
