@@ -2,5 +2,8 @@
 	"dependencies": {
 		"@tailwindcss/cli": "^4.1.6",
 		"tailwindcss": "^4.1.6"
+	},
+	"devDependencies": {
+		"husky": "^9.1.7"
 	}
 }
