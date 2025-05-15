@@ -66,41 +66,75 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.arc(centerX - 0, centerY, radius, 0, 2 * Math.PI);
   ctx.stroke();
 
-  // Calculate extreme points
+  // Calculate blue marker points (cardinal)
   const top = { x: centerX, y: centerY - radius };
   const bottom = { x: centerX, y: centerY + radius };
   const left = { x: centerX - radius, y: centerY };
   const right = { x: centerX + radius, y: centerY };
 
-  // Draw blue markers perpendicular to the circle
+  // Calculate red marker points (diagonals)
+  const diag = Math.SQRT1_2 * radius;
+  const nw = { x: centerX - diag, y: centerY - diag };
+  const ne = { x: centerX + diag, y: centerY - diag };
+  const sw = { x: centerX - diag, y: centerY + diag };
+  const se = { x: centerX + diag, y: centerY + diag };
+
+  // Draw blue markers (perpendicular to circle)
   ctx.save();
-  ctx.strokeStyle = 'blue';
+  ctx.strokeStyle = '#4444ff';
   ctx.lineWidth = 2;
-  const markerLen = 10;
+  const blueMarkerLen = 13;
+  const redMarkerLen = 8;
 
-  // Top marker (vertical line, perpendicular to tangent)
+  // Top marker (vertical)
   ctx.beginPath();
-  ctx.moveTo(top.x, top.y - markerLen / 2);
-  ctx.lineTo(top.x, top.y + markerLen / 2);
+  ctx.moveTo(top.x, top.y - blueMarkerLen / 2 - 2);
+  ctx.lineTo(top.x, top.y + blueMarkerLen / 2 - 1.5);
   ctx.stroke();
 
-  // Bottom marker (vertical line, perpendicular to tangent)
+  // Bottom marker (vertical)
   ctx.beginPath();
-  ctx.moveTo(bottom.x, bottom.y - markerLen / 2);
-  ctx.lineTo(bottom.x, bottom.y + markerLen / 2);
+  ctx.moveTo(bottom.x, bottom.y - blueMarkerLen / 3);
+  ctx.lineTo(bottom.x, bottom.y + blueMarkerLen / 2 + 1.5);
   ctx.stroke();
 
-  // Left marker (horizontal line, perpendicular to tangent)
+  // Left marker (horizontal)
   ctx.beginPath();
-  ctx.moveTo(left.x - markerLen / 2, left.y);
-  ctx.lineTo(left.x + markerLen / 2, left.y);
+  ctx.moveTo(left.x - blueMarkerLen / 2 - 2, left.y);
+  ctx.lineTo(left.x + blueMarkerLen / 2 - 1.5, left.y);
   ctx.stroke();
 
-  // Right marker (horizontal line, perpendicular to tangent)
+  // Right marker (horizontal)
   ctx.beginPath();
-  ctx.moveTo(right.x - markerLen / 2, right.y);
-  ctx.lineTo(right.x + markerLen / 2, right.y);
+  ctx.moveTo(right.x - blueMarkerLen / 2 + 2, right.y);
+  ctx.lineTo(right.x + blueMarkerLen / 2 + 1.5, right.y);
   ctx.stroke();
+
+  ctx.restore();
+
+  // Draw red markers (perpendicular to circle at diagonals)
+  ctx.save();
+  ctx.strokeStyle = '#5555ff';
+  ctx.lineWidth = 2;
+
+  // Helper to draw a perpendicular marker at (x, y) with angle theta
+  function drawDiagonalMarker(x, y, angle, len) {
+      const dx = Math.cos(angle) * len / 2;
+      const dy = Math.sin(angle) * len / 2;
+      ctx.beginPath();
+      ctx.moveTo(x - dx, y - dy);
+      ctx.lineTo(x + dx, y + dy);
+      ctx.stroke();
+  }
+
+  // NW: angle = -3 * Math.PI / 4 (perpendicular to radius at NW)
+  drawDiagonalMarker(nw.x - 1, nw.y - 1, -3 * Math.PI / 4, redMarkerLen + 3);
+  // NE: angle = -Math.PI / 4
+  drawDiagonalMarker(ne.x + 1, ne.y - 1, -Math.PI / 4, redMarkerLen + 3);
+  // SW: angle = 3 * Math.PI / 4
+  drawDiagonalMarker(sw.x - 1, sw.y + 1, 3 * Math.PI / 4, redMarkerLen + 3);
+  // SE: angle = Math.PI / 4
+  drawDiagonalMarker(se.x + 1, se.y + 1, Math.PI / 4, redMarkerLen + 3);
 
   ctx.restore();
 
@@ -178,9 +212,25 @@ canvas.addEventListener('mousedown', (event) => {
   const dotX = centerX + radius * Math.cos(angle);
   const dotY = centerY + radius * Math.sin(angle);
 
-  if (isMouseOverDot(mouseX, mouseY, dotX, dotY)) {
+  const dx = mouseX - centerX;
+  const dy = mouseY - centerY;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  // Position of green dot
+  const greenDotX = centerX + radius * Math.cos(angle);
+  const greenDotY = centerY + radius * Math.sin(angle);
+  const dotDist = Math.sqrt((mouseX - greenDotX) ** 2 + (mouseY - greenDotY) ** 2);
+
+  // If mouse is near the green dot, start dragging
+  if (dotDist < 10) {
     isDragging = true;
     canvas.style.cursor = 'grabbing'; // Change cursor to grabbing when dragging starts
+  } else if (Math.abs(dist - radius) < 10) {
+    // If click is near the circle's edge, move green dot there
+    const newAngle = Math.atan2(dy, dx);
+    currentDayOfYear = calculateDayOfYearFromAngle(newAngle, totalDays);
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+    return;
   }
 });
 
