@@ -52,8 +52,8 @@ function formatDate(dayOfYear, year) {
   const day = date.getDate();
   const month = date.toLocaleString('default', { month: 'long' });
   const daySuffix = (day % 10 === 1 && day !== 11) ? 'st' :
-                    (day % 10 === 2 && day !== 12) ? 'nd' :
-                    (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
+    (day % 10 === 2 && day !== 12) ? 'nd' :
+    (day % 10 === 3 && day !== 13) ? 'rd' : 'th';
   return `${day}${daySuffix} of ${month} ${year}`;
 }
 
@@ -70,16 +70,13 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.font = `${radius * 0.1}px Arial`; // Font size is 10% of the radius
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
-  ctx.fillText('Jun 21st', centerX - radius * 0.95, centerY - radius * 0.98);
-
+ 
   // Draw "100%" at the same level as "June 21st" on the opposite side
-  ctx.fillText("100% Peak S.I.", centerX + radius * 0.95, centerY - radius * 0.98);
+  ctx.fillText("Jun 21st -- 100% Peak S.I.", centerX + radius * 0.03, centerY - radius * 1.1);
 
   // Draw "December 21st" about 95% to the left of the canvas and 5% higher
-  ctx.fillText('Dec 21st', centerX - radius * 0.95, centerY + radius + radius * 0.07);
+  ctx.fillText('Dec 21st -- 19.7% Peak S.I.', centerX - radius * -0.01, centerY + radius + radius * 0.15);
 
-  // Draw "47%" at the same level as "December 21st" on the opposite side
-  ctx.fillText('19.7% Peak S.I.', centerX + radius * 0.95, centerY + radius + radius * 0.07);
 
   // Adjust the angle so June 21st is at the top and December 21st is at the bottom
   const december21st = 355; // December 21st is approximately day 355
@@ -206,3 +203,21 @@ setToTodayButton.addEventListener('click', setToToday);
 
 // Initial draw
 setToToday();
+
+
+/*
+
+ ctx.fillText('Jun 21st', centerX - radius * 0.95, centerY - radius * 0.98);
+
+
+
+
+  // Draw "47%" at the same level as "December 21st" on the opposite side
+  ctx.fillText('19.7% Peak S.I.', centerX + radius * 0.95, centerY + radius + radius * 0.07);
+
+
+
+
+
+
+*/
