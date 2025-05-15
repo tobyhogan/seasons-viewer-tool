@@ -351,6 +351,33 @@
   .pb-6 {
     padding-bottom: calc(var(--spacing) * 6);
   }
+  .pl-2 {
+    padding-left: calc(var(--spacing) * 2);
+  }
+  .pl-4 {
+    padding-left: calc(var(--spacing) * 4);
+  }
+  .pl-\[3px\] {
+    padding-left: 3px;
+  }
+  .pl-\[6px\] {
+    padding-left: 6px;
+  }
+  .pl-\[8px\] {
+    padding-left: 8px;
+  }
+  .pl-\[9px\] {
+    padding-left: 9px;
+  }
+  .pl-\[10px\] {
+    padding-left: 10px;
+  }
+  .pl-\[11px\] {
+    padding-left: 11px;
+  }
+  .pl-\[12px\] {
+    padding-left: 12px;
+  }
   .text-center {
     text-align: center;
   }

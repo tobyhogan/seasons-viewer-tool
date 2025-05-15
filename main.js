@@ -20,6 +20,20 @@ const radius = canvasHeight * 0.4; // Circle radius is 40% of the canvas width
 let isDragging = false;
 let currentDayOfYear = 0; // Track the current day of the year dynamically
 
+// State for draggable dot on sun angle curve
+let sunCurveHour = 12; // default to noon
+let draggingSunDot = false;
+
+// === Sun angle graph sizing constants ===
+const SUN_GRAPH_WIDTH = 570;   // total canvas width in px
+const SUN_GRAPH_HEIGHT = 320;  // total canvas height in px
+const SUN_GRAPH_LEFT = 40;     // left margin for y-axis
+const SUN_GRAPH_RIGHT = 20;    // right margin
+const SUN_GRAPH_TOP = 20;      // top margin
+const SUN_GRAPH_BOTTOM = 20;   // bottom margin
+const SUN_GRAPH_X_AXIS_LEN = SUN_GRAPH_WIDTH - SUN_GRAPH_LEFT - SUN_GRAPH_RIGHT;
+const SUN_GRAPH_Y_AXIS_LEN = SUN_GRAPH_HEIGHT - SUN_GRAPH_TOP - SUN_GRAPH_BOTTOM;
+
 // Function to calculate the total number of days in the year
 
 function roundSpec(num, decimals) {
@@ -292,20 +306,180 @@ setToTodayButton.addEventListener('click', setToToday);
 // Initial draw
 setToToday();
 
+// Create and insert the canvas for the sun angle tool
+const middleColumn = document.querySelector('.middleColumn');
+const sunAngleCanvas = document.createElement('canvas');
+sunAngleCanvas.width = SUN_GRAPH_WIDTH;
+sunAngleCanvas.height = SUN_GRAPH_HEIGHT;
+sunAngleCanvas.style.border = '1px solid #ccc';
+sunAngleCanvas.style.margin = '16px 0';
+middleColumn.appendChild(sunAngleCanvas);
 
-/*
+function drawSunAngleGraph() {
+    const ctx = sunAngleCanvas.getContext('2d');
+    ctx.clearRect(0, 0, SUN_GRAPH_WIDTH, SUN_GRAPH_HEIGHT);
 
- ctx.fillText('Jun 21st', centerX - radius * 0.95, centerY - radius * 0.98);
+    // Axes
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    // X-axis (time)
+    ctx.beginPath();
+    ctx.moveTo(SUN_GRAPH_LEFT, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
+    ctx.lineTo(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
+    ctx.stroke();
+    // Y-axis (angle)
+    ctx.beginPath();
+    ctx.moveTo(SUN_GRAPH_LEFT, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
+    ctx.lineTo(SUN_GRAPH_LEFT, SUN_GRAPH_TOP);
+    ctx.stroke();
 
+    // Labels
+    ctx.fillStyle = '#333';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Time', SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN / 2 - 18, SUN_GRAPH_HEIGHT - 5);
+    ctx.save();
+    ctx.translate(10, SUN_GRAPH_TOP + SUN_GRAPH_Y_AXIS_LEN / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Sun angle (°)', 0, 0);
+    ctx.restore();
 
+    // Y-axis range: -18 to +90 degrees
+    const minAngle = -18;
+    const maxAngle = 90;
 
+    // X-axis ticks (hours)
+    for (let h = 0; h <= 24; h += 6) {
+        const x = SUN_GRAPH_LEFT + (h / 24) * SUN_GRAPH_X_AXIS_LEN;
+        ctx.beginPath();
+        ctx.moveTo(x, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
+        ctx.lineTo(x, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM + 5);
+        ctx.stroke();
+        ctx.fillText(h, x - 6, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM + 15);
+    }
 
-  // Draw "47%" at the same level as "December 21st" on the opposite side
-  ctx.fillText('19.7% Peak S.I.', centerX + radius * 0.95, centerY + radius + radius * 0.07);
+    // Y-axis ticks (angle)
+    for (let a = minAngle; a <= maxAngle; a += 36) {
+        const y = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((a - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+        ctx.beginPath();
+        ctx.moveTo(SUN_GRAPH_LEFT - 5, y);
+        ctx.lineTo(SUN_GRAPH_LEFT, y);
+        ctx.stroke();
+        ctx.fillText(a, 10, y + 4);
+    }
 
+    // Draw dotted line at zero degrees
+    const zeroY = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((0 - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#888';
+    ctx.beginPath();
+    ctx.moveTo(SUN_GRAPH_LEFT, zeroY);
+    ctx.lineTo(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, zeroY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
 
+    // Sun position calculation for London, May 15th
+    function solarElevationAngle(date, lat, lon) {
+        // Convert date to UTC decimal hours
+        const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+        // Day of year
+        const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
+        const diff = date - start;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
 
+        // Declination of the sun
+        const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
+        // Time correction for longitude
+        const timeOffset = (lon / 15);
+        // Solar time
+        const solarTime = hours + timeOffset;
+        // Hour angle
+        const hourAngle = (solarTime - 12) * 15;
+        // Convert degrees to radians
+        const toRad = Math.PI / 180;
+        // Calculate elevation
+        const elevation = Math.asin(
+            Math.sin(lat * toRad) * Math.sin(decl * toRad) +
+            Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
+        ) * (180 / Math.PI);
+        return elevation;
+    }
 
+    // Plot sun angle for each hour (use smaller step for smoothness)
+    ctx.strokeStyle = 'orange';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let first = true;
+    for (let h = 0; h <= 24; h += 0.01) {
+        const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0));
+        const angle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(date, 51.5074, -0.1278)));
+        const x = SUN_GRAPH_LEFT + (h / 24) * SUN_GRAPH_X_AXIS_LEN;
+        const y = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((angle - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+        if (first) {
+            ctx.moveTo(x, y);
+            first = false;
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
 
+    // Draw draggable dot on the curve
+    const dotHour = sunCurveHour;
+    const dotDate = new Date(Date.UTC(2023, 4, 15, 0, dotHour * 60, 0));
+    const dotAngle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(dotDate, 51.5074, -0.1278)));
+    const dotX = SUN_GRAPH_LEFT + (dotHour / 24) * SUN_GRAPH_X_AXIS_LEN;
+    const dotY = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((dotAngle - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
 
-*/
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(dotX, dotY, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = 'green';
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+}
+
+// Add event listeners for dragging the dot
+sunAngleCanvas.addEventListener('mousedown', function(e) {
+    const rect = sunAngleCanvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const dotDate = new Date(Date.UTC(2023, 4, 15, 0, sunCurveHour * 60, 0));
+    const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
+    const dotX = SUN_GRAPH_LEFT + (sunCurveHour / 24) * SUN_GRAPH_X_AXIS_LEN;
+    const dotY = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((dotAngle + 18) / (90 + 18)) * SUN_GRAPH_Y_AXIS_LEN;
+
+    if (Math.hypot(mouseX - dotX, mouseY - dotY) < 10) {
+        draggingSunDot = true;
+        e.preventDefault();
+    }
+});
+
+window.addEventListener('mousemove', function(e) {
+    if (!draggingSunDot) return;
+    const rect = sunAngleCanvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const clampedX = Math.max(SUN_GRAPH_LEFT, Math.min(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, mouseX));
+    sunCurveHour = ((clampedX - SUN_GRAPH_LEFT) / SUN_GRAPH_X_AXIS_LEN) * 24;
+    drawSunAngleGraph();
+});
+
+window.addEventListener('mouseup', function() {
+    draggingSunDot = false;
+});
+
+sunAngleCanvas.addEventListener('click', function(e) {
+    const rect = sunAngleCanvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const clampedX = Math.max(SUN_GRAPH_LEFT, Math.min(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, mouseX));
+    sunCurveHour = ((clampedX - SUN_GRAPH_LEFT) / SUN_GRAPH_X_AXIS_LEN) * 24;
+    drawSunAngleGraph();
+});
+
+drawSunAngleGraph();
