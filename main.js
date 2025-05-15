@@ -66,16 +66,54 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.arc(centerX - 0, centerY, radius, 0, 2 * Math.PI);
   ctx.stroke();
 
+  // Calculate extreme points
+  const top = { x: centerX, y: centerY - radius };
+  const bottom = { x: centerX, y: centerY + radius };
+  const left = { x: centerX - radius, y: centerY };
+  const right = { x: centerX + radius, y: centerY };
+
+  // Draw blue markers perpendicular to the circle
+  ctx.save();
+  ctx.strokeStyle = 'blue';
+  ctx.lineWidth = 2;
+  const markerLen = 10;
+
+  // Top marker (vertical line, perpendicular to tangent)
+  ctx.beginPath();
+  ctx.moveTo(top.x, top.y - markerLen / 2);
+  ctx.lineTo(top.x, top.y + markerLen / 2);
+  ctx.stroke();
+
+  // Bottom marker (vertical line, perpendicular to tangent)
+  ctx.beginPath();
+  ctx.moveTo(bottom.x, bottom.y - markerLen / 2);
+  ctx.lineTo(bottom.x, bottom.y + markerLen / 2);
+  ctx.stroke();
+
+  // Left marker (horizontal line, perpendicular to tangent)
+  ctx.beginPath();
+  ctx.moveTo(left.x - markerLen / 2, left.y);
+  ctx.lineTo(left.x + markerLen / 2, left.y);
+  ctx.stroke();
+
+  // Right marker (horizontal line, perpendicular to tangent)
+  ctx.beginPath();
+  ctx.moveTo(right.x - markerLen / 2, right.y);
+  ctx.lineTo(right.x + markerLen / 2, right.y);
+  ctx.stroke();
+
+  ctx.restore();
+
   // Draw "June 21st" 95% to the left and 98% to the top of the canvas
   ctx.font = `${radius * 0.1}px Arial`; // Font size is 10% of the radius
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
  
   // Draw "100%" at the same level as "June 21st" on the opposite side
-  ctx.fillText("Jun 21st -- 100% Peak S.I.", centerX + radius * 0.03, centerY - radius * 1.1);
+  ctx.fillText("Jun 21st -- 100% Peak Sun Intensity", centerX + radius * 0.03, centerY - radius * 1.1);
 
   // Draw "December 21st" about 95% to the left of the canvas and 5% higher
-  ctx.fillText('Dec 21st -- 19.7% Peak S.I.', centerX - radius * -0.01, centerY + radius + radius * 0.15);
+  ctx.fillText('Dec 21st -- 19.7% Peak Sun Intensity', centerX - radius * -0.05, centerY + radius + radius * 0.17);
 
 
   // Adjust the angle so June 21st is at the top and December 21st is at the bottom
