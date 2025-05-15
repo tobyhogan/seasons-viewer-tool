@@ -24,16 +24,6 @@ let currentDayOfYear = 0; // Track the current day of the year dynamically
 let sunCurveHour = 12; // default to noon
 let draggingSunDot = false;
 
-// === Sun angle graph sizing constants ===
-const SUN_GRAPH_WIDTH = 570;   // total canvas width in px
-const SUN_GRAPH_HEIGHT = 320;  // total canvas height in px
-const SUN_GRAPH_LEFT = 40;     // left margin for y-axis
-const SUN_GRAPH_RIGHT = 20;    // right margin
-const SUN_GRAPH_TOP = 20;      // top margin
-const SUN_GRAPH_BOTTOM = 20;   // bottom margin
-const SUN_GRAPH_X_AXIS_LEN = SUN_GRAPH_WIDTH - SUN_GRAPH_LEFT - SUN_GRAPH_RIGHT;
-const SUN_GRAPH_Y_AXIS_LEN = SUN_GRAPH_HEIGHT - SUN_GRAPH_TOP - SUN_GRAPH_BOTTOM;
-
 // Function to calculate the total number of days in the year
 
 function roundSpec(num, decimals) {
@@ -46,15 +36,36 @@ function getTotalDaysInYear(date) {
   return (new Date(year, 11, 31).getDate() === 31) ? 366 : 365;
 }
 
+// Helper: get day of year for June 21st and Dec 21st for any year
+function getDayOfYear(date) {
+  const start = new Date(date.getFullYear(), 0, 0);
+  const diff = date - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / oneDay);
+}
+function getJune21DayOfYear(year) {
+  return getDayOfYear(new Date(year, 5, 21)); // June is month 5 (0-based)
+}
+function getDec21DayOfYear(year) {
+  return getDayOfYear(new Date(year, 11, 21)); // December is month 11
+}
+
 // Function to calculate sunlight percentage
 function calculateSunlightPercentage(dayOfYear, totalDays) {
-  const maxSunlightDay = totalDays / 2;
-  const sunlight = Math.cos(((dayOfYear - maxSunlightDay) / totalDays) * 2 * Math.PI);
+  // Find the day of year for June 21st for the current year
+  const year = new Date().getFullYear();
+  const june21 = getJune21DayOfYear(year);
 
-  // Normalize sunlight to range from 47% to 100%
+  // Calculate the offset from June 21st, wrapping around the year
+  let offset = (dayOfYear - june21 + totalDays) % totalDays;
 
+  // Map offset to [0, totalDays)
+  // The cosine curve should peak at offset = 0 (June 21st)
+  // and reach minimum at offset = totalDays/2 (Dec 21st)
+  const sunlight = Math.cos((offset / totalDays) * 2 * Math.PI);
+
+  // Normalize sunlight to range from 0 to 1
   const sunlightCoeff = ((sunlight + 1) / 2);
-
 
   return sunlightCoeff;
 }
@@ -152,22 +163,28 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
   ctx.restore();
 
-  // Draw "June 21st" 95% to the left and 98% to the top of the canvas
-  ctx.font = `${radius * 0.1}px Arial`; // Font size is 10% of the radius
+  // Draw "June 21st" and "December 21st" labels
+  ctx.font = `${radius * 0.1}px Arial`;
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
- 
-  // Draw "100%" at the same level as "June 21st" on the opposite side
-  ctx.fillText("Jun 21st -- 100% Peak Sun Intensity", centerX + radius * 0.03, centerY - radius * 1.1);
 
-  // Draw "December 21st" about 95% to the left of the canvas and 5% higher
-  ctx.fillText('Dec 21st -- 19.7% Peak Sun Intensity', centerX - radius * -0.05, centerY + radius + radius * 0.17);
+  // Calculate actual day numbers for current year
+  const year = new Date().getFullYear();
+  const june21 = getJune21DayOfYear(year);
+  const dec21 = getDec21DayOfYear(year);
 
+  // Place June 21st label at the top
+  ctx.fillText("Jun 21st -- 100% Peak Sun Intensity", centerX, centerY - radius * 1.1);
 
-  // Adjust the angle so June 21st is at the top and December 21st is at the bottom
-  const december21st = 355; // December 21st is approximately day 355
-  const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI; // Align December 21st to the bottom
-  const angle = ((dayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
+  // Place Dec 21st label at the bottom
+  ctx.fillText('Dec 21st -- 19.7% Peak Sun Intensity', centerX, centerY + radius * 1.18);
+
+  // Calculate angle so that June 21st is at the top (12 o'clock)
+  // Angle increases clockwise, 0 at 3 o'clock, so top is -Math.PI/2
+  // Map dayOfYear so that day == june21 => angle = -Math.PI/2
+  // and day == dec21 => angle = +Math.PI/2
+  // Full year is mapped to [ -Math.PI/2, 3*Math.PI/2 ]
+  const angle = -Math.PI / 2 + ((dayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
   // Calculate the dot's position
   const dotX = centerX + radius * Math.cos(angle);
@@ -175,7 +192,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
   // Draw the dot
   ctx.beginPath();
-  ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI); // Dot size is 5% of the radius
+  ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI);
   ctx.fillStyle = '#06ba48';
   ctx.fill();
 }
@@ -188,10 +205,15 @@ function isMouseOverDot(mouseX, mouseY, dotX, dotY) {
 
 // Function to calculate the day of the year based on the angle
 function calculateDayOfYearFromAngle(angle, totalDays) {
-  const december21st = 355; // December 21st is approximately day 355
-  const angleOffset = Math.PI / 2 - (december21st / totalDays) * 2 * Math.PI; // Align December 21st to the bottom
-  const adjustedAngle = (angle - angleOffset + 2 * Math.PI) % (2 * Math.PI);
-  return Math.round((adjustedAngle / (2 * Math.PI)) * totalDays);
+  // Reverse of the above: angle = -Math.PI/2 + ((dayOfYear - june21) * 2PI / totalDays)
+  // So: dayOfYear = june21 + ((angle + Math.PI/2) * totalDays) / (2PI)
+  const year = new Date().getFullYear();
+  const june21 = getJune21DayOfYear(year);
+  let day = Math.round(june21 + ((angle + Math.PI / 2) * totalDays) / (2 * Math.PI));
+  // Wrap around if needed
+  if (day < 0) day += totalDays;
+  if (day >= totalDays) day -= totalDays;
+  return day;
 }
 
 // Function to update the displayed information
@@ -220,8 +242,10 @@ canvas.addEventListener('mousedown', (event) => {
   const mouseY = event.clientY - rect.top;
 
   const totalDays = getTotalDaysInYear(new Date());
-  const angleOffset = Math.PI / 2 - (355 / totalDays) * 2 * Math.PI; // December 21st offset
-  const angle = ((currentDayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
+  const year = new Date().getFullYear();
+  const june21 = getJune21DayOfYear(year);
+  // Calculate angle for current dot position
+  const angle = -Math.PI / 2 + ((currentDayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
   const dotX = centerX + radius * Math.cos(angle);
   const dotY = centerY + radius * Math.sin(angle);
@@ -231,8 +255,8 @@ canvas.addEventListener('mousedown', (event) => {
   const dist = Math.sqrt(dx * dx + dy * dy);
 
   // Position of green dot
-  const greenDotX = centerX + radius * Math.cos(angle);
-  const greenDotY = centerY + radius * Math.sin(angle);
+  const greenDotX = dotX;
+  const greenDotY = dotY;
   const dotDist = Math.sqrt((mouseX - greenDotX) ** 2 + (mouseY - greenDotY) ** 2);
 
   // If mouse is near the green dot, start dragging
@@ -243,7 +267,7 @@ canvas.addEventListener('mousedown', (event) => {
     // If click is near the circle's edge, move green dot there
     const newAngle = Math.atan2(dy, dx);
     currentDayOfYear = calculateDayOfYearFromAngle(newAngle, totalDays);
-    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+    updateDisplay(currentDayOfYear, totalDays, year);
     return;
   }
 });
@@ -255,8 +279,9 @@ canvas.addEventListener('mousemove', (event) => {
   const mouseY = event.clientY - rect.top;
 
   const totalDays = getTotalDaysInYear(new Date());
-  const angleOffset = Math.PI / 2 - (355 / totalDays) * 2 * Math.PI; // December 21st offset
-  const angle = ((currentDayOfYear / totalDays) * 2 * Math.PI + angleOffset) % (2 * Math.PI);
+  const year = new Date().getFullYear();
+  const june21 = getJune21DayOfYear(year);
+  const angle = -Math.PI / 2 + ((currentDayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
   const dotX = centerX + radius * Math.cos(angle);
   const dotY = centerY + radius * Math.sin(angle);
@@ -273,7 +298,7 @@ canvas.addEventListener('mousemove', (event) => {
     const newAngle = Math.atan2(dy, dx);
     currentDayOfYear = calculateDayOfYearFromAngle(newAngle, totalDays); // Update the current day of the year
 
-    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+    updateDisplay(currentDayOfYear, totalDays, year);
   }
 });
 
@@ -307,38 +332,38 @@ setToTodayButton.addEventListener('click', setToToday);
 setToToday();
 
 // Create and insert the canvas for the sun angle tool
-const middleColumn = document.querySelector('.middleColumn');
+const middleColumn = document.querySelector('.dayViewTool');
 const sunAngleCanvas = document.createElement('canvas');
-sunAngleCanvas.width = SUN_GRAPH_WIDTH;
-sunAngleCanvas.height = SUN_GRAPH_HEIGHT;
+sunAngleCanvas.width = 500;
+sunAngleCanvas.height = 300;
 sunAngleCanvas.style.border = '1px solid #ccc';
 sunAngleCanvas.style.margin = '16px 0';
 middleColumn.appendChild(sunAngleCanvas);
 
 function drawSunAngleGraph() {
     const ctx = sunAngleCanvas.getContext('2d');
-    ctx.clearRect(0, 0, SUN_GRAPH_WIDTH, SUN_GRAPH_HEIGHT);
+    ctx.clearRect(0, 0, sunAngleCanvas.width, sunAngleCanvas.height);
 
     // Axes
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 1;
     // X-axis (time)
     ctx.beginPath();
-    ctx.moveTo(SUN_GRAPH_LEFT, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
-    ctx.lineTo(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
+    ctx.moveTo(40, 180);
+    ctx.lineTo(380, 180);
     ctx.stroke();
     // Y-axis (angle)
     ctx.beginPath();
-    ctx.moveTo(SUN_GRAPH_LEFT, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
-    ctx.lineTo(SUN_GRAPH_LEFT, SUN_GRAPH_TOP);
+    ctx.moveTo(40, 180);
+    ctx.lineTo(40, 20);
     ctx.stroke();
 
     // Labels
     ctx.fillStyle = '#333';
     ctx.font = '12px sans-serif';
-    ctx.fillText('Time', SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN / 2 - 18, SUN_GRAPH_HEIGHT - 5);
+    ctx.fillText('Time', 200, 195);
     ctx.save();
-    ctx.translate(10, SUN_GRAPH_TOP + SUN_GRAPH_Y_AXIS_LEN / 2);
+    ctx.translate(10, 120);
     ctx.rotate(-Math.PI / 2);
     ctx.fillText('Sun angle (°)', 0, 0);
     ctx.restore();
@@ -346,40 +371,43 @@ function drawSunAngleGraph() {
     // Y-axis range: -18 to +90 degrees
     const minAngle = -18;
     const maxAngle = 90;
+    const yAxisHeight = 160;
 
     // X-axis ticks (hours)
     for (let h = 0; h <= 24; h += 6) {
-        const x = SUN_GRAPH_LEFT + (h / 24) * SUN_GRAPH_X_AXIS_LEN;
+        const x = 40 + (h / 24) * 340;
         ctx.beginPath();
-        ctx.moveTo(x, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM);
-        ctx.lineTo(x, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM + 5);
+        ctx.moveTo(x, 180);
+        ctx.lineTo(x, 185);
         ctx.stroke();
-        ctx.fillText(h, x - 6, SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM + 15);
+        ctx.fillText(h, x - 6, 195);
     }
 
     // Y-axis ticks (angle)
     for (let a = minAngle; a <= maxAngle; a += 36) {
-        const y = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((a - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+        const y = 180 - ((a - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
         ctx.beginPath();
-        ctx.moveTo(SUN_GRAPH_LEFT - 5, y);
-        ctx.lineTo(SUN_GRAPH_LEFT, y);
+        ctx.moveTo(35, y);
+        ctx.lineTo(40, y);
         ctx.stroke();
         ctx.fillText(a, 10, y + 4);
     }
 
     // Draw dotted line at zero degrees
-    const zeroY = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((0 - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+    const zeroY = 180 - ((0 - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
     ctx.save();
     ctx.setLineDash([4, 4]);
     ctx.strokeStyle = '#888';
     ctx.beginPath();
-    ctx.moveTo(SUN_GRAPH_LEFT, zeroY);
-    ctx.lineTo(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, zeroY);
+    ctx.moveTo(40, zeroY);
+    ctx.lineTo(380, zeroY);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
 
     // Sun position calculation for London, May 15th
+    // London: lat 51.5074, lon -0.1278, May 15th
+    // We'll use a simple solar position formula for demonstration (not precise for all cases)
     function solarElevationAngle(date, lat, lon) {
         // Convert date to UTC decimal hours
         const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
@@ -412,11 +440,11 @@ function drawSunAngleGraph() {
     ctx.lineWidth = 2;
     ctx.beginPath();
     let first = true;
-    for (let h = 0; h <= 24; h += 0.01) {
-        const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0));
+    for (let h = 0; h <= 24; h += 0.01) { // smaller step for smoother curve
+        const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0)); // h may be fractional
         const angle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(date, 51.5074, -0.1278)));
-        const x = SUN_GRAPH_LEFT + (h / 24) * SUN_GRAPH_X_AXIS_LEN;
-        const y = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((angle - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+        const x = 40 + (h / 24) * 340;
+        const y = 180 - ((angle - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
         if (first) {
             ctx.moveTo(x, y);
             first = false;
@@ -430,8 +458,8 @@ function drawSunAngleGraph() {
     const dotHour = sunCurveHour;
     const dotDate = new Date(Date.UTC(2023, 4, 15, 0, dotHour * 60, 0));
     const dotAngle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(dotDate, 51.5074, -0.1278)));
-    const dotX = SUN_GRAPH_LEFT + (dotHour / 24) * SUN_GRAPH_X_AXIS_LEN;
-    const dotY = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((dotAngle - minAngle) / (maxAngle - minAngle)) * SUN_GRAPH_Y_AXIS_LEN;
+    const dotX = 40 + (dotHour / 24) * 340;
+    const dotY = 180 - ((dotAngle - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
 
     ctx.save();
     ctx.beginPath();
@@ -450,35 +478,42 @@ sunAngleCanvas.addEventListener('mousedown', function(e) {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
+    // Compute dot position
     const dotDate = new Date(Date.UTC(2023, 4, 15, 0, sunCurveHour * 60, 0));
     const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
-    const dotX = SUN_GRAPH_LEFT + (sunCurveHour / 24) * SUN_GRAPH_X_AXIS_LEN;
-    const dotY = SUN_GRAPH_HEIGHT - SUN_GRAPH_BOTTOM - ((dotAngle + 18) / (90 + 18)) * SUN_GRAPH_Y_AXIS_LEN;
+    const dotX = 40 + (sunCurveHour / 24) * 340;
+    const dotY = 180 - ((dotAngle + 18) / (90 + 18)) * 160;
 
     if (Math.hypot(mouseX - dotX, mouseY - dotY) < 10) {
         draggingSunDot = true;
+        // Prevent text selection or other default actions
         e.preventDefault();
     }
 });
 
+// Listen for mousemove and mouseup on the whole window for robust dragging
 window.addEventListener('mousemove', function(e) {
     if (!draggingSunDot) return;
     const rect = sunAngleCanvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
-    const clampedX = Math.max(SUN_GRAPH_LEFT, Math.min(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, mouseX));
-    sunCurveHour = ((clampedX - SUN_GRAPH_LEFT) / SUN_GRAPH_X_AXIS_LEN) * 24;
-    drawSunAngleGraph();
+    // Clamp mouseX to graph area
+    const clampedX = Math.max(40, Math.min(380, mouseX));
+    // Convert x back to hour
+    sunCurveHour = ((clampedX - 40) / 340) * 24;
+    drawSunAngleGraph(); // <-- This ensures the dot is redrawn as you drag
 });
 
 window.addEventListener('mouseup', function() {
     draggingSunDot = false;
 });
 
+// Optional: allow clicking anywhere on the curve to move the dot there
 sunAngleCanvas.addEventListener('click', function(e) {
     const rect = sunAngleCanvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
-    const clampedX = Math.max(SUN_GRAPH_LEFT, Math.min(SUN_GRAPH_LEFT + SUN_GRAPH_X_AXIS_LEN, mouseX));
-    sunCurveHour = ((clampedX - SUN_GRAPH_LEFT) / SUN_GRAPH_X_AXIS_LEN) * 24;
+    // Clamp mouseX to graph area
+    const clampedX = Math.max(40, Math.min(380, mouseX));
+    sunCurveHour = ((clampedX - 40) / 340) * 24;
     drawSunAngleGraph();
 });
 
