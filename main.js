@@ -679,3 +679,13 @@ sunAngleCanvas.addEventListener('click', function(e) {
 });
 
 drawSunAngleGraph();
+
+// --- NEW: Set to Now button logic for Day View ---
+const setToNowButton = document.getElementById('setToNowButton');
+if (setToNowButton) {
+  setToNowButton.addEventListener('click', () => {
+    const now = new Date();
+    sunCurveHour = now.getHours() + now.getMinutes() / 60;
+    drawSunAngleGraph();
+  });
+}
