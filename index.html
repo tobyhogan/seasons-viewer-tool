@@ -30,7 +30,7 @@
               </label>
               <label class="flex items-center gap-2 text-sm ml-4">
                 <input type="checkbox" id="toggleBlueMarkers" checked>
-                Even Time Markers
+                Time-based Markers
               </label>
             </div>
 
@@ -59,18 +59,23 @@
 
         </div>
 
-        <div class="middleColumn border-2 rounded-lg h-[400px] mt-[130px] ml-3 w-[600px] pl-[11px] bg-white">
+        <div class="middleColumn border-2 rounded-lg h-fit mt-[130px] ml-3 w-[600px] pl-[11px] bg-white pb-3">
 
-          <h2 class="text-center underline">Day View</h2>
+          <h2 class="text-center underline text-lg mt-2">Sun Info - Day View</h2>
 
           <div class="dayViewTool">
-
+            <!-- Add this line for time selected display -->
           </div>
 
-           <div class="mx-auto w-fit mb-2.5">
-             <button id="setToNowButton" class="px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]">Set to Now</button>
-           </div>
+          
+          <div class="mx-auto w-fit mb-2.5">
+            <button id="setToNowButton" class="px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]">Set to Now</button>
+          </div>
 
+          <div id="dayViewTimeSelected" class="text-center text-[16px] mt-2"></div>
+
+
+          
         </div>
 
         <div class="rightColumn">

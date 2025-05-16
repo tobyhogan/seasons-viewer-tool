@@ -338,7 +338,8 @@ function calculateDayOfYearFromAngle(angle, totalDays) {
 
 // Function to update the displayed information
 function updateDisplay(dayOfYear, totalDays, year) {
-  formattedDateDiv.textContent = formatDate(dayOfYear, year);
+
+  formattedDateDiv.textContent = `Day Selected: ${formatDate(dayOfYear, year)}`;
 
   const sunlightCoeff = calculateSunlightPercentage(dayOfYear, totalDays);
 
@@ -450,6 +451,40 @@ setToTodayButton.addEventListener('click', setToToday);
 // Initial draw
 setToToday();
 
+// --- Add these constants for the sun angle graph ---
+const minAngle = -18;
+const maxAngle = 90;
+const yAxisHeight = 160;
+
+// Move solarElevationAngle outside so it's accessible everywhere
+function solarElevationAngle(date, lat, lon) {
+    // Convert date to UTC decimal hours
+    const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+    // Day of year
+    const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
+    const diff = date - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+
+    // Declination of the sun
+    const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
+    // Time correction for longitude
+    const timeOffset = (lon / 15);
+    // Solar time
+    const solarTime = hours + timeOffset;
+    // Hour angle
+    const hourAngle = (solarTime - 12) * 15;
+    // Convert degrees to radians
+    const toRad = Math.PI / 180;
+    // Calculate elevation
+    const elevation = Math.asin(
+        Math.sin(lat * toRad) * Math.sin(decl * toRad) +
+        Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
+    ) * (180 / Math.PI);
+    return elevation;
+}
+
+
 // Create and insert the canvas for the sun angle tool
 const middleColumn = document.querySelector('.dayViewTool');
 const sunAngleCanvas = document.createElement('canvas');
@@ -458,6 +493,17 @@ sunAngleCanvas.height = 300;
 sunAngleCanvas.style.border = '1px solid #ccc';
 sunAngleCanvas.style.margin = '16px 0';
 middleColumn.appendChild(sunAngleCanvas);
+
+// --- Add reference for the time selected display in day view ---
+const dayViewTimeSelectedDiv = document.getElementById('dayViewTimeSelected');
+
+// --- Helper to format hour as "HH:MM am/pm" (24-hour format) ---
+function formatHourDecimal(hour) {
+    const h = Math.floor(hour);
+    const m = Math.round((hour - h) * 60);
+    const ampm = h < 12 ? '(am)' : '(pm)';
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+}
 
 function drawSunAngleGraph() {
     const ctx = sunAngleCanvas.getContext('2d');
@@ -480,18 +526,6 @@ function drawSunAngleGraph() {
     // Labels
     ctx.fillStyle = '#333';
     ctx.font = '12px sans-serif';
-    ctx.fillText('Time', 200, 195);
-    ctx.save();
-    ctx.translate(10, 120);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillText('Sun angle (°)', 0, 0);
-    ctx.restore();
-
-    // Y-axis range: -18 to +90 degrees
-    const minAngle = -18;
-    const maxAngle = 90;
-    const yAxisHeight = 160;
-
     // X-axis ticks (hours)
     for (let h = 0; h <= 24; h += 6) {
         const x = 40 + (h / 24) * 340;
@@ -501,6 +535,9 @@ function drawSunAngleGraph() {
         ctx.stroke();
         ctx.fillText(h, x - 6, 195);
     }
+
+    // Move "Time" label below the numbers
+    ctx.fillText('Time', 200, 210);
 
     // Y-axis ticks (angle)
     for (let a = minAngle; a <= maxAngle; a += 36) {
@@ -589,6 +626,11 @@ function drawSunAngleGraph() {
     ctx.fill();
     ctx.stroke();
     ctx.restore();
+
+    // --- NEW: Update the time selected text in the day view ---
+    if (dayViewTimeSelectedDiv) {
+        dayViewTimeSelectedDiv.textContent = `Time Selected: ${formatHourDecimal(dotHour)}`;
+    }
 }
 
 // Add event listeners for dragging the dot
