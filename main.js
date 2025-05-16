@@ -496,6 +496,8 @@ middleColumn.appendChild(sunAngleCanvas);
 
 // --- Add reference for the time selected display in day view ---
 const dayViewTimeSelectedDiv = document.getElementById('dayViewTimeSelected');
+// --- Add reference for the current sun angle display in day view ---
+const dayViewCurrentSunAngleDiv = document.getElementById('dayViewCurrentSunAngle');
 
 // --- Helper to format hour as "HH:MM am/pm" (24-hour format) ---
 function formatHourDecimal(hour) {
@@ -617,6 +619,18 @@ function drawSunAngleGraph() {
     const dotX = 40 + (dotHour / 24) * 340;
     const dotY = 180 - ((dotAngle - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
 
+    // --- NEW: Draw horizontal dotted line at dotY ---
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#2d7b2d';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(40, dotY);
+    ctx.lineTo(380, dotY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
     ctx.save();
     ctx.beginPath();
     ctx.arc(dotX, dotY, 6, 0, 2 * Math.PI);
@@ -630,6 +644,10 @@ function drawSunAngleGraph() {
     // --- NEW: Update the time selected text in the day view ---
     if (dayViewTimeSelectedDiv) {
         dayViewTimeSelectedDiv.textContent = `Time Selected: ${formatHourDecimal(dotHour)}`;
+    }
+    // --- NEW: Update the current sun angle text in the day view ---
+    if (dayViewCurrentSunAngleDiv) {
+        dayViewCurrentSunAngleDiv.textContent = `Current sun angle: ${roundSpec(dotAngle, 1)}°`;
     }
 }
 
