@@ -7,19 +7,12 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --color-blue-100: oklch(93.2% 0.032 255.585);
-    --color-blue-200: oklch(88.2% 0.059 254.128);
-    --color-blue-300: oklch(80.9% 0.105 251.813);
     --color-gray-50: oklch(98.5% 0.002 247.839);
-    --color-gray-100: oklch(96.7% 0.003 264.542);
-    --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
-    --text-lg: 1.125rem;
-    --text-lg--line-height: calc(1.75 / 1.125);
-    --text-xl: 1.25rem;
-    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
     --text-2xl: 1.5rem;
     --text-2xl--line-height: calc(2 / 1.5);
     --font-weight-semibold: 600;
@@ -175,6 +168,9 @@
   }
 }
 @layer utilities {
+  .visible {
+    visibility: visible;
+  }
   .mx-auto {
     margin-inline: auto;
   }
@@ -183,9 +179,6 @@
   }
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
-  }
-  .mt-3 {
-    margin-top: calc(var(--spacing) * 3);
   }
   .mt-4 {
     margin-top: calc(var(--spacing) * 4);
@@ -196,20 +189,11 @@
   .mt-\[5px\] {
     margin-top: 5px;
   }
-  .mt-\[6px\] {
-    margin-top: 6px;
-  }
   .mt-\[7px\] {
     margin-top: 7px;
   }
   .mt-\[8px\] {
     margin-top: 8px;
-  }
-  .mt-\[17px\] {
-    margin-top: 17px;
-  }
-  .mt-\[100px\] {
-    margin-top: 100px;
   }
   .mt-\[130px\] {
     margin-top: 130px;
@@ -226,20 +210,17 @@
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
   }
-  .mb-\[4px\] {
-    margin-bottom: 4px;
-  }
-  .mb-\[5px\] {
-    margin-bottom: 5px;
-  }
-  .mb-\[6px\] {
-    margin-bottom: 6px;
-  }
   .mb-\[7px\] {
     margin-bottom: 7px;
   }
   .ml-3 {
     margin-left: calc(var(--spacing) * 3);
+  }
+  .ml-4 {
+    margin-left: calc(var(--spacing) * 4);
+  }
+  .flex {
+    display: flex;
   }
   .table {
     display: table;
@@ -271,8 +252,14 @@
   .resize {
     resize: both;
   }
+  .items-center {
+    align-items: center;
+  }
   .justify-center {
     justify-content: center;
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
   }
   .rounded-lg {
     border-radius: var(--radius-lg);
@@ -340,18 +327,13 @@
   .text-left {
     text-align: left;
   }
-  .text-right {
-    text-align: right;
-  }
   .text-2xl {
     font-size: var(--text-2xl);
     line-height: var(--tw-leading, var(--text-2xl--line-height));
   }
-  .text-\[2px\] {
-    font-size: 2px;
-  }
-  .text-\[12px\] {
-    font-size: 12px;
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
   }
   .text-\[16px\] {
     font-size: 16px;

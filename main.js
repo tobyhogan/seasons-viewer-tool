@@ -12,6 +12,33 @@ const daylightLengthDiv = document.getElementById('daylightLength');
 const daylightPercentageDiv = document.getElementById('daylightPercentage');
 const sunElevationAngleDiv = document.getElementById('sunElevationAngle');
 const setToTodayButton = document.getElementById('setToTodayButton');
+// Add reference to the blue marker toggle checkbox
+const toggleBlueMarkersCheckbox = document.getElementById('toggleBlueMarkers');
+// Add reference to the red marker toggle checkbox
+const toggleRedMarkersCheckbox = document.getElementById('toggleRedMarkers');
+
+// --- FIX: Define showBlueMarkers and set initial value from checkbox ---
+let showBlueMarkers = toggleBlueMarkersCheckbox ? toggleBlueMarkersCheckbox.checked : true;
+// --- NEW: Define showRedMarkers and set initial value from checkbox ---
+let showRedMarkers = toggleRedMarkersCheckbox ? toggleRedMarkersCheckbox.checked : true;
+
+// --- FIX: Listen for checkbox changes and redraw ---
+if (toggleBlueMarkersCheckbox) {
+  toggleBlueMarkersCheckbox.addEventListener('change', () => {
+    showBlueMarkers = toggleBlueMarkersCheckbox.checked;
+    // Redraw with current state
+    const totalDays = getTotalDaysInYear(new Date());
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+  });
+}
+// --- NEW: Listen for red marker checkbox changes and redraw ---
+if (toggleRedMarkersCheckbox) {
+  toggleRedMarkersCheckbox.addEventListener('change', () => {
+    showRedMarkers = toggleRedMarkersCheckbox.checked;
+    const totalDays = getTotalDaysInYear(new Date());
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+  });
+}
 
 const centerX = canvasWidth / 2;
 const centerY = canvasHeight / 2;
@@ -86,10 +113,14 @@ function formatDate(dayOfYear, year) {
 function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Draw the circle
+  // --- FIX: Always set strokeStyle and fillStyle before drawing ---
+  ctx.save();
+  ctx.strokeStyle = '#222'; // Ensure circle is visible
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(centerX - 0, centerY, radius, 0, 2 * Math.PI);
   ctx.stroke();
+  ctx.restore();
 
   // Calculate blue marker points (cardinal)
   const top = { x: centerX, y: centerY - radius };
@@ -104,64 +135,150 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   const sw = { x: centerX - diag, y: centerY + diag };
   const se = { x: centerX + diag, y: centerY + diag };
 
-  // Draw blue markers (perpendicular to circle)
-  ctx.save();
-  ctx.strokeStyle = '#4444ff';
-  ctx.lineWidth = 2;
-  const blueMarkerLen = 13;
-  const redMarkerLen = 8;
+  // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
+  if (showBlueMarkers) {
+    // Blue markers (cardinal)
+    ctx.save();
+    ctx.strokeStyle = '#4444ff';
+    ctx.lineWidth = 2;
+    const blueMarkerLen = 13;
+    // Top marker (vertical)
+    ctx.beginPath();
+    ctx.moveTo(top.x, top.y - blueMarkerLen / 2 - 2);
+    ctx.lineTo(top.x, top.y + blueMarkerLen / 2 - 1.5);
+    ctx.stroke();
 
-  // Top marker (vertical)
-  ctx.beginPath();
-  ctx.moveTo(top.x, top.y - blueMarkerLen / 2 - 2);
-  ctx.lineTo(top.x, top.y + blueMarkerLen / 2 - 1.5);
-  ctx.stroke();
+    // Bottom marker (vertical)
+    ctx.beginPath();
+    ctx.moveTo(bottom.x, bottom.y - blueMarkerLen / 3);
+    ctx.lineTo(bottom.x, bottom.y + blueMarkerLen / 2 + 1.5);
+    ctx.stroke();
 
-  // Bottom marker (vertical)
-  ctx.beginPath();
-  ctx.moveTo(bottom.x, bottom.y - blueMarkerLen / 3);
-  ctx.lineTo(bottom.x, bottom.y + blueMarkerLen / 2 + 1.5);
-  ctx.stroke();
+    // Left marker (horizontal)
+    ctx.beginPath();
+    ctx.moveTo(left.x - blueMarkerLen / 2 - 2, left.y);
+    ctx.lineTo(left.x + blueMarkerLen / 2 - 1.5, left.y);
+    ctx.stroke();
 
-  // Left marker (horizontal)
-  ctx.beginPath();
-  ctx.moveTo(left.x - blueMarkerLen / 2 - 2, left.y);
-  ctx.lineTo(left.x + blueMarkerLen / 2 - 1.5, left.y);
-  ctx.stroke();
+    // Right marker (horizontal)
+    ctx.beginPath();
+    ctx.moveTo(right.x - blueMarkerLen / 2 + 2, right.y);
+    ctx.lineTo(right.x + blueMarkerLen / 2 + 1.5, right.y);
+    ctx.stroke();
 
-  // Right marker (horizontal)
-  ctx.beginPath();
-  ctx.moveTo(right.x - blueMarkerLen / 2 + 2, right.y);
-  ctx.lineTo(right.x + blueMarkerLen / 2 + 1.5, right.y);
-  ctx.stroke();
+    ctx.restore();
 
-  ctx.restore();
+    // Diagonal markers (now also toggled by showBlueMarkers)
+    ctx.save();
+    ctx.strokeStyle = '#5555ff';
+    ctx.lineWidth = 2;
 
-  // Draw red markers (perpendicular to circle at diagonals)
-  ctx.save();
-  ctx.strokeStyle = '#5555ff';
-  ctx.lineWidth = 2;
+    // Helper to draw a perpendicular marker at (x, y) with angle theta
+    function drawDiagonalMarker(x, y, angle, len) {
+        const dx = Math.cos(angle) * len / 2;
+        const dy = Math.sin(angle) * len / 2;
+        ctx.beginPath();
+        ctx.moveTo(x - dx, y - dy);
+        ctx.lineTo(x + dx, y + dy);
+        ctx.stroke();
+    }
 
-  // Helper to draw a perpendicular marker at (x, y) with angle theta
-  function drawDiagonalMarker(x, y, angle, len) {
-      const dx = Math.cos(angle) * len / 2;
-      const dy = Math.sin(angle) * len / 2;
-      ctx.beginPath();
-      ctx.moveTo(x - dx, y - dy);
-      ctx.lineTo(x + dx, y + dy);
-      ctx.stroke();
+    // NW: angle = -3 * Math.PI / 4 (perpendicular to radius at NW)
+    drawDiagonalMarker(nw.x - 1, nw.y - 1, -3 * Math.PI / 4, 8 + 3);
+    // NE: angle = -Math.PI / 4
+    drawDiagonalMarker(ne.x + 1, ne.y - 1, -Math.PI / 4, 8 + 3);
+    // SW: angle = 3 * Math.PI / 4
+    drawDiagonalMarker(sw.x - 1, sw.y + 1, 3 * Math.PI / 4, 8 + 3);
+    // SE: angle = Math.PI / 4
+    drawDiagonalMarker(se.x + 1, se.y + 1, Math.PI / 4, 8 + 3);
+
+    ctx.restore();
   }
 
-  // NW: angle = -3 * Math.PI / 4 (perpendicular to radius at NW)
-  drawDiagonalMarker(nw.x - 1, nw.y - 1, -3 * Math.PI / 4, redMarkerLen + 3);
-  // NE: angle = -Math.PI / 4
-  drawDiagonalMarker(ne.x + 1, ne.y - 1, -Math.PI / 4, redMarkerLen + 3);
-  // SW: angle = 3 * Math.PI / 4
-  drawDiagonalMarker(sw.x - 1, sw.y + 1, 3 * Math.PI / 4, redMarkerLen + 3);
-  // SE: angle = Math.PI / 4
-  drawDiagonalMarker(se.x + 1, se.y + 1, Math.PI / 4, redMarkerLen + 3);
+  // --- NEW: Draw red markers as dashes at 80%, 59.5%, 40% peak intensities if enabled ---
+  if (showRedMarkers) {
+    // These are the target peak intensities
+    const intensities = [0.8, 0.595, 0.4];
+    // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
+    // Solve for sunlightCoeff: sunlightCoeff = (peak - 19.7) / (100 - 19.7)
+    // For each intensity, calculate the corresponding dayOfYear offset from June 21st
 
-  ctx.restore();
+    const year = new Date().getFullYear();
+    const june21 = getJune21DayOfYear(year);
+
+    intensities.forEach((intensity) => {
+      const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
+      // sunlightCoeff = cos(offset/totalDays * 2PI) + 1 / 2
+      // So: cosVal = sunlightCoeff * 2 - 1
+      const cosVal = sunlightCoeff * 2 - 1;
+      // offset = arccos(cosVal) * totalDays / (2PI)
+      let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+      // There are two solutions: one before and one after June 21st. We'll use the one after June 21st.
+      // So markerDay = (june21 + offset) % totalDays
+      let markerDay = (june21 + Math.round(offset)) % totalDays;
+
+      // Calculate angle for this marker
+      const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
+
+      // Draw a red dash (line) at this angle, same style as blue markers
+      ctx.save();
+      ctx.strokeStyle = '#e53935';
+      ctx.lineWidth = 2;
+      const dashLen = 13; // same as blueMarkerLen
+      // Start and end points for the dash, centered on the circle edge
+      const x1 = centerX + (radius - dashLen / 2) * Math.cos(angle);
+      const y1 = centerY + (radius - dashLen / 2) * Math.sin(angle);
+      const x2 = centerX + (radius + dashLen / 2) * Math.cos(angle);
+      const y2 = centerY + (radius + dashLen / 2) * Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
+      const angleMirror = angle + Math.PI;
+      const x1m = centerX + (radius - dashLen / 2) * Math.cos(angleMirror);
+      const y1m = centerY + (radius - dashLen / 2) * Math.sin(angleMirror);
+      const x2m = centerX + (radius + dashLen / 2) * Math.cos(angleMirror);
+      const y2m = centerY + (radius + dashLen / 2) * Math.sin(angleMirror);
+      ctx.beginPath();
+      ctx.moveTo(x1m, y1m);
+      ctx.lineTo(x2m, y2m);
+      ctx.stroke();
+
+      ctx.restore();
+    });
+
+    // --- NEW: Add red markers at the top (100%) and bottom (19.7%) of the circle ---
+    ctx.save();
+    ctx.strokeStyle = '#e53935';
+    ctx.lineWidth = 2;
+    const dashLen = 13;
+
+    // Top (100% intensity, June 21st)
+    const angleTop = -Math.PI / 2;
+    const x1Top = centerX + (radius - dashLen / 2) * Math.cos(angleTop);
+    const y1Top = centerY + (radius - dashLen / 2) * Math.sin(angleTop);
+    const x2Top = centerX + (radius + dashLen / 2) * Math.cos(angleTop);
+    const y2Top = centerY + (radius + dashLen / 2) * Math.sin(angleTop);
+    ctx.beginPath();
+    ctx.moveTo(x1Top, y1Top);
+    ctx.lineTo(x2Top, y2Top);
+    ctx.stroke();
+
+    // Bottom (19.7% intensity, Dec 21st)
+    const angleBottom = Math.PI / 2;
+    const x1Bottom = centerX + (radius - dashLen / 2) * Math.cos(angleBottom);
+    const y1Bottom = centerY + (radius - dashLen / 2) * Math.sin(angleBottom);
+    const x2Bottom = centerX + (radius + dashLen / 2) * Math.cos(angleBottom);
+    const y2Bottom = centerY + (radius + dashLen / 2) * Math.sin(angleBottom);
+    ctx.beginPath();
+    ctx.moveTo(x1Bottom, y1Bottom);
+    ctx.lineTo(x2Bottom, y2Bottom);
+    ctx.stroke();
+
+    ctx.restore();
+  }
 
   // Draw "June 21st" and "December 21st" labels
   ctx.font = `${radius * 0.1}px Arial`;
@@ -191,10 +308,13 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   const dotY = centerY + radius * Math.sin(angle);
 
   // Draw the dot
+  ctx.save();
   ctx.beginPath();
   ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI);
   ctx.fillStyle = '#06ba48';
+  ctx.lineWidth = 2;
   ctx.fill();
+  ctx.restore();
 }
 
 // Function to check if the mouse is over the red dot
