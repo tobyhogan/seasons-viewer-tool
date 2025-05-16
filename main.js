@@ -488,7 +488,8 @@ function solarElevationAngle(date, lat, lon) {
 // Create and insert the canvas for the sun angle tool
 const middleColumn = document.querySelector('.dayViewTool');
 const sunAngleCanvas = document.createElement('canvas');
-sunAngleCanvas.width = 500;
+// --- CHANGED: Increase width for more left margin ---
+sunAngleCanvas.width = 540; // was 500
 sunAngleCanvas.height = 300;
 sunAngleCanvas.style.border = '1px solid #ccc';
 sunAngleCanvas.style.margin = '16px 0';
@@ -511,18 +512,22 @@ function drawSunAngleGraph() {
     const ctx = sunAngleCanvas.getContext('2d');
     ctx.clearRect(0, 0, sunAngleCanvas.width, sunAngleCanvas.height);
 
+    // --- CHANGED: Increase left margin from 40 to 80 ---
+    const leftMargin = 80;
+    const rightMargin = 40;
+    const graphWidth = 380; // was 340, now 380 for similar right margin
     // Axes
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 1;
     // X-axis (time)
     ctx.beginPath();
-    ctx.moveTo(40, 180);
-    ctx.lineTo(380, 180);
+    ctx.moveTo(leftMargin, 180);
+    ctx.lineTo(leftMargin + graphWidth, 180);
     ctx.stroke();
     // Y-axis (angle)
     ctx.beginPath();
-    ctx.moveTo(40, 180);
-    ctx.lineTo(40, 20);
+    ctx.moveTo(leftMargin, 180);
+    ctx.lineTo(leftMargin, 20);
     ctx.stroke();
 
     // Labels
@@ -530,7 +535,7 @@ function drawSunAngleGraph() {
     ctx.font = '12px sans-serif';
     // X-axis ticks (hours)
     for (let h = 0; h <= 24; h += 6) {
-        const x = 40 + (h / 24) * 340;
+        const x = leftMargin + (h / 24) * graphWidth;
         ctx.beginPath();
         ctx.moveTo(x, 180);
         ctx.lineTo(x, 185);
@@ -539,17 +544,34 @@ function drawSunAngleGraph() {
     }
 
     // Move "Time" label below the numbers
-    ctx.fillText('Time', 200, 210);
+    ctx.fillText('Time', leftMargin + graphWidth / 2, 210);
 
     // Y-axis ticks (angle)
     for (let a = minAngle; a <= maxAngle; a += 36) {
         const y = 180 - ((a - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
         ctx.beginPath();
-        ctx.moveTo(35, y);
-        ctx.lineTo(40, y);
+        ctx.moveTo(leftMargin - 5, y);
+        ctx.lineTo(leftMargin, y);
         ctx.stroke();
-        ctx.fillText(a, 10, y + 4);
+        ctx.fillText(a, leftMargin - 30, y + 4);
     }
+
+    // --- Add horizontal y-axis title "Sun angle" ---
+    ctx.save();
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    // Place the label horizontally, left of the y-axis, vertically centered
+    ctx.fillText('Sun', leftMargin - 55, 100);
+    ctx.restore();
+
+    ctx.save();
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    // Place the label horizontally, left of the y-axis, vertically centered
+    ctx.fillText('Angle', leftMargin - 55, 115);
+    ctx.restore();
 
     // Draw dotted line at zero degrees
     const zeroY = 180 - ((0 - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
@@ -557,8 +579,8 @@ function drawSunAngleGraph() {
     ctx.setLineDash([4, 4]);
     ctx.strokeStyle = '#888';
     ctx.beginPath();
-    ctx.moveTo(40, zeroY);
-    ctx.lineTo(380, zeroY);
+    ctx.moveTo(leftMargin, zeroY);
+    ctx.lineTo(leftMargin + graphWidth, zeroY);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
@@ -601,7 +623,7 @@ function drawSunAngleGraph() {
     for (let h = 0; h <= 24; h += 0.01) { // smaller step for smoother curve
         const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0)); // h may be fractional
         const angle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(date, 51.5074, -0.1278)));
-        const x = 40 + (h / 24) * 340;
+        const x = leftMargin + (h / 24) * graphWidth;
         const y = 180 - ((angle - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
         if (first) {
             ctx.moveTo(x, y);
@@ -616,7 +638,7 @@ function drawSunAngleGraph() {
     const dotHour = sunCurveHour;
     const dotDate = new Date(Date.UTC(2023, 4, 15, 0, dotHour * 60, 0));
     const dotAngle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(dotDate, 51.5074, -0.1278)));
-    const dotX = 40 + (dotHour / 24) * 340;
+    const dotX = leftMargin + (dotHour / 24) * graphWidth;
     const dotY = 180 - ((dotAngle - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
 
     // --- NEW: Draw horizontal dotted line at dotY ---
@@ -625,8 +647,8 @@ function drawSunAngleGraph() {
     ctx.strokeStyle = '#2d7b2d';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(40, dotY);
-    ctx.lineTo(380, dotY);
+    ctx.moveTo(leftMargin, dotY);
+    ctx.lineTo(leftMargin + graphWidth, dotY);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
@@ -657,10 +679,12 @@ sunAngleCanvas.addEventListener('mousedown', function(e) {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    // Compute dot position
+    // --- CHANGED: Use leftMargin and graphWidth for dot position ---
+    const leftMargin = 80;
+    const graphWidth = 380;
     const dotDate = new Date(Date.UTC(2023, 4, 15, 0, sunCurveHour * 60, 0));
     const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
-    const dotX = 40 + (sunCurveHour / 24) * 340;
+    const dotX = leftMargin + (sunCurveHour / 24) * graphWidth;
     const dotY = 180 - ((dotAngle + 18) / (90 + 18)) * 160;
 
     if (Math.hypot(mouseX - dotX, mouseY - dotY) < 10) {
@@ -675,10 +699,13 @@ window.addEventListener('mousemove', function(e) {
     if (!draggingSunDot) return;
     const rect = sunAngleCanvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
+    // --- CHANGED: Use leftMargin and graphWidth for x calculation ---
+    const leftMargin = 80;
+    const graphWidth = 380;
     // Clamp mouseX to graph area
-    const clampedX = Math.max(40, Math.min(380, mouseX));
+    const clampedX = Math.max(leftMargin, Math.min(leftMargin + graphWidth, mouseX));
     // Convert x back to hour
-    sunCurveHour = ((clampedX - 40) / 340) * 24;
+    sunCurveHour = ((clampedX - leftMargin) / graphWidth) * 24;
     drawSunAngleGraph(); // <-- This ensures the dot is redrawn as you drag
 });
 
@@ -690,9 +717,12 @@ window.addEventListener('mouseup', function() {
 sunAngleCanvas.addEventListener('click', function(e) {
     const rect = sunAngleCanvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
+    // --- CHANGED: Use leftMargin and graphWidth for x calculation ---
+    const leftMargin = 80;
+    const graphWidth = 380;
     // Clamp mouseX to graph area
-    const clampedX = Math.max(40, Math.min(380, mouseX));
-    sunCurveHour = ((clampedX - 40) / 340) * 24;
+    const clampedX = Math.max(leftMargin, Math.min(leftMargin + graphWidth, mouseX));
+    sunCurveHour = ((clampedX - leftMargin) / graphWidth) * 24;
     drawSunAngleGraph();
 });
 

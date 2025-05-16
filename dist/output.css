@@ -221,6 +221,12 @@
   .ml-4 {
     margin-left: calc(var(--spacing) * 4);
   }
+  .ml-12 {
+    margin-left: calc(var(--spacing) * 12);
+  }
+  .ml-\[50px\] {
+    margin-left: 50px;
+  }
   .flex {
     display: flex;
   }
