@@ -504,6 +504,9 @@ html.dark, body.dark {
 .dark .border {
   border-color: #444 !important;
 }
+#darkModeToggle {
+  cursor: pointer;
+}
 @property --tw-border-style {
   syntax: "*";
   inherits: false;

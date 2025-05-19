@@ -612,12 +612,26 @@ const dayViewTimeSelectedDiv = document.getElementById('dayViewTimeSelected');
 // --- Add reference for the current sun angle display in day view ---
 const dayViewCurrentSunAngleDiv = document.getElementById('dayViewCurrentSunAngle');
 
+// --- Add reference for the "Set to Now" button in day view ---
+const setToNowButton = document.getElementById('setToNowButton');
+
 // --- Helper to format hour as "HH:MM am/pm" (24-hour format) ---
 function formatHourDecimal(hour) {
     const h = Math.floor(hour);
     const m = Math.round((hour - h) * 60);
     const ampm = h < 12 ? '(am)' : '(pm)';
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+}
+
+// --- Add event listener for the "Set to Now" button ---
+if (setToNowButton) {
+  setToNowButton.addEventListener('click', () => {
+    // Get current UTC hour + minute as decimal
+    const now = new Date();
+    const utcHour = now.getUTCHours() + now.getUTCMinutes() / 60;
+    sunCurveHour = utcHour;
+    drawSunAngleGraph();
+  });
 }
 
 function drawSunAngleGraph() {
