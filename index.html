@@ -9,6 +9,13 @@
   </head>
   <body class="">
 
+    <!-- Dark mode toggle button -->
+    <button id="darkModeToggle"
+      class="fixed top-4 right-4 z-50 px-4 py-2 rounded-md bg-gray-200 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+      aria-label="Toggle dark mode">
+      🌙
+    </button>
+
     <div class="w-screen h-screen bg-gray-50">
 
       <div class="container1 w-fit justify-center mx-auto">
@@ -163,6 +170,24 @@
       </div>
     </div>
     <script src="./main.js"></script>
+    <script>
+      // Dark mode toggle logic
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const htmlEl = document.documentElement;
+      // Optionally, persist dark mode in localStorage
+      if (localStorage.getItem('theme') === 'dark') {
+        htmlEl.classList.add('dark');
+      }
+      darkModeToggle.addEventListener('click', () => {
+        htmlEl.classList.toggle('dark');
+        // Save preference
+        if (htmlEl.classList.contains('dark')) {
+          localStorage.setItem('theme', 'dark');
+        } else {
+          localStorage.setItem('theme', 'light');
+        }
+      });
+    </script>
   </body>
 </html>
 

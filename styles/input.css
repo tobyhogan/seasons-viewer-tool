@@ -184,3 +184,62 @@ info {
 
 
 */
+
+/* Custom dark mode styles */
+html.dark, body.dark {
+  background: #18181b !important;
+  color: #e5e7eb !important;
+}
+
+.dark .bg-white {
+  background-color: #23272f !important;
+}
+.dark .border-black {
+  border-color: #444 !important;
+}
+.dark .border-white {
+  border-color: #23272f !important;
+}
+.dark .text-black {
+  color: #e5e7eb !important;
+}
+.dark .text-gray-800 {
+  color: #e5e7eb !important;
+}
+.dark .bg-gray-50 {
+  background-color: #18181b !important;
+}
+.dark .border-gray-200 {
+  border-color: #23272f !important;
+}
+.dark .border-gray-300 {
+  border-color: #23272f !important;
+}
+.dark .border-gray-400 {
+  border-color: #23272f !important;
+}
+.dark .bg-gray-200 {
+  background-color: #23272f !important;
+}
+.dark .bg-gray-300 {
+  background-color: #23272f !important;
+}
+.dark .bg-gray-800 {
+  background-color: #23272f !important;
+}
+.dark .text-gray-100 {
+  color: #e5e7eb !important;
+}
+.dark .rounded-lg {
+  border-color: #23272f !important;
+}
+.dark canvas {
+  background: #23272f !important;
+  border-color: #444 !important;
+}
+.dark .border-2 {
+  border-color: #444 !important;
+}
+.dark .border {
+  border-color: #444 !important;
+}

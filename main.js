@@ -121,13 +121,33 @@ function formatDate(dayOfYear, year) {
   return `${day}${daySuffix} of ${month} ${year}`;
 }
 
+// --- Add: Helper to get current canvas colors based on dark mode ---
+function getCanvasColors() {
+  const isDark = document.documentElement.classList.contains('dark');
+  return {
+    circle: isDark ? '#e0e6f0' : '#23272f',
+    label: isDark ? '#e0e6f0' : '#23272f',
+    blue: isDark ? '#7ecbff' : '#0074d9',
+    blueLight: isDark ? '#b3e0ff' : '#7ecbff',
+    red: isDark ? '#ff8a80' : '#e53935',
+    yellow: isDark ? '#20e648' : '#1e9636',
+    green: isDark ? '#7fff9f' : '#09bb4b',
+    axis: isDark ? '#e0e6f0' : '#23272f',
+    axisLabel: isDark ? '#e0e6f0' : '#23272f',
+    axisDotted: isDark ? '#b3b3b3' : '#888',
+    dotOutline: isDark ? '#e0e6f0' : '#23272f',
+    bg: isDark ? '#23272f' : '#fff'
+  };
+}
+
 // Function to draw the circle, red dot, and text labels
 function drawCircleAndDot(dayOfYear, totalDays) {
+  const colors = getCanvasColors();
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // --- FIX: Always set strokeStyle and fillStyle before drawing ---
   ctx.save();
-  ctx.strokeStyle = '#222'; // Ensure circle is visible
+  ctx.strokeStyle = colors.circle;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(centerX - 0, centerY, radius, 0, 2 * Math.PI);
@@ -149,9 +169,8 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
   // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
   if (showBlueMarkers) {
-    // Blue markers (cardinal)
     ctx.save();
-    ctx.strokeStyle = '#4444ff';
+    ctx.strokeStyle = colors.blue;
     ctx.lineWidth = 2;
     const blueMarkerLen = 13;
     // Top marker (vertical)
@@ -180,9 +199,8 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
     ctx.restore();
 
-    // Diagonal markers (now also toggled by showBlueMarkers)
     ctx.save();
-    ctx.strokeStyle = '#5555ff';
+    ctx.strokeStyle = colors.blueLight;
     ctx.lineWidth = 2;
 
     // Helper to draw a perpendicular marker at (x, y) with angle theta
@@ -231,7 +249,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
       // Draw a yellow dash (line) at this angle, same style as blue/red markers
       ctx.save();
-      ctx.strokeStyle = 'green';
+      ctx.strokeStyle = colors.yellow;
       ctx.lineWidth = 2;
       const dashLen = 13;
       const x1 = centerX + (radius - dashLen / 2) * Math.cos(angle);
@@ -259,7 +277,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
     // Add yellow markers at the top and bottom, shifted by 2 months
     ctx.save();
-    ctx.strokeStyle = 'green';
+    ctx.strokeStyle = colors.yellow;
     ctx.lineWidth = 2;
     const dashLen = 13;
 
@@ -316,7 +334,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
       // Draw a red dash (line) at this angle, same style as blue markers
       ctx.save();
-      ctx.strokeStyle = '#e53935';
+      ctx.strokeStyle = colors.red;
       ctx.lineWidth = 2;
       const dashLen = 13; // same as blueMarkerLen
       // Start and end points for the dash, centered on the circle edge
@@ -345,7 +363,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
     // --- NEW: Add red markers at the top (100%) and bottom (19.7%) of the circle ---
     ctx.save();
-    ctx.strokeStyle = '#e53935';
+    ctx.strokeStyle = colors.red;
     ctx.lineWidth = 2;
     const dashLen = 13;
 
@@ -376,7 +394,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
 
   // Draw "June 21st" and "December 21st" labels
   ctx.font = `${radius * 0.1}px Arial`;
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = colors.label;
   ctx.textAlign = 'center';
 
   // Calculate actual day numbers for current year
@@ -405,7 +423,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.save();
   ctx.beginPath();
   ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI);
-  ctx.fillStyle = '#06ba48';
+  ctx.fillStyle = colors.green;
   ctx.lineWidth = 2;
   ctx.fill();
   ctx.restore();
@@ -606,12 +624,14 @@ function drawSunAngleGraph() {
     const ctx = sunAngleCanvas.getContext('2d');
     ctx.clearRect(0, 0, sunAngleCanvas.width, sunAngleCanvas.height);
 
+    const colors = getCanvasColors();
+
     // --- CHANGED: Increase left margin from 40 to 80 ---
     const leftMargin = 80;
     const rightMargin = 40;
     const graphWidth = 380; // was 340, now 380 for similar right margin
     // Axes
-    ctx.strokeStyle = '#333';
+    ctx.strokeStyle = colors.axis;
     ctx.lineWidth = 1;
     // X-axis (time)
     ctx.beginPath();
@@ -625,7 +645,7 @@ function drawSunAngleGraph() {
     ctx.stroke();
 
     // Labels
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = colors.axisLabel;
     ctx.font = '12px sans-serif';
     // X-axis ticks (hours)
     for (let h = 0; h <= 24; h += 6) {
@@ -653,7 +673,7 @@ function drawSunAngleGraph() {
     // --- Add horizontal y-axis title "Sun angle" ---
     ctx.save();
     ctx.font = '14px sans-serif';
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = colors.axisLabel;
     ctx.textAlign = 'center';
     // Place the label horizontally, left of the y-axis, vertically centered
     ctx.fillText('Sun', leftMargin - 55, 100);
@@ -661,7 +681,7 @@ function drawSunAngleGraph() {
 
     ctx.save();
     ctx.font = '14px sans-serif';
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = colors.axisLabel;
     ctx.textAlign = 'center';
     // Place the label horizontally, left of the y-axis, vertically centered
     ctx.fillText('Angle', leftMargin - 55, 115);
@@ -671,7 +691,7 @@ function drawSunAngleGraph() {
     const zeroY = 180 - ((0 - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
     ctx.save();
     ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = '#888';
+    ctx.strokeStyle = colors.axisDotted;
     ctx.beginPath();
     ctx.moveTo(leftMargin, zeroY);
     ctx.lineTo(leftMargin + graphWidth, zeroY);
@@ -710,7 +730,7 @@ function drawSunAngleGraph() {
     }
 
     // Plot sun angle for each hour (use smaller step for smoothness)
-    ctx.strokeStyle = 'orange';
+    ctx.strokeStyle = colors.yellow;
     ctx.lineWidth = 2;
     ctx.beginPath();
     let first = true;
@@ -738,7 +758,7 @@ function drawSunAngleGraph() {
     // --- NEW: Draw horizontal dotted line at dotY ---
     ctx.save();
     ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = '#2d7b2d';
+    ctx.strokeStyle = colors.green;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(leftMargin, dotY);
@@ -750,8 +770,8 @@ function drawSunAngleGraph() {
     ctx.save();
     ctx.beginPath();
     ctx.arc(dotX, dotY, 6, 0, 2 * Math.PI);
-    ctx.fillStyle = 'green';
-    ctx.strokeStyle = 'black';
+    ctx.fillStyle = colors.green;
+    ctx.strokeStyle = colors.dotOutline;
     ctx.lineWidth = 2;
     ctx.fill();
     ctx.stroke();
@@ -777,57 +797,52 @@ sunAngleCanvas.addEventListener('mousedown', function(e) {
     const leftMargin = 80;
     const graphWidth = 380;
     const dotDate = new Date(Date.UTC(2023, 4, 15, 0, sunCurveHour * 60, 0));
-    const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
+    const dotAngle = Math.max(minAngle, Math.min(maxAngle, solarElevationAngle(dotDate, 51.5074, -0.1278)));
     const dotX = leftMargin + (sunCurveHour / 24) * graphWidth;
-    const dotY = 180 - ((dotAngle + 18) / (90 + 18)) * 160;
-
-    if (Math.hypot(mouseX - dotX, mouseY - dotY) < 10) {
+    const dotY = 180 - ((dotAngle - minAngle) / (maxAngle - minAngle)) * yAxisHeight;
+    // Check if mouse is over the dot
+    const dist = Math.sqrt((mouseX - dotX) ** 2 + (mouseY - dotY) ** 2);
+    if (dist < 10) {
         draggingSunDot = true;
-        // Prevent text selection or other default actions
-        e.preventDefault();
+        sunAngleCanvas.style.cursor = 'grabbing';
     }
 });
 
-// Listen for mousemove and mouseup on the whole window for robust dragging
-window.addEventListener('mousemove', function(e) {
+sunAngleCanvas.addEventListener('mousemove', function(e) {
     if (!draggingSunDot) return;
     const rect = sunAngleCanvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
-    // --- CHANGED: Use leftMargin and graphWidth for x calculation ---
+    // --- CHANGED: Use leftMargin and graphWidth for dot position ---
     const leftMargin = 80;
     const graphWidth = 380;
     // Clamp mouseX to graph area
-    const clampedX = Math.max(leftMargin, Math.min(leftMargin + graphWidth, mouseX));
-    // Convert x back to hour
-    sunCurveHour = ((clampedX - leftMargin) / graphWidth) * 24;
-    drawSunAngleGraph(); // <-- This ensures the dot is redrawn as you drag
-});
-
-window.addEventListener('mouseup', function() {
-    draggingSunDot = false;
-});
-
-// Optional: allow clicking anywhere on the curve to move the dot there
-sunAngleCanvas.addEventListener('click', function(e) {
-    const rect = sunAngleCanvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    // --- CHANGED: Use leftMargin and graphWidth for x calculation ---
-    const leftMargin = 80;
-    const graphWidth = 380;
-    // Clamp mouseX to graph area
-    const clampedX = Math.max(leftMargin, Math.min(leftMargin + graphWidth, mouseX));
-    sunCurveHour = ((clampedX - leftMargin) / graphWidth) * 24;
+    let x = Math.max(leftMargin, Math.min(leftMargin + graphWidth, mouseX));
+    // Convert x to hour
+    sunCurveHour = ((x - leftMargin) / graphWidth) * 24;
     drawSunAngleGraph();
 });
 
+sunAngleCanvas.addEventListener('mouseup', function() {
+    draggingSunDot = false;
+    sunAngleCanvas.style.cursor = 'default';
+});
+
+sunAngleCanvas.addEventListener('mouseleave', function() {
+    draggingSunDot = false;
+    sunAngleCanvas.style.cursor = 'default';
+});
+
+// Initial draw for sun angle graph
 drawSunAngleGraph();
 
-// --- NEW: Set to Now button logic for Day View ---
-const setToNowButton = document.getElementById('setToNowButton');
-if (setToNowButton) {
-  setToNowButton.addEventListener('click', () => {
-    const now = new Date();
-    sunCurveHour = now.getHours() + now.getMinutes() / 60;
+// --- Add: Listen for dark mode toggle and redraw canvases ---
+(function() {
+  const htmlEl = document.documentElement;
+  const observer = new MutationObserver(() => {
+    // Redraw both canvases on dark mode toggle
+    const totalDays = getTotalDaysInYear(new Date());
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
     drawSunAngleGraph();
   });
-}
+  observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
+})();
