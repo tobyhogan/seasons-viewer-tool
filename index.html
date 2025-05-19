@@ -23,15 +23,28 @@
 
             <canvas id="seasonsCanvas" class=" border-x-2 border-t-2 rounded-lg border-white mb-[7px]"></canvas>
 
-            <div class="flex justify-center mb-2">
-              <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" id="toggleRedMarkers" checked>
-                Intensity-Percentile-based Markers
-              </label>
-              <label class="flex items-center gap-2 text-sm ml-4">
-                <input type="checkbox" id="toggleBlueMarkers" checked>
-                Time-based Markers
-              </label>
+            <div class="flex flex-row justify-center mb-4">
+
+              <div class="flex flex-col pl-8">
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" id="toggleBlueMarkers" checked>
+                  Latent-Heat Adjusted Intensity-Based Markers
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" id="toggleRedMarkers" checked>
+                  Intensity-Based Markers
+                </label>
+              </div>
+
+              <div class="flex flex-col">
+                <label class="flex items-center gap-2 text-sm">
+                  <input type="checkbox" id="toggleBlueMarkers" checked>
+                  Time-based Markers
+                </label>
+              </div>
+
+
+
             </div>
 
             <div class="border-t-2"></div>
