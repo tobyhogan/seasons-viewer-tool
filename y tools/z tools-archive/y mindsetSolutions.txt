@@ -1,0 +1,19 @@
+--> don't know what to do next
+
+
+  - go through all potential featuers and see which ones feel right to work on 
+    - some things may not feel impactful enough to work, others may feel too grand and like there are other issues to deal with first
+    - features that feel right might be ones that are important, often for UX - might not be obvious in the UI you see
+
+
+
+
+      - examples & previous:
+        - the right click menu for habits --- you can't tell this is missing by looking at the app, but is a really important UX feature
+
+
+
+
+
+
+

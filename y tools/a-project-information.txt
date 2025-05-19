@@ -1,0 +1,12 @@
+
+
+What features this project / template has:
+
+
+- Navbar
+- Profile
+- Settings
+- Authentication
+- Page Switching
+
+

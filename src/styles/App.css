@@ -1,0 +1,558 @@
+:root {
+  --gray050: #fcfcfc;
+  --gray100: #F8F8F8;
+  --gray125: #f6f6f6;
+  --gray150: #efefef;
+  --gray200: #e0e0e0;
+  --gray250: #d9d9d9;
+  --gray275: #cccccc;
+  --gray300: #c8c8c8;
+  --gray325: #bbbbbb;
+  --gray350: #989898;
+  --gray375: #888888;
+  --gray400: #707070;
+  --gray500: #606060;
+  --gray550: #505050;
+  --gray600: #404040;
+  --gray650: #383838;
+  --gray700: #282828;
+  --gray750: #252525;
+  --gray800: #222222;
+  --gray825: #1c1c1c;
+  --gray850: #181818;
+  --gray875: #101010;
+  --gray900: #101010;
+  --gray950: #090909;
+}
+
+
+* {
+
+  margin: 0;
+  padding: 0;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
+
+}
+
+/*
+body {
+  background-color: var(--main-bg-color);
+  --main-bg-color: white;
+  }
+  */
+  
+@media only screen and (max-width: 650px) {
+
+  .MobileHidden {
+    display: none;
+  }
+  
+  .HabitTable {
+
+    th:first-child {
+      border-right: none !important;
+    }
+
+    th:nth-child(2), td:nth-child(2) {
+
+      padding: 0 0 0 px;
+      
+    }
+  }
+}
+
+
+@media only screen and (min-width: 651px) {
+
+
+  .HabitTable {
+
+    th:nth-child(8) {
+
+      border-radius: 15px 15px 0 0;
+      
+    }
+
+    th:nth-child(8), td:nth-child(8) {
+ 
+      padding-left: 15px;
+      padding-right: 15px;
+      
+    }
+
+    /*
+
+    td:first-child, th:first-child {
+      border-right: 2px solid;
+    }
+  
+    */
+
+
+    th:nth-child(2), td:nth-child(2) {
+
+      padding: 0 5px 0 17px;
+  
+    }
+    
+  }
+  
+
+  .MobileHidden {
+    display: auto;
+  }
+
+}
+
+
+  
+.light {
+
+  @media only screen and (max-width: 650px) {
+
+    td:nth-child(8) {
+  
+      background-color: var(--gray125);
+
+
+      p {
+
+        color: var(--gray600);
+
+      }
+
+      .mantine-Checkbox-icon {
+        color: var(--gray500);
+      }
+
+
+      input[type=checkbox]:checked {
+
+        background-color: var(--gray200) !important;
+
+      }
+    
+      input[type=checkbox]:not(:checked) {
+        background-color: var(--gray050) !important;
+    
+      }
+    }
+  }
+  
+  @media only screen and (min-width: 651px) {
+    
+    background-color: white;
+    color: #474747;
+
+    td:nth-child(8), th:nth-child(8){
+  
+      background-color: var(--gray125);
+
+
+      p {
+
+        color: var(--gray600);
+
+      }
+
+      .mantine-Checkbox-icon {
+        color: var(--gray500);
+      }
+
+
+      input[type=checkbox]:checked {
+
+        background-color: var(--gray200) !important;
+
+      }
+    
+      input[type=checkbox]:not(:checked) {
+        background-color: var(--gray050) !important;
+    
+      }
+    }
+  }
+
+
+  input[type=checkbox]:checked {
+
+    background-color: rgb(241, 241, 241) !important;
+    border: none;
+  
+  }
+
+  
+  .ResizeHandleOuter {
+    
+    --background-color: var(--gray125);
+
+  }
+
+  .ResizeHandleOuter:active {
+    --background-color: var(--gray150);
+    
+  }
+
+  
+
+  .mantine-Checkbox-icon {
+    color: rgb(126, 126, 126);
+    width: 15px;
+  }
+
+
+  .mantine-Modal-content {
+    border: 1px solid var(--gray500);
+  }
+
+
+  .HabitTable {
+
+    table {
+      accent-color: rgb(233, 233, 233);
+      
+    }
+  
+
+    td:first-child, th:first-child {
+      border-right: var(--gray250);
+    }
+
+  
+  }
+
+  .Input1 {
+    color: black;
+  }
+
+}
+
+
+
+.dark {
+
+  background-color: rgb(28, 28, 28);
+  
+  color: #e0e0e0;
+  border: white;
+  accent-color: black;
+
+
+  @media only screen and (max-width: 650px) {
+
+    td:nth-child(8) {
+      background-color: var(--gray700);
+  
+      input[type=checkbox]:not(:checked) {
+        background-color: rgb(32, 32, 32) !important;
+    
+      }
+    }
+  }
+
+  @media only screen and (min-width: 651px) {
+
+    td:nth-child(8), th:nth-child(8){
+  
+      background-color: var(--gray750);
+  
+
+      input[type=checkbox]:not(:checked) {
+        background-color: rgb(32, 32, 32) !important;
+    
+      }
+    }
+  }
+
+
+  input[type=checkbox]:checked {
+    background-color: rgb(28, 28, 28) !important;
+    border: 1px solid rgb(104, 104, 104);
+  }
+
+  input[type=checkbox]:not(:checked) {
+    background-color: rgb(28, 28, 28) !important;
+    border: 1px solid rgb(151, 151, 151);
+  }
+
+
+  .mantine-Checkbox-icon {
+    color: rgb(247, 247, 247);
+    width: 15px;
+  }
+
+  .mantine-Modal-content {
+    border: 1px solid var(--gray300);
+  }
+
+  .mantine-Modal-body, .mantine-Modal-header {
+    background-color: rgb(29, 29, 29);
+  
+  }
+
+  .mantine-Modal-title {
+    color: rgb(201, 201, 201);
+  }
+
+  input {
+    background-color: rgb(39, 39, 39);
+    border: 2px solid rgb(180, 180, 180);
+    padding: 0 0 0 3px;
+    color: rgb(201, 201, 201)
+  }
+
+  input:focus {
+    border: 2px solid rgb(85, 85, 85);
+  }
+
+
+  .ResizeHandleOuter {
+    
+    --background-color: rgb(37, 37, 37);
+
+  }
+
+  .ResizeHandleOuter:active {
+    --background-color: rgb(46, 46, 46);
+    
+  }
+
+  .mantine-Menu-dropdown {
+    
+    background-color: rgb(44, 44, 44);
+    border: none;
+
+  }
+
+  .HabitTable {
+
+
+    td:first-child, th:first-child {
+
+      border-right: 2px solid var(--gray500);
+
+    }
+
+  }
+
+  .Input1 {
+
+    color: white;
+  
+  }
+  
+}
+
+/*
+
+.PfpNavPopup {
+  li:hover {
+    text-decoration: underline;
+    }
+    }
+    
+*/
+
+h3 {
+  text-align: center;
+  font-size: larger;
+}
+
+    
+button {
+  border: 1px solid;
+  border-radius: 7px;
+  padding: 4px;
+
+}
+
+
+table {
+  border-collapse: separate;
+  border: solid 4px;
+  border-radius: 0px;
+  overflow: hidden;
+  margin: -4px;
+
+}
+
+.mantine-Checkbox-input {
+  width: 15px;
+  height: 15px;
+}
+
+.mantine-Checkbox-icon {
+  width: 8px;
+  height: 8px;
+  margin: 4px 3px 0 0;
+}
+
+
+.HabitTable {
+
+  th {
+    border-top: none;
+    padding-top: 10px !important;
+
+  }
+
+  td, th {
+    border-left: none;
+    border-right: none;
+    border-top: solid 1px rgb(122, 122, 122);
+  }
+
+  td:nth-child(2), th:nth-child(2){
+    
+    padding-left: 7px !important;
+
+  }
+
+
+  td:nth-child(10) {
+
+    border-top: none;
+
+  }
+
+
+  tr:last-child {
+    
+    td:nth-child(8) {
+
+      border-radius: 0 0 15px 15px;
+
+    }
+
+  }
+
+  th, tr, td {
+    padding: 0px 0.4vw 0px 0.4vw;
+  }
+
+
+
+  td button {
+    margin: 0px 3px 0px 3px;
+  }
+
+}
+
+.Modal2 {
+  color: black;
+
+  input {
+    border: 1px solid black;
+  }
+}
+
+.Button2 {
+  padding: 5px 10px;
+  border: 2px solid white;
+
+  margin: 20px -4px;
+}
+
+
+.mantine-Modal-title {
+  color: black;
+}
+
+
+/*
+:root {
+
+
+  --color-solid-resize-bar: #000103;
+  --color-solid-resize-bar-handle: rgb(107, 55, 55);
+
+}
+*/
+
+.ResizeHandleOuter {
+  flex: 0 0 1.5em;
+  position: relative;
+  outline: none;
+  height: 93vh;
+
+}
+
+/*
+
+.ResizeHandleOuter[data-resize-handle-active] {
+  --background-color: var(--color-solid-resize-bar-handle);
+}
+
+*/
+
+.ResizeHandleInner {
+  position: absolute;
+  top: 0.25em;
+  bottom: 0.25em;
+  left: 0.25em;
+  right: 0.25em;
+  border-radius: 0.25em;
+  background-color: var(--background-color);
+  transition: background-color 0.2s linear;
+}
+
+
+.Icon {
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  left: calc(50% - 0.5rem);
+  top: calc(50% - 0.5rem);
+}
+
+
+.MyCalendarContainer > div {
+  padding: 0;
+}
+
+.mantine-Calendar-calendarHeader { 
+  margin: 0 auto;
+}
+
+.mantine-Calendar-calendarHeaderLevel:hover, .mantine-Calendar-calendarHeaderControl:hover {
+
+  background-color: rgb(51, 51, 51) !important;
+
+}
+
+.mantine-Calendar-levelsGroup {
+
+  overflow: none;
+  min-width: fit-content;
+  margin: 0 auto;
+  padding: none;
+
+}
+
+
+.mantine-Calendar-levelsGroup > div {
+
+  padding: none;  
+  overflow: none;
+  margin: 0 auto;
+
+}
+
+
+.mantine-Calendar-month {
+
+  border: none;
+
+}
+
+.mantine-Calendar-day {
+
+  color: white !important;
+
+}
+
+.mantine-Calendar-day:hover {
+
+  background-color: rgb(46, 46, 46) !important;
+
+}

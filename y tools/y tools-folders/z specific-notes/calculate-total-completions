@@ -1,0 +1,6 @@
+what do I need it to do:
+
+
+calculate total habit completions
+
+- iterate through each column for a given habit(by its id), and add up the number of completions - where it equals "true", then give that as a total

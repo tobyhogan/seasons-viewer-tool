@@ -1,0 +1,26 @@
+DEVELOPMENT:
+
+- when will I need to start working on the organisation-structure-viewer?
+  - probably when I have some sort of monetization system or paid version
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UI:
+
+What sort of buttons do I want?
+
+- options
+ - 3d like duolingo & pomofocus <--- this seems good no?

@@ -1,0 +1,25 @@
+{
+  "short_name": "Habitazen",
+  "name": "Habitazen",
+  "description": "A High Quality, Feature Rich Habit Tracker",
+  "icons": [
+    {
+      "src": "/assets/habitazen-logo-240.png",
+      "type": "image/png",
+      "sizes": "240x240",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/habitazen-logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#6850ff",
+  "orientation": "portrait"
+}

@@ -1,0 +1,42 @@
+
+
+What is stopping me from using habitazen instead of ticktick?
+
+- Habitazen has no "mark habits as incomplete", like with an X, for the current day, so it still feels like you need to do them
+- Habitazen has no way to group habits into seperate folders
+- Habitazen has no way to color code habits
+
+
+
+
+What features will the habit tracker have that TickTick does not?
+
+- Ability to custom track habits e.g. you want to go over your goal, but still have it contribute to your statistics and see
+the analytics for it
+
+- Not having any features or purposes, ticktick has other features which are not needed for the habit tracker.
+
+- Having habits be connected so you can have seperate habits for 10 minutes meditating, 15 minutes, but you can link them together
+so you can see your overall tiem meditating
+
+- ? Ability to set goals within the app for specific habits, like "about my habit of running, I want to run 10k, and then you can see
+your log history for one of those basically...
+
+- ? Ability to track metrics and behaviours seperately, to acknowledge them, or maybe treat them differently in some way, like not coming up
+on the statistics page
+
+
+
+- Have it so a user can go on, and be able to have all basic functionality, have it be usable
+  - What are these features?
+    - be able to view habit completions past 1 week ago
+    - be able to rename habits
+
+
+
+  
+What is the overall goal of the product to be?
+
+- A platform that allows you to use a habit tracker with all the feature you'd need to set and update goals
+
+
