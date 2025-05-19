@@ -16,11 +16,15 @@ const setToTodayButton = document.getElementById('setToTodayButton');
 const toggleBlueMarkersCheckbox = document.getElementById('toggleBlueMarkers');
 // Add reference to the red marker toggle checkbox
 const toggleRedMarkersCheckbox = document.getElementById('toggleRedMarkers');
+// --- NEW: Add reference to the yellow marker toggle checkbox ---
+const toggleYellowMarkersCheckbox = document.getElementById('toggleYellowMarkers');
 
 // --- FIX: Define showBlueMarkers and set initial value from checkbox ---
 let showBlueMarkers = toggleBlueMarkersCheckbox ? toggleBlueMarkersCheckbox.checked : true;
 // --- NEW: Define showRedMarkers and set initial value from checkbox ---
 let showRedMarkers = toggleRedMarkersCheckbox ? toggleRedMarkersCheckbox.checked : true;
+// --- NEW: Define showYellowMarkers and set initial value from checkbox ---
+let showYellowMarkers = toggleYellowMarkersCheckbox ? toggleYellowMarkersCheckbox.checked : true;
 
 // --- FIX: Listen for checkbox changes and redraw ---
 if (toggleBlueMarkersCheckbox) {
@@ -35,6 +39,14 @@ if (toggleBlueMarkersCheckbox) {
 if (toggleRedMarkersCheckbox) {
   toggleRedMarkersCheckbox.addEventListener('change', () => {
     showRedMarkers = toggleRedMarkersCheckbox.checked;
+    const totalDays = getTotalDaysInYear(new Date());
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+  });
+}
+// --- NEW: Listen for yellow marker checkbox changes and redraw ---
+if (toggleYellowMarkersCheckbox) {
+  toggleYellowMarkersCheckbox.addEventListener('change', () => {
+    showYellowMarkers = toggleYellowMarkersCheckbox.checked;
     const totalDays = getTotalDaysInYear(new Date());
     updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
   });
@@ -195,7 +207,89 @@ function drawCircleAndDot(dayOfYear, totalDays) {
     ctx.restore();
   }
 
-  // --- NEW: Draw red markers as dashes at 80%, 59.5%, 40% peak intensities if enabled ---
+  // --- NEW: Draw yellow markers as dashes at same positions as red, but shifted by 2 months (about 61 days) ---
+  if (showYellowMarkers) {
+    // These are the target peak intensities
+    const intensities = [0.8, 0.595, 0.4];
+    // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
+    // Solve for sunlightCoeff: sunlightCoeff = (peak - 19.7) / (100 - 19.7)
+    // For each intensity, calculate the corresponding dayOfYear offset from June 21st
+
+    const year = new Date().getFullYear();
+    const june21 = getJune21DayOfYear(year);
+    const daysShift = Math.round(totalDays * 1.25 / 12); // 2 months ≈ 1/6 of year
+
+    intensities.forEach((intensity) => {
+      const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
+      const cosVal = sunlightCoeff * 2 - 1;
+      let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+      // Shift forward by 2 months
+      let markerDay = (june21 + Math.round(offset) + daysShift) % totalDays;
+
+      // Calculate angle for this marker
+      const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
+
+      // Draw a yellow dash (line) at this angle, same style as blue/red markers
+      ctx.save();
+      ctx.strokeStyle = 'green';
+      ctx.lineWidth = 2;
+      const dashLen = 13;
+      const x1 = centerX + (radius - dashLen / 2) * Math.cos(angle);
+      const y1 = centerY + (radius - dashLen / 2) * Math.sin(angle);
+      const x2 = centerX + (radius + dashLen / 2) * Math.cos(angle);
+      const y2 = centerY + (radius + dashLen / 2) * Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      // Draw mirrored marker on the left side (angle + Math.PI)
+      const angleMirror = angle + Math.PI;
+      const x1m = centerX + (radius - dashLen / 2) * Math.cos(angleMirror);
+      const y1m = centerY + (radius - dashLen / 2) * Math.sin(angleMirror);
+      const x2m = centerX + (radius + dashLen / 2) * Math.cos(angleMirror);
+      const y2m = centerY + (radius + dashLen / 2) * Math.sin(angleMirror);
+      ctx.beginPath();
+      ctx.moveTo(x1m, y1m);
+      ctx.lineTo(x2m, y2m);
+      ctx.stroke();
+
+      ctx.restore();
+    });
+
+    // Add yellow markers at the top and bottom, shifted by 2 months
+    ctx.save();
+    ctx.strokeStyle = 'green';
+    ctx.lineWidth = 2;
+    const dashLen = 13;
+
+    // Top (100% intensity, June 21st + shift)
+    const angleTop = -Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
+    const x1Top = centerX + (radius - dashLen / 2) * Math.cos(angleTop);
+    const y1Top = centerY + (radius - dashLen / 2) * Math.sin(angleTop);
+    const x2Top = centerX + (radius + dashLen / 2) * Math.cos(angleTop);
+    const y2Top = centerY + (radius + dashLen / 2) * Math.sin(angleTop);
+    ctx.beginPath();
+    ctx.moveTo(x1Top, y1Top);
+    ctx.lineTo(x2Top, y2Top);
+    ctx.stroke();
+
+    // Bottom (19.7% intensity, Dec 21st + shift)
+    // Dec 21st = June 21st + totalDays/2, so add daysShift
+    const angleBottom = Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
+    const x1Bottom = centerX + (radius - dashLen / 2) * Math.cos(angleBottom);
+    const y1Bottom = centerY + (radius - dashLen / 2) * Math.sin(angleBottom);
+    const x2Bottom = centerX + (radius + dashLen / 2) * Math.cos(angleBottom);
+    const y2Bottom = centerY + (radius + dashLen / 2) * Math.sin(angleBottom);
+    ctx.beginPath();
+    ctx.moveTo(x1Bottom, y1Bottom);
+    ctx.lineTo(x2Bottom, y2Bottom);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // ---existing code for red markers---
   if (showRedMarkers) {
     // These are the target peak intensities
     const intensities = [0.8, 0.595, 0.4];
