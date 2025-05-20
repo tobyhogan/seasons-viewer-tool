@@ -17,6 +17,7 @@ function ViewerTool() {
   const avgSunlightPercentageRef = useRef<HTMLDivElement>(null);
   const daylightLengthRef = useRef<HTMLDivElement>(null);
   const daylightPercentageRef = useRef<HTMLDivElement>(null);
+  
   const sunElevationAngleRef = useRef<HTMLDivElement>(null);
 
   // Day view info
