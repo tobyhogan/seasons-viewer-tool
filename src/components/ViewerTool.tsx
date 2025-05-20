@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 function ViewerTool() {
+
+  const canvasHeight = 300;
+  const canvasWidth = 300;
+
+
+
   // --- State and refs ---
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sunAngleCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -112,6 +118,9 @@ function ViewerTool() {
 
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
+
+    const radius = 150;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -125,18 +134,18 @@ function ViewerTool() {
     ctx.strokeStyle = colors.circle;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(225, 200, 180, 0, 2 * Math.PI);
+    ctx.arc(225, 200, radius, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.restore();
 
     // Calculate blue marker points (cardinal)
-    const top = { x: 225, y: 200 - 180 };
-    const bottom = { x: 225, y: 200 + 180 };
-    const left = { x: 225 - 180, y: 200 };
-    const right = { x: 225 + 180, y: 200 };
+    const top = { x: 225, y: 200 - radius };
+    const bottom = { x: 225, y: 200 + radius };
+    const left = { x: 225 - radius, y: 200 };
+    const right = { x: 225 + radius, y: 200 };
 
     // Calculate red marker points (diagonals)
-    const diag = Math.SQRT1_2 * 180;
+    const diag = Math.SQRT1_2 * radius;
     const nw = { x: 225 - diag, y: 200 - diag };
     const ne = { x: 225 + diag, y: 200 - diag };
     const sw = { x: 225 - diag, y: 200 + diag };
@@ -227,10 +236,10 @@ function ViewerTool() {
         ctx.strokeStyle = colors.yellow;
         ctx.lineWidth = 2;
         const dashLen = 13;
-        const x1 = 225 + (180 - dashLen / 2) * Math.cos(angle);
-        const y1 = 200 + (180 - dashLen / 2) * Math.sin(angle);
-        const x2 = 225 + (180 + dashLen / 2) * Math.cos(angle);
-        const y2 = 200 + (180 + dashLen / 2) * Math.sin(angle);
+        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -238,10 +247,10 @@ function ViewerTool() {
 
         // Draw mirrored marker on the left side (angle + Math.PI)
         const angleMirror = angle + Math.PI;
-        const x1m = 225 + (180 - dashLen / 2) * Math.cos(angleMirror);
-        const y1m = 200 + (180 - dashLen / 2) * Math.sin(angleMirror);
-        const x2m = 225 + (180 + dashLen / 2) * Math.cos(angleMirror);
-        const y2m = 200 + (180 + dashLen / 2) * Math.sin(angleMirror);
+        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
         ctx.beginPath();
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
@@ -258,10 +267,10 @@ function ViewerTool() {
 
       // Top (100% intensity, June 21st + shift)
       const angleTop = -Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
-      const x1Top = 225 + (180 - dashLen / 2) * Math.cos(angleTop);
-      const y1Top = 200 + (180 - dashLen / 2) * Math.sin(angleTop);
-      const x2Top = 225 + (180 + dashLen / 2) * Math.cos(angleTop);
-      const y2Top = 200 + (180 + dashLen / 2) * Math.sin(angleTop);
+      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
       ctx.beginPath();
       ctx.moveTo(x1Top, y1Top);
       ctx.lineTo(x2Top, y2Top);
@@ -270,10 +279,10 @@ function ViewerTool() {
       // Bottom (19.7% intensity, Dec 21st + shift)
       // Dec 21st = June 21st + totalDays/2, so add daysShift
       const angleBottom = Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
-      const x1Bottom = 225 + (180 - dashLen / 2) * Math.cos(angleBottom);
-      const y1Bottom = 200 + (180 - dashLen / 2) * Math.sin(angleBottom);
-      const x2Bottom = 225 + (180 + dashLen / 2) * Math.cos(angleBottom);
-      const y2Bottom = 200 + (180 + dashLen / 2) * Math.sin(angleBottom);
+      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
       ctx.beginPath();
       ctx.moveTo(x1Bottom, y1Bottom);
       ctx.lineTo(x2Bottom, y2Bottom);
@@ -313,10 +322,10 @@ function ViewerTool() {
         ctx.lineWidth = 2;
         const dashLen = 13; // same as blueMarkerLen
         // Start and end points for the dash, centered on the circle edge
-        const x1 = 225 + (180 - dashLen / 2) * Math.cos(angle);
-        const y1 = 200 + (180 - dashLen / 2) * Math.sin(angle);
-        const x2 = 225 + (180 + dashLen / 2) * Math.cos(angle);
-        const y2 = 200 + (180 + dashLen / 2) * Math.sin(angle);
+        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -324,10 +333,10 @@ function ViewerTool() {
 
         // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
         const angleMirror = angle + Math.PI;
-        const x1m = 225 + (180 - dashLen / 2) * Math.cos(angleMirror);
-        const y1m = 200 + (180 - dashLen / 2) * Math.sin(angleMirror);
-        const x2m = 225 + (180 + dashLen / 2) * Math.cos(angleMirror);
-        const y2m = 200 + (180 + dashLen / 2) * Math.sin(angleMirror);
+        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
         ctx.beginPath();
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
@@ -344,10 +353,10 @@ function ViewerTool() {
 
       // Top (100% intensity, June 21st)
       const angleTop = -Math.PI / 2;
-      const x1Top = 225 + (180 - dashLen / 2) * Math.cos(angleTop);
-      const y1Top = 200 + (180 - dashLen / 2) * Math.sin(angleTop);
-      const x2Top = 225 + (180 + dashLen / 2) * Math.cos(angleTop);
-      const y2Top = 200 + (180 + dashLen / 2) * Math.sin(angleTop);
+      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
       ctx.beginPath();
       ctx.moveTo(x1Top, y1Top);
       ctx.lineTo(x2Top, y2Top);
@@ -355,10 +364,10 @@ function ViewerTool() {
 
       // Bottom (19.7% intensity, Dec 21st)
       const angleBottom = Math.PI / 2;
-      const x1Bottom = 225 + (180 - dashLen / 2) * Math.cos(angleBottom);
-      const y1Bottom = 200 + (180 - dashLen / 2) * Math.sin(angleBottom);
-      const x2Bottom = 225 + (180 + dashLen / 2) * Math.cos(angleBottom);
-      const y2Bottom = 200 + (180 + dashLen / 2) * Math.sin(angleBottom);
+      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
       ctx.beginPath();
       ctx.moveTo(x1Bottom, y1Bottom);
       ctx.lineTo(x2Bottom, y2Bottom);
@@ -368,7 +377,7 @@ function ViewerTool() {
     }
 
     // Draw "June 21st" and "December 21st" labels
-    ctx.font = `${180 * 0.1}px Arial`;
+    ctx.font = `${radius * 0.1}px Arial`;
     ctx.fillStyle = colors.label;
     ctx.textAlign = 'center';
 
@@ -378,10 +387,10 @@ function ViewerTool() {
     const dec21 = getDec21DayOfYear(year);
 
     // Place June 21st label at the top
-    ctx.fillText("Jun 21st – 100% Sun Intensity at Peak", 225, 200 - 180 * 1.1);
+    ctx.fillText("Jun 21st – 100% Sun Intensity at Peak", 225, 200 - radius * 1.1);
 
     // Place Dec 21st label at the bottom
-    ctx.fillText('Dec 21st – 19.7% Sun Intensity at Peak', 225, 200 + 180 * 1.18);
+    ctx.fillText('Dec 21st – 19.7% Sun Intensity at Peak', 225, 200 + radius * 1.18);
 
     // Calculate angle so that June 21st is at the top (12 o'clock)
     // Angle increases clockwise, 0 at 3 o'clock, so top is -Math.PI/2
@@ -391,13 +400,13 @@ function ViewerTool() {
     const angle = -Math.PI / 2 + ((dayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
     // Calculate the dot's position
-    const dotX = 225 + 180 * Math.cos(angle);
-    const dotY = 200 + 180 * Math.sin(angle);
+    const dotX = 225 + radius * Math.cos(angle);
+    const dotY = 200 + radius * Math.sin(angle);
 
     // Draw the dot
     ctx.save();
     ctx.beginPath();
-    ctx.arc(dotX, dotY, 180 * 0.05, 0, 2 * Math.PI);
+    ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI);
     ctx.fillStyle = colors.green;
     ctx.lineWidth = 2;
     ctx.fill();
@@ -405,6 +414,9 @@ function ViewerTool() {
   }, [showBlueMarkers, showRedMarkers, showYellowMarkers]);
 
   const drawSunAngleGraph = useCallback(() => {
+
+    const radius = 180;
+
     const canvas = sunAngleCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -421,12 +433,12 @@ function ViewerTool() {
     ctx.lineWidth = 1;
     // X-axis (time)
     ctx.beginPath();
-    ctx.moveTo(leftMargin, 180);
-    ctx.lineTo(leftMargin + graphWidth, 180);
+    ctx.moveTo(leftMargin, radius);
+    ctx.lineTo(leftMargin + graphWidth, radius);
     ctx.stroke();
     // Y-axis (angle)
     ctx.beginPath();
-    ctx.moveTo(leftMargin, 180);
+    ctx.moveTo(leftMargin, radius);
     ctx.lineTo(leftMargin, 20);
     ctx.stroke();
 
@@ -437,7 +449,7 @@ function ViewerTool() {
     for (let h = 0; h <= 24; h += 6) {
         const x = leftMargin + (h / 24) * graphWidth;
         ctx.beginPath();
-        ctx.moveTo(x, 180);
+        ctx.moveTo(x, radius);
         ctx.lineTo(x, 185);
         ctx.stroke();
         ctx.fillText(h.toString(), x - 6, 195);
@@ -448,7 +460,7 @@ function ViewerTool() {
 
     // Y-axis ticks (angle)
     for (let a = -18; a <= 90; a += 36) {
-        const y = 180 - ((a + 18) / 108) * 160;
+        const y = radius - ((a + 18) / 108) * 160;
         ctx.beginPath();
         ctx.moveTo(leftMargin - 5, y);
         ctx.lineTo(leftMargin, y);
@@ -474,7 +486,7 @@ function ViewerTool() {
     ctx.restore();
 
     // Draw dotted line at zero degrees
-    const zeroY = 180 - ((0 + 18) / 108) * 160;
+    const zeroY = radius - ((0 + 18) / 108) * 160;
     ctx.save();
     ctx.setLineDash([4, 4]);
     ctx.strokeStyle = colors.axisDotted;
@@ -506,12 +518,12 @@ function ViewerTool() {
         // Hour angle
         const hourAngle = (solarTime - 12) * 15;
         // Convert degrees to radians
-        const toRad = Math.PI / 180;
+        const toRad = Math.PI / radius;
         // Calculate elevation
         const elevation = Math.asin(
             Math.sin(lat * toRad) * Math.sin(decl * toRad) +
             Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
-        ) * (180 / Math.PI);
+        ) * (radius / Math.PI);
         return elevation;
     }
 
@@ -524,7 +536,7 @@ function ViewerTool() {
         const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0)); // h may be fractional
         const angle = Math.max(-18, Math.min(90, solarElevationAngle(date, 51.5074, -0.1278)));
         const x = leftMargin + (h / 24) * graphWidth;
-        const y = 180 - ((angle + 18) / 108) * 160;
+        const y = radius - ((angle + 18) / 108) * 160;
         if (first) {
             ctx.moveTo(x, y);
             first = false;
@@ -539,7 +551,7 @@ function ViewerTool() {
     const dotDate = new Date(Date.UTC(2023, 4, 15, 0, dotHour * 60, 0));
     const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
     const dotX = leftMargin + (dotHour / 24) * graphWidth;
-    const dotY = 180 - ((dotAngle + 18) / 108) * 160;
+    const dotY = radius - ((dotAngle + 18) / 108) * 160;
 
     // --- NEW: Draw horizontal dotted line at dotY ---
     ctx.save();
@@ -609,8 +621,8 @@ function ViewerTool() {
       // Calculate angle for current dot position
       const angle = -Math.PI / 2 + ((currentDayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
-      const dotX = 225 + 180 * Math.cos(angle);
-      const dotY = 200 + 180 * Math.sin(angle);
+      const dotX = 225 + radius * Math.cos(angle);
+      const dotY = 200 + radius * Math.sin(angle);
 
       const dx = mouseX - 225;
       const dy = mouseY - 200;
@@ -625,7 +637,7 @@ function ViewerTool() {
       if (dotDist < 10) {
         draggingDot.current = true;
         canvas.style.cursor = 'grabbing'; // Change cursor to grabbing when dragging starts
-      } else if (Math.abs(dist - 180) < 10) {
+      } else if (Math.abs(dist - radius) < 10) {
         // If click is near the circle's edge, move green dot there
         const newAngle = Math.atan2(dy, dx);
         setCurrentDayOfYear(calculateDayOfYearFromAngle(newAngle, totalDays));
@@ -643,8 +655,8 @@ function ViewerTool() {
       const june21 = getJune21DayOfYear(year);
       const angle = -Math.PI / 2 + ((currentDayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
-      const dotX = 225 + 180 * Math.cos(angle);
-      const dotY = 200 + 180 * Math.sin(angle);
+      const dotX = 225 + radius * Math.cos(angle);
+      const dotY = 200 + radius * Math.sin(angle);
 
       if (isMouseOverDot(mouseX, mouseY, dotX, dotY)) {
         canvas.style.cursor = draggingDot.current ? 'grabbing' : 'pointer'; // Show pointer or grabbing cursor
@@ -699,7 +711,7 @@ function ViewerTool() {
     observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, [currentDayOfYear, updateDisplay, drawSunAngleGraph]);
-  
+
 
   // --- Handlers for toggles and buttons ---
   const handleSetToToday = () => {
@@ -725,7 +737,7 @@ function ViewerTool() {
   // --- Render ---
   return (
     <div className="w-screen h-screen bg-gray-50">
-      <div className="container1 w-fit justify-center mx-auto">
+      <div className="container1 w-fit justify-center mx-auto flex flex-row">
         <div id="column1" className="mt-4 w-fit rounded-lg">
           <h1 className="mx-auto text-center text-2xl mt-4 mb-4">Season & Sun Info</h1>
           <div className="rounded-lg border-2 border-black bg-white">
