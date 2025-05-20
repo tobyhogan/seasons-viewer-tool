@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { createBrowserHistory } from 'history'
 import { Panel, PanelGroup } from 'react-resizable-panels'
 import '../styles/App.css'
+import ViewerTool from '../components/ViewerTool';
 
 import { useAppContext } from "../app/appContext.tsx";
 import supabase from "../../supabaseClient.js";
@@ -21,11 +22,7 @@ function Home({title, dataUpdate, setDataUpdate}) {
 
   return (
 
-    <div>
-      
-      
-    </div>
-
+    <ViewerTool></ViewerTool>
 
   );
 }
