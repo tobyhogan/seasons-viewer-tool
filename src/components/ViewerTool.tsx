@@ -46,6 +46,12 @@ function ViewerTool() {
       return Math.round(num * factor) / factor;
   }
 
+  // --- Add: Helper to check if mouse is over the green dot ---
+  function isMouseOverDot(mouseX: number, mouseY: number, dotX: number, dotY: number) {
+    const dist = Math.sqrt((mouseX - dotX) ** 2 + (mouseY - dotY) ** 2);
+    return dist < 10;
+  }
+
   function getTotalDaysInYear(date: Date) {
     const year = date.getFullYear();
     return (new Date(year, 11, 31).getDate() === 31) ? 366 : 365;
@@ -611,6 +617,9 @@ function ViewerTool() {
 
     // --- Mouse events for main circle ---
     function handleMouseDown(event: MouseEvent) {
+
+      const radius = 150;
+
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
@@ -646,6 +655,9 @@ function ViewerTool() {
       }
     }
     function handleMouseMove(event: MouseEvent) {
+
+      const radius = 150;
+
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
@@ -732,6 +744,19 @@ function ViewerTool() {
     const h = Math.floor(hour);
     const m = Math.round((hour - h) * 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
+
+  // --- Add: Helper to calculate day of year from angle on the circle ---
+  function calculateDayOfYearFromAngle(angle: number, totalDays: number) {
+    // June 21st is at -Math.PI/2 (top of the circle)
+    // Angle increases clockwise, so map angle to dayOfYear
+    // dayOfYear = june21 + ((angle + Math.PI/2) / (2*PI)) * totalDays
+    const year = new Date().getFullYear();
+    const june21 = (new Date(year, 5, 21).getTime() - new Date(year, 0, 0).getTime()) / (1000 * 60 * 60 * 24);
+    let day = Math.round(june21 + ((angle + Math.PI / 2) / (2 * Math.PI)) * totalDays);
+    // Wrap around the year
+    day = ((day % totalDays) + totalDays) % totalDays;
+    return day;
   }
 
   // --- Render ---
