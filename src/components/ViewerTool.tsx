@@ -699,6 +699,7 @@ function ViewerTool() {
     observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, [currentDayOfYear, updateDisplay, drawSunAngleGraph]);
+  
 
   // --- Handlers for toggles and buttons ---
   const handleSetToToday = () => {
