@@ -428,6 +428,9 @@ function ViewerTool() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // --- ADD THIS LINE: clear the canvas before drawing ---
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     const colors = getCanvasColors();
 
     // --- CHANGED: Increase left margin from 40 to 80 ---
@@ -600,6 +603,7 @@ function ViewerTool() {
     if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Intensity: ${roundSpec((12.5 + ((63.7 - 12.5) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
     if (sunElevationAngleRef.current) sunElevationAngleRef.current.textContent = `Highest Elevation: ${roundSpec((15.5 + calculateSunlightPercentage(dayOfYear, totalDays) * (61.5 - 15.5)), 1)}°`;
     if (daylightLengthRef.current) daylightLengthRef.current.textContent = `Daylight Time Length: ${roundSpec((6.5 + (calculateSunlightPercentage(dayOfYear, totalDays) * (16.5 - 6.5))), 1)} Hours`;
+    if (daylightPercentageRef.current) daylightPercentageRef.current.textContent = `Daylight Percentage: ${roundSpec(calculateSunlightPercentage(dayOfYear, totalDays) * 100, 1)}%`;
     drawCircleAndDot(dayOfYear, totalDays);
   }, [drawCircleAndDot]);
 
@@ -710,7 +714,98 @@ function ViewerTool() {
   // --- Effect for sun angle graph ---
   useEffect(() => {
     drawSunAngleGraph();
-  }, [drawSunAngleGraph]);
+
+    // --- Add drag functionality for the sun angle dot ---
+    const canvas = sunAngleCanvasRef.current;
+    if (!canvas) return;
+
+    // Helper: get dot position for current sunCurveHour
+    function getDotPos(hour: number) {
+      const leftMargin = 80;
+      const graphWidth = 380;
+      const radius = 180;
+      // Sun position calculation for London, May 15th
+      function solarElevationAngle(date: Date, lat: number, lon: number) {
+        const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+        const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
+        const diff = date.getTime() - start.getTime();
+        const oneDay = 1000 * 60 * 60 * 24;
+        const dayOfYear = Math.floor(diff / oneDay);
+        const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
+        const timeOffset = (lon / 15);
+        const solarTime = hours + timeOffset;
+        const hourAngle = (solarTime - 12) * 15;
+        const toRad = Math.PI / radius;
+        const elevation = Math.asin(
+          Math.sin(51.5074 * toRad) * Math.sin(decl * toRad) +
+          Math.cos(51.5074 * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
+        ) * (radius / Math.PI);
+        return Math.max(-18, Math.min(90, elevation));
+      }
+      const date = new Date(Date.UTC(2023, 4, 15, 0, hour * 60, 0));
+      const angle = solarElevationAngle(date, 51.5074, -0.1278);
+      const x = leftMargin + (hour / 24) * graphWidth;
+      const y = radius - ((angle + 18) / 108) * 160;
+      return { x, y };
+    }
+
+    function isOverSunDot(mouseX: number, mouseY: number) {
+      const { x, y } = getDotPos(sunCurveHour);
+      const dist = Math.sqrt((mouseX - x) ** 2 + (mouseY - y) ** 2);
+      return dist < 10;
+    }
+
+    function handleMouseDown(event: MouseEvent) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      if (isOverSunDot(mouseX, mouseY)) {
+        draggingSunDot.current = true;
+        canvas.style.cursor = 'grabbing';
+      }
+    }
+
+    function handleMouseMove(event: MouseEvent) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      if (draggingSunDot.current) {
+        // Find the closest hour for the mouseX position
+        const leftMargin = 80;
+        const graphWidth = 380;
+        let hour = ((mouseX - leftMargin) / graphWidth) * 24;
+        hour = Math.max(0, Math.min(24, hour));
+        setSunCurveHour(hour);
+      } else {
+        if (isOverSunDot(mouseX, mouseY)) {
+          canvas.style.cursor = 'pointer';
+        } else {
+          canvas.style.cursor = 'default';
+        }
+      }
+    }
+
+    function handleMouseUp() {
+      draggingSunDot.current = false;
+      canvas.style.cursor = 'default';
+    }
+    function handleMouseLeave() {
+      draggingSunDot.current = false;
+      canvas.style.cursor = 'default';
+    }
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [sunCurveHour, drawSunAngleGraph]);
 
   // --- Effect for dark mode toggle ---
   useEffect(() => {
