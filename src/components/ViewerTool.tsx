@@ -145,6 +145,8 @@ function ViewerTool() {
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
+    const pi = 3.141592;
+
     const radius = 150;
 
     const canvas = canvasRef.current;
@@ -344,7 +346,7 @@ function ViewerTool() {
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, markerAngles[3], markerAngles[4], false);
+      ctx.arc(225, 200, radius - 1, 3.65, 5.77, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff00"; // light yellow
@@ -356,10 +358,10 @@ function ViewerTool() {
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, markerAngles[3], markerAngles[5], false);
+      ctx.arc(225, 200, radius - 1, 6.8, 8.9, false);
       ctx.closePath();
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = "#e6f3ff"; // light blue
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#0000ff"; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
