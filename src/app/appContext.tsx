@@ -48,12 +48,12 @@ const AppContextProvider = ({ children }) => {
         var darkThemeEnabledDb = data![0].dark_theme_enabled
 
         if (darkThemeEnabledDb) {
-          document.body.classList.add('dark');
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
           setDarkThemeEnabled(true)
-
-  
         } else if (!darkThemeEnabledDb) {
-          document.body.classList.add('light');
+          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('dark');
           setDarkThemeEnabled(false)
         }
       }
@@ -68,8 +68,8 @@ const AppContextProvider = ({ children }) => {
       if (session) {
 
       if (darkThemeEnabled) {
-        document.body.classList.remove('light');
-        document.body.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
 
         const { error } = await supabase
           .from('profiles')        
@@ -78,8 +78,8 @@ const AppContextProvider = ({ children }) => {
         
   
       } else if (!darkThemeEnabled) {
-        document.body.classList.remove('dark');
-        document.body.classList.add('light');
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
 
         const { error } = await supabase
           .from('profiles')        

@@ -556,3 +556,38 @@ table {
   background-color: rgb(46, 46, 46) !important;
 
 }
+
+body.dark, .dark .w-screen, .dark .bg-gray-50 {
+  background-color: #181818 !important;
+  color: #e0e0e0 !important;
+}
+
+body.light, .light .w-screen, .light .bg-gray-50 {
+  background-color: #fcfcfc !important;
+  color: #23272f !important;
+}
+
+/* Make sure all text in .dark is light, and in .light is dark */
+.dark, .dark * {
+  color: #e0e0e0 !important;
+}
+
+.light, .light * {
+  color: #23272f !important;
+}
+
+/* Fix for Mantine and Tailwind bg-white in dark mode */
+.dark .bg-white, .dark.bg-white,
+.dark .border-2, .dark.border-2 {
+  background-color: #23272f !important;
+  color: #e0e0e0 !important;
+  border-color: #444 !important;
+}
+
+/* Fix for Mantine and Tailwind bg-white in light mode */
+.light .bg-white, .light.bg-white,
+.light .border-2, .light.border-2 {
+  background-color: #fff !important;
+  color: #23272f !important;
+  border-color: #bbb !important;
+}

@@ -100,12 +100,7 @@ function Header({ dataUpdate, setDataUpdate}) {
                 <Link to="/home" className='mr-2 text-2xl flex mt-0.5'><MdOutlineCheckBox size={30} className='mr-1'/>
                 <p className='MobileHidden'>Home</p><div className='MobileHidden mr-4' /></Link> }
 
-              {  location.pathname == '/analytics' ?
-                <Link to="/analytics" className='mr-2 text-2xl flex mt-0.5'><AiOutlineAreaChart size={30} className='mr-1'/>
-                <p className='MobileHidden'>Analytics</p><div className='MobileHidden mr-4' /></Link> :
-                <Link to="/analytics" className='mr-2 text-2xl flex mt-0.5'><AiOutlineLineChart size={30} className='mr-1'/>
-                <p className='MobileHidden'>Analytics</p><div className='MobileHidden mr-4' /></Link> }
-
+             
               { <button
                   onClick={() => {setPfpNavShown(pfpNavShown => !pfpNavShown)}}
                   className='mr-3 ml-3'
@@ -171,7 +166,7 @@ function Header({ dataUpdate, setDataUpdate}) {
           </>
           : 
           <>
-            <Link to="/landing" className='mr-6 text-4xl'>WA-T-1</Link>
+            <Link to="/home" className='mr-6 text-4xl'>SeasonsViewer</Link>
             <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
           </> 
         }
@@ -181,3 +176,32 @@ function Header({ dataUpdate, setDataUpdate}) {
 }
 
 export default Header
+
+
+
+
+/*
+
+
+
+
+
+ {  location.pathname == '/analytics' ?
+                <Link to="/analytics" className='mr-2 text-2xl flex mt-0.5'><AiOutlineAreaChart size={30} className='mr-1'/>
+                <p className='MobileHidden'>Analytics</p><div className='MobileHidden mr-4' /></Link> :
+                <Link to="/analytics" className='mr-2 text-2xl flex mt-0.5'><AiOutlineLineChart size={30} className='mr-1'/>
+                <p className='MobileHidden'>Analytics</p><div className='MobileHidden mr-4' /></Link> }
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/

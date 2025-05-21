@@ -1,11 +1,30 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useAppContext } from "../app/appContext"; // Add this import
 
 function ViewerTool() {
 
   const canvasHeight = 300;
   const canvasWidth = 300;
 
+  // Add context for dark mode
+  const { darkThemeEnabled, setDarkThemeEnabled }: any = useAppContext();
 
+  // Add this effect to sync darkThemeEnabled with the html class
+  useEffect(() => {
+    if (darkThemeEnabled) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+  }, [darkThemeEnabled]);
+
+  // Add this function to toggle dark mode
+  function toggleTheme() {
+    setDarkThemeEnabled(!darkThemeEnabled);
+    // No need to manually set class here, appContext handles it
+  }
 
   // --- State and refs ---
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -126,6 +145,8 @@ function ViewerTool() {
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
+    const pi = 3.141592;
+
     const radius = 150;
 
     const canvas = canvasRef.current;
@@ -228,6 +249,108 @@ function ViewerTool() {
       const june21 = getJune21DayOfYear(year);
       const daysShift = Math.round(totalDays * 1.25 / 12); // 2 months ≈ 1/6 of year
 
+      // Calculate marker angles for yellow markers (latent-heat adjusted)
+      let markerAngles: number[] = [];
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+        const cosVal = sunlightCoeff * 2 - 1;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset) + daysShift) % totalDays;
+        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
+        markerAngles.push(angle);
+      });
+      // Add top and bottom (June 21st + shift, Dec 21st + shift)
+      markerAngles.unshift(-Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays)); // top
+      markerAngles.push(Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays)); // bottom
+
+      // Normalize and sort markerAngles for correct arc drawing
+      markerAngles = markerAngles.map(a => (a + 2 * Math.PI) % (2 * Math.PI));
+
+      
+      markerAngles.sort((a, b) => a - b);
+
+      /// THESE MARKINGS ARE FOR THE FIRST CHECKBOX
+
+      // --- SHADE: Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3] (red) ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 7.45, 9.55, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#0000ff"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 12.68, 13.21, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 13.21, 13.73, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      // --- SHADE: Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5] (purple) ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 4.3, 6.4, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff00"; // purple
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 9.55, 10.1, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 10.1, 10.6, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+ 
+
+      // Draw yellow dashes (lines) at the calculated angles
+      ctx.save();
+      ctx.strokeStyle = colors.yellow;
+      ctx.lineWidth = 2;
+      const dashLen = 13;
       intensities.forEach((intensity) => {
         const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
         const cosVal = sunlightCoeff * 2 - 1;
@@ -239,10 +362,6 @@ function ViewerTool() {
         const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
         // Draw a yellow dash (line) at this angle, same style as blue/red markers
-        ctx.save();
-        ctx.strokeStyle = colors.yellow;
-        ctx.lineWidth = 2;
-        const dashLen = 13;
         const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
         const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
         const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
@@ -262,15 +381,12 @@ function ViewerTool() {
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
         ctx.stroke();
-
-        ctx.restore();
       });
 
       // Add yellow markers at the top and bottom, shifted by 2 months
       ctx.save();
       ctx.strokeStyle = colors.yellow;
       ctx.lineWidth = 2;
-      const dashLen = 13;
 
       // Top (100% intensity, June 21st + shift)
       const angleTop = -Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
@@ -302,12 +418,51 @@ function ViewerTool() {
     if (showRedMarkers) {
       // These are the target peak intensities
       const intensities = [0.8, 0.595, 0.4];
-      // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
-      // Solve for sunlightCoeff: sunlightCoeff = (peak - 19.7) / (100 - 19.7)
-      // For each intensity, calculate the corresponding dayOfYear offset from June 21st
-
       const year = new Date().getFullYear();
       const june21 = getJune21DayOfYear(year);
+
+      // --- NEW: Calculate angles for the three top and three bottom dashes ---
+      let markerAngles: number[] = [];
+
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.3) / (1 - 0.3);
+        const cosVal = sunlightCoeff * 2 - 0.5;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays ) % totalDays) * (2 * Math.PI / totalDays) + 3;
+        markerAngles.push(angle);
+      });
+      // Add top and bottom (June 21st and Dec 21st)
+      markerAngles.unshift(-Math.PI / 2); // top
+      markerAngles.push(Math.PI / 2); // bottom
+
+
+      //THESE MARKINGS ARE FOR THE SECOND CHECKBOX
+
+      // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
+      // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 3.65, 5.77, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff00"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 6.8, 8.9, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#0000ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
 
       intensities.forEach((intensity) => {
         const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
@@ -817,8 +972,12 @@ function ViewerTool() {
       drawSunAngleGraph();
     });
     observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
+    // Force redraw on darkThemeEnabled change
+    const totalDays = getTotalDaysInYear(new Date());
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+    drawSunAngleGraph();
     return () => observer.disconnect();
-  }, [currentDayOfYear, updateDisplay, drawSunAngleGraph]);
+  }, [currentDayOfYear, updateDisplay, drawSunAngleGraph, darkThemeEnabled]);
 
 
   // --- Handlers for toggles and buttons ---
@@ -857,152 +1016,165 @@ function ViewerTool() {
 
   // --- Render ---
   return (
-    <div className="w-screen h-screen bg-gray-50">
-      <div className="container1 w-fit justify-center mx-auto flex flex-row">
-        <div id="column1" className="mt-4 w-fit rounded-lg">
-          <h1 className="mx-auto text-center text-2xl mt-4 mb-4">Season & Sun Info</h1>
-          <div className="rounded-lg border-2 border-black bg-white">
-            <h2 className="text-center text-[19px] mt-2 underline">Sun Info - Year View</h2>
-            <canvas
-              id="seasonsCanvas"
-              ref={canvasRef}
-              width={450}
-              height={400}
-              className="border-x-2 border-t-2 rounded-lg border-white mb-[7px]"
-              style={{ border: '1px solid #ccc' }}
-            />
-            <div className="flex flex-row justify-center mb-4">
-              <div className="flex flex-col pl-8">
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    id="toggleYellowMarkers"
-                    checked={showYellowMarkers}
-                    onChange={e => setShowYellowMarkers(e.target.checked)}
-                  />
-                  Latent-Heat Adjusted Intensity-Based Markers
-                </label>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    id="toggleRedMarkers"
-                    checked={showRedMarkers}
-                    onChange={e => setShowRedMarkers(e.target.checked)}
-                  />
-                  Intensity-Based Markers
-                </label>
+    <div className={darkThemeEnabled ? "dark" : "light"}>
+      <div className="w-screen h-screen bg-gray-50 flex flex-row">
+        {/* Toggle Dark Mode Button in top right */}
+        
+        <div className="container1 w-fit justify-center mx-auto flex flex-row">
+          <div id="column1" className="mt-4 ml-20 w-fit rounded-lg">
+            <h1 className="mx-auto text-center text-2xl mt-4 mb-4">Season & Sun Info</h1>
+            <div className="rounded-lg border-2 border-black bg-white">
+              <h2 className="text-center text-[19px] mt-2 underline">Sun Info - Year View</h2>
+              <canvas
+                id="seasonsCanvas"
+                ref={canvasRef}
+                width={450}
+                height={400}
+                className="border-x-2 border-t-2 rounded-lg border-white mb-[7px]"
+                style={{ border: '1px solid #ccc' }}
+              />
+              <div className="flex flex-row justify-center mb-4">
+                <div className="flex flex-col pl-8">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      id="toggleYellowMarkers"
+                      checked={showYellowMarkers}
+                      onChange={e => setShowYellowMarkers(e.target.checked)}
+                    />
+                    Latent-Heat Adjusted Intensity-Based Markers
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      id="toggleRedMarkers"
+                      checked={showRedMarkers}
+                      onChange={e => setShowRedMarkers(e.target.checked)}
+                    />
+                    Intensity-Based Markers
+                  </label>
+                </div>
+                <div className="flex flex-col">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      id="toggleBlueMarkers"
+                      checked={showBlueMarkers}
+                      onChange={e => setShowBlueMarkers(e.target.checked)}
+                    />
+                    Time-based Markers
+                  </label>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    id="toggleBlueMarkers"
-                    checked={showBlueMarkers}
-                    onChange={e => setShowBlueMarkers(e.target.checked)}
-                  />
-                  Time-based Markers
-                </label>
+              <div className="border-t-2"></div>
+              <div id="bottom-features" className="border-x-2 border-b-2 pb-4 rounded-lg border-white">
+                <div className="mx-auto w-fit mb-2.5">
+                  <button
+                    id="setToTodayButton"
+                    className="mt-4 px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                    onClick={handleSetToToday}
+                  >
+                    Set to Today
+                  </button>
+                </div>
+                <div id="formattedDate" className="info text-center mt-1 mb-1" ref={formattedDateRef}></div>
+                <p className="text-center underline mt-[4px] mb-1 text-[18px]">Sun Information:</p>
+                <div id="sunlightPercentage" className="info text-center" ref={sunlightPercentageRef}></div>
+                <div id="avgSunlightPercentage" className="info text-center" ref={avgSunlightPercentageRef}></div>
+                <div id="sunElevationAngle" className="info text-center" ref={sunElevationAngleRef}></div>
+                <div id="daylightPercentage" className="info text-center"></div>
+                <div id="daylightLength" className="info text-center" ref={daylightLengthRef}></div>
               </div>
             </div>
-            <div className="border-t-2"></div>
-            <div id="bottom-features" className="border-x-2 border-b-2 pb-4 rounded-lg border-white">
+          </div>
+          <div className="middleColumn border-2 rounded-lg h-fit mt-[130px] ml-3 w-[600px] pl-[11px] bg-white pb-3">
+            <h2 className="text-center underline text-lg mt-2">Sun Info - Day View</h2>
+            <div className="dayViewTool">
+              {/* Time selected display */}
+              <canvas
+                ref={sunAngleCanvasRef}
+                width={540}
+                height={300}
+                style={{ border: '1px solid #ccc', margin: '16px 0' }}
+              />
               <div className="mx-auto w-fit mb-2.5">
                 <button
-                  id="setToTodayButton"
-                  className="mt-4 px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
-                  onClick={handleSetToToday}
+                  id="setToNowButton"
+                  className="px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                  onClick={handleSetToNow}
                 >
-                  Set to Today
+                  Set to Now
                 </button>
               </div>
-              <div id="formattedDate" className="info text-center mt-1 mb-1" ref={formattedDateRef}></div>
-              <p className="text-center underline mt-[4px] mb-1 text-[18px]">Sun Information:</p>
-              <div id="sunlightPercentage" className="info text-center" ref={sunlightPercentageRef}></div>
-              <div id="avgSunlightPercentage" className="info text-center" ref={avgSunlightPercentageRef}></div>
-              <div id="sunElevationAngle" className="info text-center" ref={sunElevationAngleRef}></div>
-              <div id="daylightPercentage" className="info text-center"></div>
-              <div id="daylightLength" className="info text-center" ref={daylightLengthRef}></div>
+              <div id="dayViewTimeSelected" className="text-center text-[16px] mt-2" ref={dayViewTimeSelectedRef}></div>
+              <div id="dayViewCurrentSunAngle" className="text-center text-[16px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
             </div>
           </div>
+          <div className="rightColumn">
+            <div className="border-2 h-fit rounded-lg p-4 w-fit bg-white">
+              <div className="mb-2">
+                <label htmlFor="pet-select">Location Chosen:</label>
+                <select
+                  name="location"
+                  id="location-select"
+                  className="border-[1px] border-black"
+                  defaultValue="london"
+                >
+                  <option value="london">&nbsp;London&nbsp;</option>
+                  <option value="tokyo">&nbsp;Tokyo&nbsp;</option>
+                </select>
+              </div>
+              <p className="mt-[7px] text-center underline text-[17px]">Sun & Sunlight Information:</p>
+              <p className="mt-2 underline text-center text-[16px]">Year-round Daily-Peak Intensities:</p>
+              <div className="text-left w-fit mx-auto mt-[8px]">
+                <p className="mt-2">Year's Highest: _____ˍ100%</p>
+                <p className="">75th Percentile: ____ˍ80.0%</p>
+                <p className="">Average: ___________ˍ59.9%</p>
+                <p className="">25th Percentile: ˍ____40.0%</p>
+                <p className="">Year's Lowest: ______ˍ19.7%</p>
+              </div>
+              <p className="mt-[8px] underline text-center text-[16px]">24hr Sunlight Intensity Averages</p>
+              <div className="w-fit mx-auto mt-2">
+                <p className="">Year's Highest: _____63.7%</p>
+                <p className="">Average: _____38.1%</p>
+                <p className="">Year's Lowest: _____ˍ12.5%</p>
+              </div>
+              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak Sun Elevation:</p>
+              <div className="w-fit mx-auto mt-[5px]">
+                <p className="">Highest: ______61.5°</p>
+                <p className="">Average: ______38.5°</p>
+                <p className="">Lowest: ______ˍ15.5°</p>
+              </div>
+              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak True Sun Intensities</p>
+              <div className="w-fit mx-auto mt-2">
+                <p className="">Highest ≈ _____ˍ900W/m²</p>
+                <p className="">Average ≈ _____ˍ537.5W/m²</p>
+                <p className="">Lowest ≈ ______175W/m²</p>
+              </div>
+              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daylight Lengths:</p>
+              <div className="w-fit mx-auto mt-2">
+                <p className="">Highest: _____16hrs 32mins</p>
+                <p className="">Average: _____11hrs 0 mins</p>
+                <p className="">Lowest: ______6hrs 32mins</p>
+              </div>
+            </div>
+            <div className="border-2 h-fit mt-4 rounded-lg p-4 w-fit bg-white">
+              <p>Three variables to track:</p>
+              <p>- Maximum Intensity of Sun</p>
+              <p>- Day Length</p>
+              <p>- Maximum Height of Sun in Sky</p>
+            </div>
+          </div>
+
         </div>
-        <div className="middleColumn border-2 rounded-lg h-fit mt-[130px] ml-3 w-[600px] pl-[11px] bg-white pb-3">
-          <h2 className="text-center underline text-lg mt-2">Sun Info - Day View</h2>
-          <div className="dayViewTool">
-            {/* Time selected display */}
-            <canvas
-              ref={sunAngleCanvasRef}
-              width={540}
-              height={300}
-              style={{ border: '1px solid #ccc', margin: '16px 0' }}
-            />
-            <div className="mx-auto w-fit mb-2.5">
-              <button
-                id="setToNowButton"
-                className="px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
-                onClick={handleSetToNow}
-              >
-                Set to Now
-              </button>
-            </div>
-            <div id="dayViewTimeSelected" className="text-center text-[16px] mt-2" ref={dayViewTimeSelectedRef}></div>
-            <div id="dayViewCurrentSunAngle" className="text-center text-[16px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
-          </div>
-        </div>
-        <div className="rightColumn">
-          <div className="border-2 h-fit rounded-lg p-4 w-fit bg-white">
-            <div className="mb-2">
-              <label htmlFor="pet-select">Location Chosen:</label>
-              <select
-                name="location"
-                id="location-select"
-                className="border-[1px] border-black"
-                defaultValue="london"
-              >
-                <option value="london">&nbsp;London&nbsp;</option>
-                <option value="tokyo">&nbsp;Tokyo&nbsp;</option>
-              </select>
-            </div>
-            <p className="mt-[7px] text-center underline text-[17px]">Sun & Sunlight Information:</p>
-            <p className="mt-2 underline text-center text-[16px]">Year-round Daily-Peak Intensities:</p>
-            <div className="text-left w-fit mx-auto mt-[8px]">
-              <p className="mt-2">Year's Highest: _____ˍ100%</p>
-              <p className="">75th Percentile: ____ˍ80.0%</p>
-              <p className="">Average: ___________ˍ59.9%</p>
-              <p className="">25th Percentile: ˍ____40.0%</p>
-              <p className="">Year's Lowest: ______ˍ19.7%</p>
-            </div>
-            <p className="mt-[8px] underline text-center text-[16px]">24hr Sunlight Intensity Averages</p>
-            <div className="w-fit mx-auto mt-2">
-              <p className="">Year's Highest: _____63.7%</p>
-              <p className="">Average: _____38.1%</p>
-              <p className="">Year's Lowest: _____ˍ12.5%</p>
-            </div>
-            <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak Sun Elevation:</p>
-            <div className="w-fit mx-auto mt-[5px]">
-              <p className="">Highest: ______61.5°</p>
-              <p className="">Average: ______38.5°</p>
-              <p className="">Lowest: ______ˍ15.5°</p>
-            </div>
-            <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak True Sun Intensities</p>
-            <div className="w-fit mx-auto mt-2">
-              <p className="">Highest ≈ _____ˍ900W/m²</p>
-              <p className="">Average ≈ _____ˍ537.5W/m²</p>
-              <p className="">Lowest ≈ ______175W/m²</p>
-            </div>
-            <p className="mt-[8px] underline text-center text-[16px]">Year-round Daylight Lengths:</p>
-            <div className="w-fit mx-auto mt-2">
-              <p className="">Highest: _____16hrs 32mins</p>
-              <p className="">Average: _____11hrs 0 mins</p>
-              <p className="">Lowest: ______6hrs 32mins</p>
-            </div>
-          </div>
-          <div className="border-2 h-fit mt-4 rounded-lg p-4 w-fit bg-white">
-            <p>Three variables to track:</p>
-            <p>- Maximum Intensity of Sun</p>
-            <p>- Day Length</p>
-            <p>- Maximum Height of Sun in Sky</p>
-          </div>
-        </div>
+        <button
+            onClick={toggleTheme}
+            aria-label="Toggle dark mode"
+            className="w-16 h-16 mr-8 rounded-md bg-gray-200 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+            style={{ fontSize: 24 }}
+          >
+            {darkThemeEnabled ? "🌙" : "☀️"}
+        </button>
       </div>
     </div>
   );
