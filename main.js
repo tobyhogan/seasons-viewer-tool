@@ -12,41 +12,34 @@ const daylightLengthDiv = document.getElementById('daylightLength');
 const daylightPercentageDiv = document.getElementById('daylightPercentage');
 const sunElevationAngleDiv = document.getElementById('sunElevationAngle');
 const setToTodayButton = document.getElementById('setToTodayButton');
-// Add reference to the blue marker toggle checkbox
-const toggleBlueMarkersCheckbox = document.getElementById('toggleBlueMarkers');
-// Add reference to the red marker toggle checkbox
-const toggleRedMarkersCheckbox = document.getElementById('toggleRedMarkers');
-// --- NEW: Add reference to the yellow marker toggle checkbox ---
-const toggleYellowMarkersCheckbox = document.getElementById('toggleYellowMarkers');
+// Remove checkbox references and use radio buttons instead
+const radioYellowMarkers = document.getElementById('radioYellowMarkers');
+const radioRedMarkers = document.getElementById('radioRedMarkers');
+const radioBlueMarkers = document.getElementById('radioBlueMarkers');
 
-// --- FIX: Define showBlueMarkers and set initial value from checkbox ---
-let showBlueMarkers = toggleBlueMarkersCheckbox ? toggleBlueMarkersCheckbox.checked : true;
-// --- NEW: Define showRedMarkers and set initial value from checkbox ---
-let showRedMarkers = toggleRedMarkersCheckbox ? toggleRedMarkersCheckbox.checked : true;
-// --- NEW: Define showYellowMarkers and set initial value from checkbox ---
-let showYellowMarkers = toggleYellowMarkersCheckbox ? toggleYellowMarkersCheckbox.checked : true;
+// Use a single markerType variable
+let markerType = (radioYellowMarkers && radioYellowMarkers.checked) ? "yellow"
+  : (radioRedMarkers && radioRedMarkers.checked) ? "red"
+  : "blue";
 
-// --- FIX: Listen for checkbox changes and redraw ---
-if (toggleBlueMarkersCheckbox) {
-  toggleBlueMarkersCheckbox.addEventListener('change', () => {
-    showBlueMarkers = toggleBlueMarkersCheckbox.checked;
-    // Redraw with current state
+// Listen for radio changes and redraw
+if (radioYellowMarkers) {
+  radioYellowMarkers.addEventListener('change', () => {
+    if (radioYellowMarkers.checked) markerType = "yellow";
     const totalDays = getTotalDaysInYear(new Date());
     updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
   });
 }
-// --- NEW: Listen for red marker checkbox changes and redraw ---
-if (toggleRedMarkersCheckbox) {
-  toggleRedMarkersCheckbox.addEventListener('change', () => {
-    showRedMarkers = toggleRedMarkersCheckbox.checked;
+if (radioRedMarkers) {
+  radioRedMarkers.addEventListener('change', () => {
+    if (radioRedMarkers.checked) markerType = "red";
     const totalDays = getTotalDaysInYear(new Date());
     updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
   });
 }
-// --- NEW: Listen for yellow marker checkbox changes and redraw ---
-if (toggleYellowMarkersCheckbox) {
-  toggleYellowMarkersCheckbox.addEventListener('change', () => {
-    showYellowMarkers = toggleYellowMarkersCheckbox.checked;
+if (radioBlueMarkers) {
+  radioBlueMarkers.addEventListener('change', () => {
+    if (radioBlueMarkers.checked) markerType = "blue";
     const totalDays = getTotalDaysInYear(new Date());
     updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
   });
@@ -155,7 +148,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   ctx.restore();
 
   // --- DRAW YELLOW SHADING FIRST (before dashes/markers) ---
-  if (showYellowMarkers) {
+  if (markerType === "yellow") {
     // These are the target peak intensities for yellow markers
     const intensities = [0.8, 0.595, 0.4];
     const year = new Date().getFullYear();
@@ -218,7 +211,7 @@ function drawCircleAndDot(dayOfYear, totalDays) {
     const se = { x: centerX + diag, y: centerY + diag };
 
     // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
-    if (showBlueMarkers) {
+    if (markerType === "blue") {
       ctx.save();
       ctx.strokeStyle = colors.blue;
       ctx.lineWidth = 2;
@@ -275,8 +268,8 @@ function drawCircleAndDot(dayOfYear, totalDays) {
       ctx.restore();
     }
 
-    // --- NEW: Draw yellow markers as dashes at same positions as red, but shifted by 2 months (about 61 days) ---
-    if (showYellowMarkers) {
+    // Draw yellow markers as dashes at same positions as red, but shifted by 2 months (about 61 days)
+    if (markerType === "yellow") {
       // These are the target peak intensities
       const intensities = [0.8, 0.595, 0.4];
       // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
@@ -357,8 +350,8 @@ function drawCircleAndDot(dayOfYear, totalDays) {
       ctx.restore();
     }
 
-    // ---existing code for red markers---
-    if (showRedMarkers) {
+    // existing code for red markers
+    if (markerType === "red") {
       // These are the target peak intensities
       const intensities = [0.8, 0.595, 0.3];
       const year = new Date().getFullYear();

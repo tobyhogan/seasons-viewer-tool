@@ -1,4 +1,4 @@
-    <div>
+<div>
 
 
     
@@ -26,18 +26,15 @@
 
               <div class="flex flex-col pl-8">
                 <label class="flex items-center gap-2 text-sm">
-                  <input type="checkbox" id="toggleYellowMarkers" checked />
+                  <input type="radio" name="markerType" id="radioYellowMarkers" checked />
                   Latent-Heat Adjusted Intensity-Based Markers
                 </label>
                 <label class="flex items-center gap-2 text-sm">
-                  <input type="checkbox" id="toggleRedMarkers" checked />
+                  <input type="radio" name="markerType" id="radioRedMarkers" />
                   Intensity-Based Markers
                 </label>
-              </div>
-
-              <div class="flex flex-col">
                 <label class="flex items-center gap-2 text-sm">
-                  <input type="checkbox" id="toggleBlueMarkers" checked />
+                  <input type="radio" name="markerType" id="radioBlueMarkers" />
                   Time-based Markers
                 </label>
               </div>
@@ -155,3 +152,6 @@
 
 
         </div>
+      </div>
+    </div>
+  </div>

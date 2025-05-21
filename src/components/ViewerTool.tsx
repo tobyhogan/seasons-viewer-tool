@@ -44,9 +44,8 @@ function ViewerTool() {
   const dayViewCurrentSunAngleRef = useRef<HTMLDivElement>(null);
 
   // Toggles
-  const [showBlueMarkers, setShowBlueMarkers] = useState(true);
-  const [showRedMarkers, setShowRedMarkers] = useState(true);
-  const [showYellowMarkers, setShowYellowMarkers] = useState(true);
+  type MarkerType = "yellow" | "red" | "blue";
+  const [markerType, setMarkerType] = useState<MarkerType>("yellow");
 
   // Main state
   const [currentDayOfYear, setCurrentDayOfYear] = useState(() => {
@@ -180,7 +179,7 @@ function ViewerTool() {
     const se = { x: 225 + diag, y: 200 + diag };
 
     // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
-    if (showBlueMarkers) {
+    if (markerType === "blue") {
       ctx.save();
       ctx.strokeStyle = colors.blue;
       ctx.lineWidth = 2;
@@ -237,8 +236,8 @@ function ViewerTool() {
       ctx.restore();
     }
 
-    // --- NEW: Draw yellow markers as dashes at same positions as red, but shifted by 2 months (about 61 days) ---
-    if (showYellowMarkers) {
+    // --- Draw yellow markers as dashes at same positions as red, but shifted by 2 months (about 61 days) ---
+    if (markerType === "yellow") {
       // These are the target peak intensities
       const intensities = [0.8, 0.595, 0.4];
       // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
@@ -415,7 +414,7 @@ function ViewerTool() {
     }
 
     // ---existing code for red markers---
-    if (showRedMarkers) {
+    if (markerType === "red") {
       // These are the target peak intensities
       const intensities = [0.8, 0.595, 0.4];
       const year = new Date().getFullYear();
@@ -621,7 +620,7 @@ function ViewerTool() {
     ctx.lineWidth = 2;
     ctx.fill();
     ctx.restore();
-  }, [showBlueMarkers, showRedMarkers, showYellowMarkers]);
+  }, [markerType]);
 
   const drawSunAngleGraph = useCallback(() => {
 
@@ -1085,30 +1084,31 @@ function ViewerTool() {
                 <div className="flex flex-col pl-8">
                   <label className="flex items-center gap-2 text-sm">
                     <input
-                      type="checkbox"
-                      id="toggleYellowMarkers"
-                      checked={showYellowMarkers}
-                      onChange={e => setShowYellowMarkers(e.target.checked)}
+                      type="radio"
+                      name="markerType"
+                      id="radioYellowMarkers"
+                      checked={markerType === "yellow"}
+                      onChange={() => setMarkerType("yellow")}
                     />
-                    Latent-Heat Adjusted Intensity-Based Markers
+                    Temperature-based Markers
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <input
-                      type="checkbox"
-                      id="toggleRedMarkers"
-                      checked={showRedMarkers}
-                      onChange={e => setShowRedMarkers(e.target.checked)}
+                      type="radio"
+                      name="markerType"
+                      id="radioRedMarkers"
+                      checked={markerType === "red"}
+                      onChange={() => setMarkerType("red")}
                     />
-                    Intensity-Based Markers
+                    Sun Intensity-Based Markers
                   </label>
-                </div>
-                <div className="flex flex-col">
                   <label className="flex items-center gap-2 text-sm">
                     <input
-                      type="checkbox"
-                      id="toggleBlueMarkers"
-                      checked={showBlueMarkers}
-                      onChange={e => setShowBlueMarkers(e.target.checked)}
+                      type="radio"
+                      name="markerType"
+                      id="radioBlueMarkers"
+                      checked={markerType === "blue"}
+                      onChange={() => setMarkerType("blue")}
                     />
                     Time-based Markers
                   </label>
