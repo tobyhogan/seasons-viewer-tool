@@ -39,7 +39,7 @@ function App() {
           <div className=''>
             <Routes>
               { session ? <Route path="/" element={<Home title={"Habit" + tabSuffix} dataUpdate={undefined} setDataUpdate={undefined}></Home>} /> : 
-                <Route path="/" element={<Landing title={"Welcome" + tabSuffix}></Landing>} /> }
+                <Route path="/" element={<Home title={"Habit" + tabSuffix} dataUpdate={undefined} setDataUpdate={undefined}></Home>} /> }
 
               <Route path="*" element={<Page404 title={"404 Page" + tabSuffix}></Page404>} /> 
               <Route path="/landing" element={<Landing title={"Welcome" + tabSuffix}></Landing>} />
