@@ -452,6 +452,30 @@ function ViewerTool() {
       ctx.globalAlpha = 1;
       ctx.restore();
 
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 5.77, 6.3, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 6.3, 6.8, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
       // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
       ctx.save();
       ctx.beginPath();
@@ -460,6 +484,30 @@ function ViewerTool() {
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#0000ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 8.9, 9.44, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 9.44, 10, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
