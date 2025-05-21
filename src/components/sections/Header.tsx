@@ -171,7 +171,7 @@ function Header({ dataUpdate, setDataUpdate}) {
           </>
           : 
           <>
-            <Link to="/landing" className='mr-6 text-4xl'>WA-T-1</Link>
+            <Link to="/home" className='mr-6 text-4xl'>SeasonsViewer</Link>
             <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
           </> 
         }
