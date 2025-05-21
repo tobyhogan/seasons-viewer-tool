@@ -881,18 +881,11 @@ function ViewerTool() {
   // --- Render ---
   return (
     <div className={darkThemeEnabled ? "dark" : "light"}>
-      <div className="w-screen h-screen bg-gray-50">
+      <div className="w-screen h-screen bg-gray-50 flex flex-row">
         {/* Toggle Dark Mode Button in top right */}
-        <button
-          onClick={toggleTheme}
-          aria-label="Toggle dark mode"
-          className="fixed top-4 right-4 z-50 px-4 py-2 rounded-md bg-gray-200 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
-          style={{ fontSize: 24 }}
-        >
-          {darkThemeEnabled ? "🌙" : "☀️"}
-        </button>
+        
         <div className="container1 w-fit justify-center mx-auto flex flex-row">
-          <div id="column1" className="mt-4 w-fit rounded-lg">
+          <div id="column1" className="mt-4 ml-20 w-fit rounded-lg">
             <h1 className="mx-auto text-center text-2xl mt-4 mb-4">Season & Sun Info</h1>
             <div className="rounded-lg border-2 border-black bg-white">
               <h2 className="text-center text-[19px] mt-2 underline">Sun Info - Year View</h2>
@@ -1036,7 +1029,16 @@ function ViewerTool() {
               <p>- Maximum Height of Sun in Sky</p>
             </div>
           </div>
+
         </div>
+        <button
+            onClick={toggleTheme}
+            aria-label="Toggle dark mode"
+            className="w-16 h-16 mr-8 rounded-md bg-gray-200 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+            style={{ fontSize: 24 }}
+          >
+            {darkThemeEnabled ? "🌙" : "☀️"}
+        </button>
       </div>
     </div>
   );
