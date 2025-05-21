@@ -311,13 +311,49 @@ function drawCircleAndDot(dayOfYear, totalDays) {
   if (showRedMarkers) {
     // These are the target peak intensities
     const intensities = [0.8, 0.595, 0.4];
-    // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
-    // Solve for sunlightCoeff: sunlightCoeff = (peak - 19.7) / (100 - 19.7)
-    // For each intensity, calculate the corresponding dayOfYear offset from June 21st
-
     const year = new Date().getFullYear();
     const june21 = getJune21DayOfYear(year);
 
+    // --- NEW: Calculate angles for the three top and three bottom dashes ---
+    let markerAngles = [];
+    intensities.forEach((intensity) => {
+      const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+      const cosVal = sunlightCoeff * 2 - 1;
+      let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+      let markerDay = (june21 + Math.round(offset)) % totalDays;
+      const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
+      markerAngles.push(angle);
+    });
+    // Add top and bottom (June 21st and Dec 21st)
+    markerAngles.unshift(-Math.PI / 2); // top
+    markerAngles.push(Math.PI / 2); // bottom
+
+    // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
+    // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius - 1, markerAngles[0], markerAngles[3], false);
+    ctx.closePath();
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = "#fffbe6"; // light yellow
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius - 1, markerAngles[3], markerAngles[5], false);
+    ctx.closePath();
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = "#e6f3ff"; // light blue
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    // Draw red markers (intensity-based)
     intensities.forEach((intensity) => {
       const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
       // sunlightCoeff = cos(offset/totalDays * 2PI) + 1 / 2
