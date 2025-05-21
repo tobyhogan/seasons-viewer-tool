@@ -72,6 +72,16 @@ function Account({title, dataUpdate, setDataUpdate}) {
     */
  }
 
+ useEffect(() => {
+  if (darkThemeEnabled) {
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  }
+}, [darkThemeEnabled]);
+
   return (
       <div className='w-fit flex-row m-auto'>
         <h1 className='text-2xl text-center mt-12 underline'>Settings</h1>

@@ -1,11 +1,30 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useAppContext } from "../app/appContext"; // Add this import
 
 function ViewerTool() {
 
   const canvasHeight = 300;
   const canvasWidth = 300;
 
+  // Add context for dark mode
+  const { darkThemeEnabled, setDarkThemeEnabled }: any = useAppContext();
 
+  // Add this effect to sync darkThemeEnabled with the html class
+  useEffect(() => {
+    if (darkThemeEnabled) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+  }, [darkThemeEnabled]);
+
+  // Add this function to toggle dark mode
+  function toggleTheme() {
+    setDarkThemeEnabled(!darkThemeEnabled);
+    // No need to manually set class here, appContext handles it
+  }
 
   // --- State and refs ---
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -817,8 +836,12 @@ function ViewerTool() {
       drawSunAngleGraph();
     });
     observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
+    // Force redraw on darkThemeEnabled change
+    const totalDays = getTotalDaysInYear(new Date());
+    updateDisplay(currentDayOfYear, totalDays, new Date().getFullYear());
+    drawSunAngleGraph();
     return () => observer.disconnect();
-  }, [currentDayOfYear, updateDisplay, drawSunAngleGraph]);
+  }, [currentDayOfYear, updateDisplay, drawSunAngleGraph, darkThemeEnabled]);
 
 
   // --- Handlers for toggles and buttons ---
@@ -858,6 +881,15 @@ function ViewerTool() {
   // --- Render ---
   return (
     <div className="w-screen h-screen bg-gray-50">
+      {/* Toggle Dark Mode Button in top right */}
+      <button
+        onClick={toggleTheme}
+        aria-label="Toggle dark mode"
+        className="fixed top-4 right-4 z-50 px-4 py-2 rounded-md bg-gray-200 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+        style={{ fontSize: 24 }}
+      >
+        {darkThemeEnabled ? "🌙" : "☀️"}
+      </button>
       <div className="container1 w-fit justify-center mx-auto flex flex-row">
         <div id="column1" className="mt-4 w-fit rounded-lg">
           <h1 className="mx-auto text-center text-2xl mt-4 mb-4">Season & Sun Info</h1>
