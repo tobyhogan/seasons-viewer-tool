@@ -265,7 +265,11 @@ function ViewerTool() {
 
       // Normalize and sort markerAngles for correct arc drawing
       markerAngles = markerAngles.map(a => (a + 2 * Math.PI) % (2 * Math.PI));
+
+      
       markerAngles.sort((a, b) => a - b);
+
+      /// THESE MARKINGS ARE FOR THE FIRST CHECKBOX
 
       // --- SHADE: Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3] (red) ---
       ctx.save();
@@ -279,6 +283,31 @@ function ViewerTool() {
       ctx.globalAlpha = 1;
       ctx.restore();
 
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 12.68, 13.21, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 13.21, 13.73, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
       // --- SHADE: Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5] (purple) ---
       ctx.save();
       ctx.beginPath();
@@ -290,6 +319,32 @@ function ViewerTool() {
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 9.55, 10.1, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 10.1, 10.6, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+ 
 
       // Draw yellow dashes (lines) at the calculated angles
       ctx.save();
@@ -380,6 +435,9 @@ function ViewerTool() {
       // Add top and bottom (June 21st and Dec 21st)
       markerAngles.unshift(-Math.PI / 2); // top
       markerAngles.push(Math.PI / 2); // bottom
+
+
+      //THESE MARKINGS ARE FOR THE SECOND CHECKBOX
 
       // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
       // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
