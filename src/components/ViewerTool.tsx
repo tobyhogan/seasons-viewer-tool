@@ -249,6 +249,53 @@ function ViewerTool() {
       const june21 = getJune21DayOfYear(year);
       const daysShift = Math.round(totalDays * 1.25 / 12); // 2 months ≈ 1/6 of year
 
+      // Calculate marker angles for yellow markers (latent-heat adjusted)
+      let markerAngles: number[] = [];
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+        const cosVal = sunlightCoeff * 2 - 1;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset) + daysShift) % totalDays;
+        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
+        markerAngles.push(angle);
+      });
+      // Add top and bottom (June 21st + shift, Dec 21st + shift)
+      markerAngles.unshift(-Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays)); // top
+      markerAngles.push(Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays)); // bottom
+
+      // Normalize and sort markerAngles for correct arc drawing
+      markerAngles = markerAngles.map(a => (a + 2 * Math.PI) % (2 * Math.PI));
+      markerAngles.sort((a, b) => a - b);
+
+      // --- SHADE: Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3] (red) ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 7.45, 9.55, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#0000ff"; // red
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // --- SHADE: Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5] (purple) ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 4.3, 6.4, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff00"; // purple
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Draw yellow dashes (lines) at the calculated angles
+      ctx.save();
+      ctx.strokeStyle = colors.yellow;
+      ctx.lineWidth = 2;
+      const dashLen = 13;
       intensities.forEach((intensity) => {
         const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
         const cosVal = sunlightCoeff * 2 - 1;
@@ -260,10 +307,6 @@ function ViewerTool() {
         const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
         // Draw a yellow dash (line) at this angle, same style as blue/red markers
-        ctx.save();
-        ctx.strokeStyle = colors.yellow;
-        ctx.lineWidth = 2;
-        const dashLen = 13;
         const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
         const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
         const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
@@ -283,15 +326,12 @@ function ViewerTool() {
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
         ctx.stroke();
-
-        ctx.restore();
       });
 
       // Add yellow markers at the top and bottom, shifted by 2 months
       ctx.save();
       ctx.strokeStyle = colors.yellow;
       ctx.lineWidth = 2;
-      const dashLen = 13;
 
       // Top (100% intensity, June 21st + shift)
       const angleTop = -Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
