@@ -83,15 +83,14 @@ function Account({title, dataUpdate, setDataUpdate}) {
 }, [darkThemeEnabled]);
 
   return (
-      <div className='w-fit flex-row m-auto'>
-        <h1 className='text-2xl text-center mt-12 underline'>Settings</h1>
-
-        <div className='mt-16 flex'>
-          <h2 className='text-center'>Dark Theme: </h2>
-          <Checkbox checked={darkThemeEnabled} onChange={() => toggleTheme()} className='ml-3 mt-0.5' color="black" iconColor="white" radius="4px" />
+      <div className={darkThemeEnabled ? "dark" : "light"}>
+        <div className='w-fit flex-row m-auto'>
+          <h1 className='text-2xl text-center mt-12 underline'>Settings</h1>
+          <div className='mt-16 flex'>
+            <h2 className='text-center'>Dark Theme: </h2>
+            <Checkbox checked={darkThemeEnabled} onChange={() => toggleTheme()} className='ml-3 mt-0.5' color="black" iconColor="white" radius="4px" />
+          </div>
         </div>
-
-
       </div>
   )
 }

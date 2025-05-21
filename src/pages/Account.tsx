@@ -34,24 +34,18 @@ function Account({title, dataUpdate, setDataUpdate}) {
 
 
   return (
-    <div className='w-fit flex-row m-auto'>
-      <h1 className='text-2xl text-center mt-16 underline'>Your Account</h1>
-      <img src={avatarUrl} className='w-16 rounded-lg m-auto mt-12 outline outline-1 outline-grayNew-200'></img>
-      <h2 className='text-center mt-8'><b>Name</b>: {displayName}</h2>
-      <h2 className='text-center mt-2'><b>Email</b>: {displayEmail}</h2>
-      <h2 className='text-center mt-2'><b>Account Type</b>: Full</h2>
-
-      <div className='w-fit mx-auto mt-12'>
-        <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
+    <div className={session?.user ? (session.darkThemeEnabled ? "dark" : "light") : ""}>
+      <div className='w-fit flex-row m-auto'>
+        <h1 className='text-2xl text-center mt-16 underline'>Your Account</h1>
+        <img src={avatarUrl} className='w-16 rounded-lg m-auto mt-12 outline outline-1 outline-grayNew-200'></img>
+        <h2 className='text-center mt-8'><b>Name</b>: {displayName}</h2>
+        <h2 className='text-center mt-2'><b>Email</b>: {displayEmail}</h2>
+        <h2 className='text-center mt-2'><b>Account Type</b>: Full</h2>
+        <div className='w-fit mx-auto mt-12'>
+          <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
+        </div>
+        {/*<button onClick={toggleTheme}>hi</button>*/}
       </div>
-
-      
-        
-      {/*<button onClick={toggleTheme}>hi</button>*/}
-
-
-
-
     </div>
   )
 }
