@@ -96,9 +96,9 @@ function Header({ dataUpdate, setDataUpdate}) {
 
               { location.pathname == '/home' ?
                 <Link to="/home" className='mr-2 text-2xl flex mt-0.5'><MdCheckBox size={30} className='mr-1'/>
-                <p className='MobileHidden'>Home</p><div className='MobileHidden mr-4' /></Link> :
+                <p className='MobileHidden'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> :
                 <Link to="/home" className='mr-2 text-2xl flex mt-0.5'><MdOutlineCheckBox size={30} className='mr-1'/>
-                <p className='MobileHidden'>Home</p><div className='MobileHidden mr-4' /></Link> }
+                <p className='MobileHidden'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> }
 
              
               { <button

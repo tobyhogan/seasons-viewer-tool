@@ -3,9 +3,6 @@ import { useAppContext } from "../app/appContext"; // Add this import
 
 function ViewerTool() {
 
-  const canvasHeight = 300;
-  const canvasWidth = 300;
-
   // Add context for dark mode
   const { darkThemeEnabled, setDarkThemeEnabled }: any = useAppContext();
 
@@ -144,9 +141,15 @@ function ViewerTool() {
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
+    const canvasWidth = 320;
+    const canvasHeight = 320;
+
+    const circCenterX = canvasWidth / 2;
+    const circCenterY = canvasHeight / 2;
+
     const pi = 3.141592;
 
-    const radius = 150;
+    const radius = 120;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -161,22 +164,22 @@ function ViewerTool() {
     ctx.strokeStyle = colors.circle;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(225, 200, radius, 0, 2 * Math.PI);
+    ctx.arc(circCenterX, circCenterY, radius, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.restore();
 
     // Calculate blue marker points (cardinal)
-    const top = { x: 225, y: 200 - radius };
-    const bottom = { x: 225, y: 200 + radius };
-    const left = { x: 225 - radius, y: 200 };
-    const right = { x: 225 + radius, y: 200 };
+    const top = { x: circCenterX, y: circCenterY - radius };
+    const bottom = { x: circCenterX, y: circCenterY + radius };
+    const left = { x: circCenterX - radius, y: circCenterY };
+    const right = { x: circCenterX + radius, y: circCenterY };
 
     // Calculate red marker points (diagonals)
     const diag = Math.SQRT1_2 * radius;
-    const nw = { x: 225 - diag, y: 200 - diag };
-    const ne = { x: 225 + diag, y: 200 - diag };
-    const sw = { x: 225 - diag, y: 200 + diag };
-    const se = { x: 225 + diag, y: 200 + diag };
+    const nw = { x: circCenterX - diag, y: circCenterY - diag };
+    const ne = { x: circCenterX + diag, y: circCenterY - diag };
+    const sw = { x: circCenterX - diag, y: circCenterY + diag };
+    const se = { x: circCenterX + diag, y: circCenterY + diag };
 
     // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
     if (markerType === "timeBased") {
@@ -266,8 +269,8 @@ function ViewerTool() {
       // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 3.65, 5.77, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 3.65, 5.77, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff00"; // light yellow
@@ -278,8 +281,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 5.77, 6.3, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 5.77, 6.3, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff88"; // light yellow
@@ -290,8 +293,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 6.3, 6.8, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 6.3, 6.8, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#8888ff"; // light yellow
@@ -302,8 +305,8 @@ function ViewerTool() {
       // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 6.8, 8.9, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 6.8, 8.9, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#0000ff"; // light blue
@@ -314,8 +317,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 8.9, 9.44, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 8.9, 9.44, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#8888ff"; // light blue
@@ -326,8 +329,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 9.44, 10, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 9.44, 10, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff88"; // light blue
@@ -355,10 +358,10 @@ function ViewerTool() {
         ctx.lineWidth = 2;
         const dashLen = 13; // same as blueMarkerLen
         // Start and end points for the dash, centered on the circle edge
-        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
-        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
-        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
-        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
+        const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -366,10 +369,10 @@ function ViewerTool() {
 
         // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
         const angleMirror = angle + Math.PI;
-        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
-        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
-        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
-        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
+        const x1m = circCenterX + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = circCenterY + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = circCenterX + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = circCenterY + (radius + dashLen / 2) * Math.sin(angleMirror);
         ctx.beginPath();
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
@@ -386,10 +389,10 @@ function ViewerTool() {
 
       // Top (100% intensity, June 21st)
       const angleTop = -Math.PI / 2;
-      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
-      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
-      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
-      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
+      const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
       ctx.beginPath();
       ctx.moveTo(x1Top, y1Top);
       ctx.lineTo(x2Top, y2Top);
@@ -397,10 +400,10 @@ function ViewerTool() {
 
       // Bottom (19.7% intensity, Dec 21st)
       const angleBottom = Math.PI / 2;
-      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
-      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
-      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
-      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
+      const x1Bottom = circCenterX + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = circCenterY + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = circCenterX + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = circCenterY + (radius + dashLen / 2) * Math.sin(angleBottom);
       ctx.beginPath();
       ctx.moveTo(x1Bottom, y1Bottom);
       ctx.lineTo(x2Bottom, y2Bottom);
@@ -439,8 +442,8 @@ function ViewerTool() {
       // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 3.65 + coeff, 5.77 + coeff, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 3.65 + coeff, 5.77 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff00"; // light yellow
@@ -451,8 +454,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 5.77 + coeff, 6.3 + coeff, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 5.77 + coeff, 6.3 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff88"; // light yellow
@@ -463,8 +466,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 6.3 + coeff, 6.8 + coeff, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 6.3 + coeff, 6.8 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#8888ff"; // light yellow
@@ -475,8 +478,8 @@ function ViewerTool() {
       // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 6.8 + coeff, 8.9 + coeff, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 6.8 + coeff, 8.9 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#0000ff"; // light blue
@@ -487,8 +490,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 8.9 + coeff, 9.44 + coeff, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 8.9 + coeff, 9.44 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#8888ff"; // light blue
@@ -499,8 +502,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 9.44 + coeff, 10 + coeff, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 9.44 + coeff, 10 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff88"; // light blue
@@ -528,10 +531,10 @@ function ViewerTool() {
         ctx.lineWidth = 2;
         const dashLen = 13; // same as blueMarkerLen
         // Start and end points for the dash, centered on the circle edge
-        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
-        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
-        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
-        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
+        const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -539,10 +542,10 @@ function ViewerTool() {
 
         // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
         const angleMirror = angle + Math.PI;
-        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
-        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
-        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
-        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
+        const x1m = circCenterX + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = circCenterY + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = circCenterX + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = circCenterY + (radius + dashLen / 2) * Math.sin(angleMirror);
         ctx.beginPath();
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
@@ -559,10 +562,10 @@ function ViewerTool() {
 
       // Top (100% intensity, June 21st)
       const angleTop = (-Math.PI / 2) + coeff;
-      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
-      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
-      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
-      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
+      const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
       ctx.beginPath();
       ctx.moveTo(x1Top, y1Top);
       ctx.lineTo(x2Top, y2Top);
@@ -570,10 +573,10 @@ function ViewerTool() {
 
       // Bottom (19.7% intensity, Dec 21st)
       const angleBottom = (Math.PI / 2) + coeff;
-      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
-      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
-      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
-      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
+      const x1Bottom = circCenterX + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = circCenterY + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = circCenterX + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = circCenterY + (radius + dashLen / 2) * Math.sin(angleBottom);
       ctx.beginPath();
       ctx.moveTo(x1Bottom, y1Bottom);
       ctx.lineTo(x2Bottom, y2Bottom);
@@ -619,8 +622,8 @@ function ViewerTool() {
       // --- SHADE: Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3] (red) ---
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 7.45, 9.55, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 7.45, 9.55, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#0000ff"; // red
@@ -630,8 +633,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 12.68, 13.21, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 12.68, 13.21, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff88"; // red
@@ -643,8 +646,8 @@ function ViewerTool() {
       
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 13.21, 13.73, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 13.21, 13.73, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#8888ff"; // red
@@ -656,8 +659,8 @@ function ViewerTool() {
       // --- SHADE: Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5] (purple) ---
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 4.3, 6.4, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 4.3, 6.4, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff00"; // purple
@@ -667,8 +670,8 @@ function ViewerTool() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 9.55, 10.1, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 9.55, 10.1, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#8888ff"; // red
@@ -680,8 +683,8 @@ function ViewerTool() {
       
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 10.1, 10.6, false);
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 10.1, 10.6, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
       ctx.fillStyle = "#ffff88"; // red
@@ -707,10 +710,10 @@ function ViewerTool() {
         const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
         // Draw a yellow dash (line) at this angle, same style as blue/red markers
-        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
-        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
-        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
-        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
+        const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
@@ -718,10 +721,10 @@ function ViewerTool() {
 
         // Draw mirrored marker on the left side (angle + Math.PI)
         const angleMirror = angle + Math.PI;
-        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
-        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
-        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
-        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
+        const x1m = circCenterX + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = circCenterY + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = circCenterX + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = circCenterY + (radius + dashLen / 2) * Math.sin(angleMirror);
         ctx.beginPath();
         ctx.moveTo(x1m, y1m);
         ctx.lineTo(x2m, y2m);
@@ -735,10 +738,10 @@ function ViewerTool() {
 
       // Top (100% intensity, June 21st + shift)
       const angleTop = -Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
-      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
-      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
-      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
-      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
+      const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
       ctx.beginPath();
       ctx.moveTo(x1Top, y1Top);
       ctx.lineTo(x2Top, y2Top);
@@ -747,10 +750,10 @@ function ViewerTool() {
       // Bottom (19.7% intensity, Dec 21st + shift)
       // Dec 21st = June 21st + totalDays/2, so add daysShift
       const angleBottom = Math.PI / 2 + (daysShift * 2 * Math.PI / totalDays);
-      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
-      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
-      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
-      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
+      const x1Bottom = circCenterX + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = circCenterY + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = circCenterX + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = circCenterY + (radius + dashLen / 2) * Math.sin(angleBottom);
       ctx.beginPath();
       ctx.moveTo(x1Bottom, y1Bottom);
       ctx.lineTo(x2Bottom, y2Bottom);
@@ -773,10 +776,10 @@ function ViewerTool() {
     const dec21 = getDec21DayOfYear(year);
 
     // Place June 21st label at the top
-    ctx.fillText("Jun 21st – 100% Sun Intensity at Peak", 225, 200 - radius * 1.1);
+    ctx.fillText("Jun 21st – 100% Sun Intensity at Peak", circCenterX, circCenterY - radius * 1.1);
 
     // Place Dec 21st label at the bottom
-    ctx.fillText('Dec 21st – 19.7% Sun Intensity at Peak', 225, 200 + radius * 1.18);
+    ctx.fillText('Dec 21st – 19.7% Sun Intensity at Peak', circCenterX, circCenterY + radius * 1.18);
 
     // Calculate angle so that June 21st is at the top (12 o'clock)
     // Angle increases clockwise, 0 at 3 o'clock, so top is -Math.PI/2
@@ -786,13 +789,13 @@ function ViewerTool() {
     const angle = -Math.PI / 2 + ((dayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
     // Calculate the dot's position
-    const dotX = 225 + radius * Math.cos(angle);
-    const dotY = 200 + radius * Math.sin(angle);
+    const dotX = circCenterX + radius * Math.cos(angle);
+    const dotY = circCenterY + radius * Math.sin(angle);
 
     // Draw the dot
     ctx.save();
     ctx.beginPath();
-    ctx.arc(dotX, dotY, radius * 0.05, 0, 2 * Math.PI);
+    ctx.arc(dotX, dotY, radius * 0.07, 0, 2 * Math.PI);
     ctx.fillStyle = colors.green;
     ctx.lineWidth = 2;
     ctx.fill();
@@ -991,8 +994,8 @@ function ViewerTool() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const canvasWidth = 450;
-    const canvasHeight = 400;
+    const canvasWidth = 320;
+    const canvasHeight = 320;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
@@ -1002,7 +1005,13 @@ function ViewerTool() {
     // --- Mouse events for main circle ---
     function handleMouseDown(event: MouseEvent) {
 
-      const radius = 150;
+      const canvasWidth = 320;
+      const canvasHeight = 320;
+
+      const circCenterX = canvasWidth / 2;
+      const circCenterY = canvasHeight / 2;
+
+      const radius = 120;
 
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1014,11 +1023,11 @@ function ViewerTool() {
       // Calculate angle for current dot position
       const angle = -Math.PI / 2 + ((currentDayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
-      const dotX = 225 + radius * Math.cos(angle);
-      const dotY = 200 + radius * Math.sin(angle);
+      const dotX = circCenterX + radius * Math.cos(angle);
+      const dotY = circCenterY + radius * Math.sin(angle);
 
-      const dx = mouseX - 225;
-      const dy = mouseY - 200;
+      const dx = mouseX - circCenterX;
+      const dy = mouseY - circCenterY;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       // Position of green dot
@@ -1040,7 +1049,14 @@ function ViewerTool() {
     }
     function handleMouseMove(event: MouseEvent) {
 
-      const radius = 150;
+      const canvasWidth = 320;
+      const canvasHeight = 320;
+
+      const circCenterX = canvasWidth / 2;
+      const circCenterY = canvasHeight / 2;
+
+
+      const radius = 120;
 
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1051,8 +1067,9 @@ function ViewerTool() {
       const june21 = getJune21DayOfYear(year);
       const angle = -Math.PI / 2 + ((currentDayOfYear - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
 
-      const dotX = 225 + radius * Math.cos(angle);
-      const dotY = 200 + radius * Math.sin(angle);
+    
+      const dotX = circCenterX + radius * Math.cos(angle);
+      const dotY = circCenterY + radius * Math.sin(angle);
 
       if (isMouseOverDot(mouseX, mouseY, dotX, dotY)) {
         canvas.style.cursor = draggingDot.current ? 'grabbing' : 'pointer'; // Show pointer or grabbing cursor
@@ -1061,8 +1078,8 @@ function ViewerTool() {
       }
 
       if (draggingDot.current) {
-        const dx = mouseX - 225;
-        const dy = mouseY - 200;
+        const dx = mouseX - circCenterX;
+        const dy = mouseY - circCenterY;
         const newAngle = Math.atan2(dy, dx);
         setCurrentDayOfYear(calculateDayOfYearFromAngle(newAngle, totalDays)); // Update the current day of the year
 
@@ -1241,10 +1258,10 @@ function ViewerTool() {
   // --- Render ---
   return (
     <div className={darkThemeEnabled ? "dark" : "light"}>
-      <div className="w-screen h-screen bg-gray-50 flex flex-row">
+      <div className="w-screen  bg-gray-50 flex flex-row">
         {/* Toggle Dark Mode Button in top right */}
         
-        <div className="container1 w-fit justify-center mx-auto flex flex-row">
+        <div className="container1 w-fit justify-center mx-auto flex flex-row mt-2">
           <div id="column1" className=" ml-20 w-fit rounded-lg">
             <div className="rounded-lg border-2 border-black bg-white">
               <h2 className="text-center text-[22px] mt-2 underline">Sun Info - Year View</h2>
@@ -1254,76 +1271,85 @@ function ViewerTool() {
                 width={450}
                 height={400}
                 className="border-x-2 border-t-2 rounded-lg border-white mb-[7px]"
-                style={{ border: '1px solid #ccc' }}
+                style={{ border: '0px solid #ccc' }}
               />
-              <div className="flex flex-row justify-center mb-4">
-                <div className="flex flex-col pl-8">
-                  <p className='mx-auto pr-4'>Data View: </p>
-    
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="markerType"
-                      id="radioMarkers4"
-                      checked={markerType === "tempAndIntensityBased"}
-                      onChange={() => setMarkerType("tempAndIntensityBased")}
-                    />
-                    Tempertaure-Intensity-Average
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="markerType"
-                      id="tempBasedMarkers"
-                      checked={markerType === "tempBased"}
-                      onChange={() => setMarkerType("tempBased")}
-                    />
-                    Temperature-based
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="markerType"
-                      id="intensityBasedMarkers"
-                      checked={markerType === "intensityBased"}
-                      onChange={() => setMarkerType("intensityBased")}
-                    />
-                    Peak Sun Intesnsity / Daylight Time
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="markerType"
-                      id="timeBasedMarkers"
-                      checked={markerType === "timeBased"}
-                      onChange={() => setMarkerType("timeBased")}
-                    />
-                    Time-based
-                  </label>
+              
+              <hr className='border-[#444444]'/>
+
+              <div className="flex flex-row border-white border-0">
+
+                <div id="bottom-features" className="border-x-2 border-b-2 rounded-lg border-white w-full">
+
+                  <div id="formattedDate" className="info text-center mt-1 mb-1" ref={formattedDateRef}></div>
+                  <p className="text-center underline mt-[4px] mb-1 text-[18px]">Sun Information:</p>
+                  <div id="sunlightPercentage" className="info text-center" ref={sunlightPercentageRef}></div>
+                  <div id="avgSunlightPercentage" className="info text-center" ref={avgSunlightPercentageRef}></div>
+                  <div id="sunElevationAngle" className="info text-center" ref={sunElevationAngleRef}></div>
+                  <div id="daylightPercentage" className="info text-center"></div>
+                  <div id="daylightLength" className="info text-center" ref={daylightLengthRef}></div>
+                
+                  <div className="mx-auto w-fit mt-1 mb-2">
+                    <button
+                      id="setToTodayButton"
+                      className="color2Text px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                      onClick={handleSetToToday}
+                    >
+                      Set to Today
+                    </button>
+                  </div>
+
+                  <hr className='border-t-1 border-[#888888] w-full'/>
+
+  
+                  <p className='mx-auto pr-4 ml-8 pt-1'>Data View: </p>
+                  <div className='pl-12 pb-1'>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="radioMarkers4"
+                        checked={markerType === "tempAndIntensityBased"}
+                        onChange={() => setMarkerType("tempAndIntensityBased")}
+                      />
+                      Tempertaure-Intensity-Average
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="tempBasedMarkers"
+                        checked={markerType === "tempBased"}
+                        onChange={() => setMarkerType("tempBased")}
+                      />
+                      Temperature-based
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="intensityBasedMarkers"
+                        checked={markerType === "intensityBased"}
+                        onChange={() => setMarkerType("intensityBased")}
+                      />
+                      Peak Sun Intesnsity / Daylight Time
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="timeBasedMarkers"
+                        checked={markerType === "timeBased"}
+                        onChange={() => setMarkerType("timeBased")}
+                      />
+                      Time-based
+                    </label>
+
+                  </div>
                 </div>
-              </div>
-              <div className="border-t-2"></div>
-              <div id="bottom-features" className="border-x-2 border-b-2 pb-4 rounded-lg border-white">
-                <div className="mx-auto w-fit mb-2.5">
-                  <button
-                    id="setToTodayButton"
-                    className="color2Text mt-4 px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
-                    onClick={handleSetToToday}
-                  >
-                    Set to Today
-                  </button>
                 </div>
-                <div id="formattedDate" className="info text-center mt-1 mb-1" ref={formattedDateRef}></div>
-                <p className="text-center underline mt-[4px] mb-1 text-[18px]">Sun Information:</p>
-                <div id="sunlightPercentage" className="info text-center" ref={sunlightPercentageRef}></div>
-                <div id="avgSunlightPercentage" className="info text-center" ref={avgSunlightPercentageRef}></div>
-                <div id="sunElevationAngle" className="info text-center" ref={sunElevationAngleRef}></div>
-                <div id="daylightPercentage" className="info text-center"></div>
-                <div id="daylightLength" className="info text-center" ref={daylightLengthRef}></div>
-              </div>
             </div>
           </div>
-          <div className="middleColumn border-2 rounded-lg h-fit mt-[130px] ml-3 w-[600px] pl-[11px] bg-white pb-3">
+          <div className="middleColumn border-2 rounded-lg h-fit mt-[0px] ml-2 w-[600px] pl-[11px] bg-white pb-3">
             <h2 className="text-center underline text-[20px] mt-2">Sun Info - Day View</h2>
             <div className="dayViewTool">
               {/* Time selected display */}
@@ -1346,7 +1372,7 @@ function ViewerTool() {
               <div id="dayViewCurrentSunAngle" className="text-center text-[16px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
             </div>
           </div>
-          <div className="rightColumn">
+          <div className="rightColumn ml-2">
             <div className="border-2 h-fit rounded-lg p-4 w-fit bg-white">
               <div className="mb-2">
                 <label htmlFor="pet-select">Location Chosen:</label>
@@ -1361,7 +1387,7 @@ function ViewerTool() {
                 </select>
               </div>
               <p className="mt-[7px] text-center underline text-[17px]">Sun & Sunlight Information:</p>
-              <p className="mt-2 underline text-center text-[16px]">Year-round Daily-Peak Intensities:</p>
+              <p className="mt-2 underline text-center text-[16px]">Year-round Daily-Peak Sun Intensities:</p>
               <div className="text-left w-fit mx-auto mt-[8px]">
                 <p className="mt-2">Year's Highest: _____ˍ100%</p>
                 <p className="">75th Percentile: ____ˍ80.0%</p>
@@ -1369,10 +1395,10 @@ function ViewerTool() {
                 <p className="">25th Percentile: ˍ____40.0%</p>
                 <p className="">Year's Lowest: ______ˍ19.7%</p>
               </div>
-              <p className="mt-[8px] underline text-center text-[16px]">24hr Sunlight Intensity Averages</p>
+              <p className="mt-[8px] underline text-center text-[16px]">24hr Average Sunlight Intensities</p>
               <div className="w-fit mx-auto mt-2">
                 <p className="">Year's Highest: _____63.7%</p>
-                <p className="">Average: _____38.1%</p>
+                <p className="">Average: __________38.1%</p>
                 <p className="">Year's Lowest: _____ˍ12.5%</p>
               </div>
               <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak Sun Elevation:</p>
@@ -1381,7 +1407,7 @@ function ViewerTool() {
                 <p className="">Average: ______38.5°</p>
                 <p className="">Lowest: ______ˍ15.5°</p>
               </div>
-              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak True Sun Intensities</p>
+              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-Peak True Sun Intensities</p>
               <div className="w-fit mx-auto mt-2">
                 <p className="">Highest ≈ _____ˍ900W/m²</p>
                 <p className="">Average ≈ _____ˍ537.5W/m²</p>
@@ -1394,7 +1420,7 @@ function ViewerTool() {
                 <p className="">Lowest: ______6hrs 32mins</p>
               </div>
             </div>
-            <div className="border-2 h-fit mt-4 rounded-lg p-4 w-fit bg-white">
+            <div className="hidden border-2 h-fit mt-4 rounded-lg p-4 w-fit bg-white">
               <p>Three variables to track:</p>
               <p>- Maximum Intensity of Sun</p>
               <p>- Day Length</p>
@@ -1402,15 +1428,15 @@ function ViewerTool() {
             </div>
           </div>
 
+          <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              className="w-16 h-16 mr-8 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+              style={{ fontSize: 24 }}
+            >
+              {darkThemeEnabled ? "🌙" : "☀️"}
+          </button>
         </div>
-        <button
-            onClick={toggleTheme}
-            aria-label="Toggle dark mode"
-            className="w-16 h-16 mr-8 rounded-md bg-gray-200 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
-            style={{ fontSize: 24 }}
-          >
-            {darkThemeEnabled ? "🌙" : "☀️"}
-        </button>
       </div>
     </div>
   );
