@@ -567,6 +567,10 @@ body.light, .light .w-screen, .light .bg-gray-50 {
   color: #23272f !important;
 }
 
+.light .color2Text {
+  color: white !important;
+}
+
 /* Make sure all text in .dark is light, and in .light is dark */
 .dark, .dark * {
   color: #e0e0e0 !important;

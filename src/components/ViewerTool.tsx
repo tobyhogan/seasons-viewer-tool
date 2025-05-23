@@ -44,8 +44,8 @@ function ViewerTool() {
   const dayViewCurrentSunAngleRef = useRef<HTMLDivElement>(null);
 
   // Toggles
-  type MarkerType = "yellow" | "red" | "blue";
-  const [markerType, setMarkerType] = useState<MarkerType>("yellow");
+  type MarkerType = "timeBased" | "intensityBased" | "tempBased" | "tempAndIntensityBased";
+  const [markerType, setMarkerType] = useState<MarkerType>("tempAndIntensityBased");
 
   // Main state
   const [currentDayOfYear, setCurrentDayOfYear] = useState(() => {
@@ -179,7 +179,7 @@ function ViewerTool() {
     const se = { x: 225 + diag, y: 200 + diag };
 
     // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
-    if (markerType === "blue") {
+    if (markerType === "timeBased") {
       ctx.save();
       ctx.strokeStyle = colors.blue;
       ctx.lineWidth = 2;
@@ -237,7 +237,353 @@ function ViewerTool() {
     }
 
     // --- Draw yellow markers as dashes at same positions as red, but shifted by 2 months (about 61 days) ---
-    if (markerType === "yellow") {
+
+   if (markerType === "intensityBased") {
+      // These are the target peak intensities
+      const intensities = [0.8, 0.595, 0.4];
+      const year = new Date().getFullYear();
+      const june21 = getJune21DayOfYear(year);
+
+      // --- NEW: Calculate angles for the three top and three bottom dashes ---
+      let markerAngles: number[] = [];
+
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.3) / (1 - 0.3);
+        const cosVal = sunlightCoeff * 2 - 0.5;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays ) % totalDays) * (2 * Math.PI / totalDays) + 3;
+        markerAngles.push(angle);
+      });
+      // Add top and bottom (June 21st and Dec 21st)
+      markerAngles.unshift(-Math.PI / 2); // top
+      markerAngles.push(Math.PI / 2); // bottom
+
+
+      //THESE MARKINGS ARE FOR THE SECOND CHECKBOX
+
+      // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
+      // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 3.65, 5.77, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff00"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 5.77, 6.3, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 6.3, 6.8, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 6.8, 8.9, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#0000ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 8.9, 9.44, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 9.44, 10, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
+        // sunlightCoeff = cos(offset/totalDays * 2PI) + 1 / 2
+        // So: cosVal = sunlightCoeff * 2 - 1
+        const cosVal = sunlightCoeff * 2 - 1;
+        // offset = arccos(cosVal) * totalDays / (2PI)
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        // There are two solutions: one before and one after June 21st. We'll use the one after June 21st.
+        // So markerDay = (june21 + offset) % totalDays
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+
+        // Calculate angle for this marker
+        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
+
+        // Draw a red dash (line) at this angle, same style as blue markers
+        ctx.save();
+        ctx.strokeStyle = colors.red;
+        ctx.lineWidth = 2;
+        const dashLen = 13; // same as blueMarkerLen
+        // Start and end points for the dash, centered on the circle edge
+        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
+        const angleMirror = angle + Math.PI;
+        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
+        ctx.beginPath();
+        ctx.moveTo(x1m, y1m);
+        ctx.lineTo(x2m, y2m);
+        ctx.stroke();
+
+        ctx.restore();
+      });
+
+      // --- NEW: Add red markers at the top (100%) and bottom (19.7%) of the circle ---
+      ctx.save();
+      ctx.strokeStyle = colors.red;
+      ctx.lineWidth = 2;
+      const dashLen = 13;
+
+      // Top (100% intensity, June 21st)
+      const angleTop = -Math.PI / 2;
+      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
+      ctx.beginPath();
+      ctx.moveTo(x1Top, y1Top);
+      ctx.lineTo(x2Top, y2Top);
+      ctx.stroke();
+
+      // Bottom (19.7% intensity, Dec 21st)
+      const angleBottom = Math.PI / 2;
+      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
+      ctx.beginPath();
+      ctx.moveTo(x1Bottom, y1Bottom);
+      ctx.lineTo(x2Bottom, y2Bottom);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    if (markerType === "tempAndIntensityBased") {
+      // These are the target peak intensities
+      const intensities = [0.8, 0.595, 0.4];
+      const year = new Date().getFullYear();
+      const june21 = getJune21DayOfYear(year);
+
+      const coeff = + 0.302;
+
+      // --- NEW: Calculate angles for the three top and three bottom dashes ---
+      let markerAngles: number[] = [];
+
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.3) / (1 - 0.3);
+        const cosVal = sunlightCoeff * 2 - 0.5;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays ) % totalDays) * (2 * Math.PI / totalDays) + 3);
+        markerAngles.push(angle);
+      });
+      // Add top and bottom (June 21st and Dec 21st)
+      markerAngles.unshift(-Math.PI / 2); // top
+      markerAngles.push(Math.PI / 2); // bottom
+
+
+      //THESE MARKINGS ARE FOR THE SECOND CHECKBOX
+
+      // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
+      // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 3.65 + coeff, 5.77 + coeff, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff00"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 5.77 + coeff, 6.3 + coeff, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 6.3 + coeff, 6.8 + coeff, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 6.8 + coeff, 8.9 + coeff, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#0000ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 8.9 + coeff, 9.44 + coeff, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#8888ff"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(225, 200);
+      ctx.arc(225, 200, radius - 1, 9.44 + coeff, 10 + coeff, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = "#ffff88"; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
+        // sunlightCoeff = cos(offset/totalDays * 2PI) + 1 / 2
+        // So: cosVal = sunlightCoeff * 2 - 1
+        const cosVal = sunlightCoeff * 2 - 1;
+        // offset = arccos(cosVal) * totalDays / (2PI)
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        // There are two solutions: one before and one after June 21st. We'll use the one after June 21st.
+        // So markerDay = (june21 + offset) % totalDays
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+
+        // Calculate angle for this marker
+        const angle = coeff + (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays));
+
+        // Draw a red dash (line) at this angle, same style as blue markers
+        ctx.save();
+        ctx.strokeStyle = colors.red;
+        ctx.lineWidth = 2;
+        const dashLen = 13; // same as blueMarkerLen
+        // Start and end points for the dash, centered on the circle edge
+        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
+        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
+        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
+        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
+        const angleMirror = angle + Math.PI;
+        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
+        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
+        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
+        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
+        ctx.beginPath();
+        ctx.moveTo(x1m, y1m);
+        ctx.lineTo(x2m, y2m);
+        ctx.stroke();
+
+        ctx.restore();
+      });
+
+      // --- NEW: Add red markers at the top (100%) and bottom (19.7%) of the circle ---
+      ctx.save();
+      ctx.strokeStyle = colors.red;
+      ctx.lineWidth = 2;
+      const dashLen = 13;
+
+      // Top (100% intensity, June 21st)
+      const angleTop = (-Math.PI / 2) + coeff;
+      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
+      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
+      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
+      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
+      ctx.beginPath();
+      ctx.moveTo(x1Top, y1Top);
+      ctx.lineTo(x2Top, y2Top);
+      ctx.stroke();
+
+      // Bottom (19.7% intensity, Dec 21st)
+      const angleBottom = (Math.PI / 2) + coeff;
+      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
+      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
+      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
+      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
+      ctx.beginPath();
+      ctx.moveTo(x1Bottom, y1Bottom);
+      ctx.lineTo(x2Bottom, y2Bottom);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+    
+    
+    if (markerType === "tempBased") {
       // These are the target peak intensities
       const intensities = [0.8, 0.595, 0.4];
       // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
@@ -414,176 +760,7 @@ function ViewerTool() {
     }
 
     // ---existing code for red markers---
-    if (markerType === "red") {
-      // These are the target peak intensities
-      const intensities = [0.8, 0.595, 0.4];
-      const year = new Date().getFullYear();
-      const june21 = getJune21DayOfYear(year);
-
-      // --- NEW: Calculate angles for the three top and three bottom dashes ---
-      let markerAngles: number[] = [];
-
-      intensities.forEach((intensity) => {
-        const sunlightCoeff = (intensity - 0.3) / (1 - 0.3);
-        const cosVal = sunlightCoeff * 2 - 0.5;
-        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
-        let markerDay = (june21 + Math.round(offset)) % totalDays;
-        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays ) % totalDays) * (2 * Math.PI / totalDays) + 3;
-        markerAngles.push(angle);
-      });
-      // Add top and bottom (June 21st and Dec 21st)
-      markerAngles.unshift(-Math.PI / 2); // top
-      markerAngles.push(Math.PI / 2); // bottom
-
-
-      //THESE MARKINGS ARE FOR THE SECOND CHECKBOX
-
-      // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
-      // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 3.65, 5.77, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff00"; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 5.77, 6.3, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 6.3, 6.8, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 6.8, 8.9, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#0000ff"; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 8.9, 9.44, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(225, 200);
-      ctx.arc(225, 200, radius - 1, 9.44, 10, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      intensities.forEach((intensity) => {
-        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
-        // sunlightCoeff = cos(offset/totalDays * 2PI) + 1 / 2
-        // So: cosVal = sunlightCoeff * 2 - 1
-        const cosVal = sunlightCoeff * 2 - 1;
-        // offset = arccos(cosVal) * totalDays / (2PI)
-        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
-        // There are two solutions: one before and one after June 21st. We'll use the one after June 21st.
-        // So markerDay = (june21 + offset) % totalDays
-        let markerDay = (june21 + Math.round(offset)) % totalDays;
-
-        // Calculate angle for this marker
-        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays);
-
-        // Draw a red dash (line) at this angle, same style as blue markers
-        ctx.save();
-        ctx.strokeStyle = colors.red;
-        ctx.lineWidth = 2;
-        const dashLen = 13; // same as blueMarkerLen
-        // Start and end points for the dash, centered on the circle edge
-        const x1 = 225 + (radius - dashLen / 2) * Math.cos(angle);
-        const y1 = 200 + (radius - dashLen / 2) * Math.sin(angle);
-        const x2 = 225 + (radius + dashLen / 2) * Math.cos(angle);
-        const y2 = 200 + (radius + dashLen / 2) * Math.sin(angle);
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-
-        // --- NEW: Draw mirrored marker on the left side (angle + Math.PI) ---
-        const angleMirror = angle + Math.PI;
-        const x1m = 225 + (radius - dashLen / 2) * Math.cos(angleMirror);
-        const y1m = 200 + (radius - dashLen / 2) * Math.sin(angleMirror);
-        const x2m = 225 + (radius + dashLen / 2) * Math.cos(angleMirror);
-        const y2m = 200 + (radius + dashLen / 2) * Math.sin(angleMirror);
-        ctx.beginPath();
-        ctx.moveTo(x1m, y1m);
-        ctx.lineTo(x2m, y2m);
-        ctx.stroke();
-
-        ctx.restore();
-      });
-
-      // --- NEW: Add red markers at the top (100%) and bottom (19.7%) of the circle ---
-      ctx.save();
-      ctx.strokeStyle = colors.red;
-      ctx.lineWidth = 2;
-      const dashLen = 13;
-
-      // Top (100% intensity, June 21st)
-      const angleTop = -Math.PI / 2;
-      const x1Top = 225 + (radius - dashLen / 2) * Math.cos(angleTop);
-      const y1Top = 200 + (radius - dashLen / 2) * Math.sin(angleTop);
-      const x2Top = 225 + (radius + dashLen / 2) * Math.cos(angleTop);
-      const y2Top = 200 + (radius + dashLen / 2) * Math.sin(angleTop);
-      ctx.beginPath();
-      ctx.moveTo(x1Top, y1Top);
-      ctx.lineTo(x2Top, y2Top);
-      ctx.stroke();
-
-      // Bottom (19.7% intensity, Dec 21st)
-      const angleBottom = Math.PI / 2;
-      const x1Bottom = 225 + (radius - dashLen / 2) * Math.cos(angleBottom);
-      const y1Bottom = 200 + (radius - dashLen / 2) * Math.sin(angleBottom);
-      const x2Bottom = 225 + (radius + dashLen / 2) * Math.cos(angleBottom);
-      const y2Bottom = 200 + (radius + dashLen / 2) * Math.sin(angleBottom);
-      ctx.beginPath();
-      ctx.moveTo(x1Bottom, y1Bottom);
-      ctx.lineTo(x2Bottom, y2Bottom);
-      ctx.stroke();
-
-      ctx.restore();
-    }
+    
 
     // Draw "June 21st" and "December 21st" labels
     ctx.font = `${radius * 0.1}px Arial`;
@@ -1068,10 +1245,9 @@ function ViewerTool() {
         {/* Toggle Dark Mode Button in top right */}
         
         <div className="container1 w-fit justify-center mx-auto flex flex-row">
-          <div id="column1" className="mt-4 ml-20 w-fit rounded-lg">
-            <h1 className="mx-auto text-center text-2xl mt-4 mb-4">Season & Sun Info</h1>
+          <div id="column1" className=" ml-20 w-fit rounded-lg">
             <div className="rounded-lg border-2 border-black bg-white">
-              <h2 className="text-center text-[19px] mt-2 underline">Sun Info - Year View</h2>
+              <h2 className="text-center text-[22px] mt-2 underline">Sun Info - Year View</h2>
               <canvas
                 id="seasonsCanvas"
                 ref={canvasRef}
@@ -1082,35 +1258,47 @@ function ViewerTool() {
               />
               <div className="flex flex-row justify-center mb-4">
                 <div className="flex flex-col pl-8">
+                  <p className='mx-auto pr-4'>Data View: </p>
+    
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="markerType"
-                      id="radioYellowMarkers"
-                      checked={markerType === "yellow"}
-                      onChange={() => setMarkerType("yellow")}
+                      id="radioMarkers4"
+                      checked={markerType === "tempAndIntensityBased"}
+                      onChange={() => setMarkerType("tempAndIntensityBased")}
                     />
-                    Temperature-based Markers
+                    Tempertaure-Intensity-Average
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="markerType"
-                      id="radioRedMarkers"
-                      checked={markerType === "red"}
-                      onChange={() => setMarkerType("red")}
+                      id="tempBasedMarkers"
+                      checked={markerType === "tempBased"}
+                      onChange={() => setMarkerType("tempBased")}
                     />
-                    Sun Intensity-Based Markers
+                    Temperature-based
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <input
                       type="radio"
                       name="markerType"
-                      id="radioBlueMarkers"
-                      checked={markerType === "blue"}
-                      onChange={() => setMarkerType("blue")}
+                      id="intensityBasedMarkers"
+                      checked={markerType === "intensityBased"}
+                      onChange={() => setMarkerType("intensityBased")}
                     />
-                    Time-based Markers
+                    Peak Sun Intesnsity / Daylight Time
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="radio"
+                      name="markerType"
+                      id="timeBasedMarkers"
+                      checked={markerType === "timeBased"}
+                      onChange={() => setMarkerType("timeBased")}
+                    />
+                    Time-based
                   </label>
                 </div>
               </div>
@@ -1119,7 +1307,7 @@ function ViewerTool() {
                 <div className="mx-auto w-fit mb-2.5">
                   <button
                     id="setToTodayButton"
-                    className="mt-4 px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                    className="color2Text mt-4 px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
                     onClick={handleSetToToday}
                   >
                     Set to Today
@@ -1136,7 +1324,7 @@ function ViewerTool() {
             </div>
           </div>
           <div className="middleColumn border-2 rounded-lg h-fit mt-[130px] ml-3 w-[600px] pl-[11px] bg-white pb-3">
-            <h2 className="text-center underline text-lg mt-2">Sun Info - Day View</h2>
+            <h2 className="text-center underline text-[20px] mt-2">Sun Info - Day View</h2>
             <div className="dayViewTool">
               {/* Time selected display */}
               <canvas
@@ -1148,7 +1336,7 @@ function ViewerTool() {
               <div className="mx-auto w-fit mb-2.5">
                 <button
                   id="setToNowButton"
-                  className="px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                  className="color2Text px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
                   onClick={handleSetToNow}
                 >
                   Set to Now
