@@ -574,6 +574,12 @@ body.light, .light .w-screen, .light .bg-gray-50 {
   color: #23272f !important;
 }
 
+.light .colorOverride {
+  color: none !important;
+  border: none !important;
+  background-color: none !important;
+}
+
 .light .color2Text {
   color: white !important;
 }

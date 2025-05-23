@@ -3,6 +3,11 @@ import { useAppContext } from "../app/appContext"; // Add this import
 
 function ViewerTool() {
 
+  const yellow1 = '#ffff00' // strong yellow
+  const yellow2 = '#ffff99' // weaker yellow
+  const blue1 = '#4444aa' //dark blue
+  const blue2 = '#6666cc'// lighter blue
+
   // Add context for dark mode
   const { darkThemeEnabled, setDarkThemeEnabled }: any = useAppContext();
 
@@ -273,7 +278,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 3.65, 5.77, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff00"; // light yellow
+      ctx.fillStyle = yellow1; // light yellow
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -285,7 +290,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 5.77, 6.3, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // light yellow
+      ctx.fillStyle = yellow2; // light yellow
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -297,7 +302,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 6.3, 6.8, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // light yellow
+      ctx.fillStyle = blue2; // light yellow
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -309,7 +314,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 6.8, 8.9, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#0000ff"; // light blue
+      ctx.fillStyle = blue1; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -321,7 +326,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 8.9, 9.44, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // light blue
+      ctx.fillStyle = blue2; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -333,7 +338,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 9.44, 10, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // light blue
+      ctx.fillStyle = yellow2; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -446,7 +451,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 3.65 + coeff, 5.77 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff00"; // light yellow
+      ctx.fillStyle = yellow1; // light yellow
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -458,7 +463,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 5.77 + coeff, 6.3 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // light yellow
+      ctx.fillStyle = yellow2; // light yellow
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -470,7 +475,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 6.3 + coeff, 6.8 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // light yellow
+      ctx.fillStyle = blue2; // light yellow
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -482,7 +487,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 6.8 + coeff, 8.9 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#0000ff"; // light blue
+      ctx.fillStyle = blue1;
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -494,7 +499,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 8.9 + coeff, 9.44 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // light blue
+      ctx.fillStyle = blue2; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -506,7 +511,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 9.44 + coeff, 10 + coeff, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // light blue
+      ctx.fillStyle = yellow2; // light blue
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -626,7 +631,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 7.45, 9.55, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#0000ff"; // red
+      ctx.fillStyle = blue1; // red
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -637,7 +642,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 12.68, 13.21, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // red
+      ctx.fillStyle = yellow2; // red
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -650,7 +655,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 13.21, 13.73, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // red
+      ctx.fillStyle = blue2; // red
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -663,7 +668,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 4.3, 6.4, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff00"; // purple
+      ctx.fillStyle = yellow1; // purple
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -674,7 +679,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 9.55, 10.1, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#8888ff"; // red
+      ctx.fillStyle = blue2; // red
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -687,7 +692,7 @@ function ViewerTool() {
       ctx.arc(circCenterX, circCenterY, radius - 1, 10.1, 10.6, false);
       ctx.closePath();
       ctx.globalAlpha = 1;
-      ctx.fillStyle = "#ffff88"; // red
+      ctx.fillStyle = yellow2; // red
       ctx.fill();
       ctx.globalAlpha = 1;
       ctx.restore();
@@ -982,10 +987,10 @@ function ViewerTool() {
   const updateDisplay = useCallback((dayOfYear: number, totalDays: number, year: number) => {
     // ...existing code...
     if (formattedDateRef.current) formattedDateRef.current.textContent = `Day Selected: ${formatDate(dayOfYear, year)}`;
-    if (sunlightPercentageRef.current) sunlightPercentageRef.current.textContent = `Peak Intensity: ${roundSpec((19.7 + ((100 - 19.7) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
-    if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Intensity: ${roundSpec((12.5 + ((63.7 - 12.5) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
-    if (sunElevationAngleRef.current) sunElevationAngleRef.current.textContent = `Highest Elevation: ${roundSpec((15.5 + calculateSunlightPercentage(dayOfYear, totalDays) * (61.5 - 15.5)), 1)}°`;
-    if (daylightLengthRef.current) daylightLengthRef.current.textContent = `Daylight Time Length: ${roundSpec((6.5 + (calculateSunlightPercentage(dayOfYear, totalDays) * (16.5 - 6.5))), 1)} Hours`;
+    if (sunlightPercentageRef.current) sunlightPercentageRef.current.textContent = `Peak Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
+    if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Intensity: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
+    if (sunElevationAngleRef.current) sunElevationAngleRef.current.textContent = `Highest Sun Elevation: ${roundSpec((15.5 + calculateSunlightPercentage(dayOfYear, totalDays) * (61.5 - 15.5)), 1)}°`;
+    if (daylightLengthRef.current) daylightLengthRef.current.textContent = `Daylight Time: ${roundSpec((6.5 + (calculateSunlightPercentage(dayOfYear, totalDays) * (16.5 - 6.5))), 1)} Hours`;
     if (daylightPercentageRef.current) daylightPercentageRef.current.textContent = `Daylight Percentage: ${roundSpec(calculateSunlightPercentage(dayOfYear, totalDays) * 100, 1)}%`;
     drawCircleAndDot(dayOfYear, totalDays);
   }, [drawCircleAndDot]);
@@ -1281,7 +1286,7 @@ function ViewerTool() {
                 <div id="bottom-features" className="border-x-2 border-b-2 rounded-lg border-none w-full">
 
                   <div id="formattedDate" className="info text-center mt-1 mb-0" ref={formattedDateRef}></div>
-                  <p className="text-center underline mt-[0px] mb-1 text-[16.2px]">Sun Information:</p>
+                  <p className="text-center underline mt-[0px] mb-1 text-[16.2px]">Day Information:</p>
                   <div id="sunlightPercentage" className="info text-center text-[14.8px]" ref={sunlightPercentageRef}></div>
                   <div id="avgSunlightPercentage" className="info text-center text-[15px]" ref={avgSunlightPercentageRef}></div>
                   <div id="sunElevationAngle" className="info text-center text-[15px]" ref={sunElevationAngleRef}></div>
@@ -1397,9 +1402,9 @@ function ViewerTool() {
               </div>
               <p className="mt-[5px] underline text-center text-[15px]">24hr Average Sunlight Intensities</p>
               <div className="w-fit mx-auto mt-1">
-                <p className="">Year's Highest: _____63.7%</p>
-                <p className="">Average: __________38.1%</p>
-                <p className="">Year's Lowest: _____ˍ12.5%</p>
+                <p className="">Year's Highest: _____100%</p>
+                <p className="">Average: __________57.9%</p>
+                <p className="">Year's Lowest: _____ˍ15.8%</p>
               </div>
               <p className="mt-[5px] underline text-center text-[15px]">Year-round Daily-peak Sun Elevation:</p>
               <div className="w-fit mx-auto mt-[4px]">

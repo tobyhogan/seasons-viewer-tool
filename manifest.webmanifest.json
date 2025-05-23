@@ -1,16 +1,16 @@
 {
-  "short_name": "Habitazen",
-  "name": "Habitazen",
+  "short_name": "SeasonsViewer",
+  "name": "SeasonsViewer",
   "description": "A High Quality, Feature Rich Habit Tracker",
   "icons": [
     {
-      "src": "/assets/habitazen-logo-240.png",
+      "src": "/assets/logo-240.png",
       "type": "image/png",
       "sizes": "240x240",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/habitazen-logo-512.png",
+      "src": "/assets/logo-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"

@@ -88,10 +88,10 @@ function Header({ dataUpdate, setDataUpdate}) {
   return (
     <div className='bg-gray-100 dark:bg-grayNew-825'>
       <nav
-        className="flex justify-between p-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200">
+        className="flex justify-between px-3 py-2 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200">
         { session ? 
           <>
-            <Link to="/home" className='mr-6 ml-5 text-[29px]'>SeasonsViewer</Link>
+            <Link to="/home" className='mr-6 ml-5 text-[30.5px]'>SeasonsViewer</Link>
             <div className='justify-end flex flex-row mt-1'>
 
               { location.pathname == '/home' ?
@@ -103,7 +103,7 @@ function Header({ dataUpdate, setDataUpdate}) {
              
               { <button
                   onClick={() => {setPfpNavShown(pfpNavShown => !pfpNavShown)}}
-                  className='mr-3 ml-3'
+                  className='colorOverride border-none mr-3 ml-3'
                 >
                 {pfpNavShown ? <ActiveAccountIcon/> : <InactiveAccountIcon />}
                 
