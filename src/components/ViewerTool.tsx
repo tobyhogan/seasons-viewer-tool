@@ -141,15 +141,15 @@ function ViewerTool() {
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
-    const canvasWidth = 320;
-    const canvasHeight = 320;
+    const canvasWidth = 300;
+    const canvasHeight = 270;
 
     const circCenterX = canvasWidth / 2;
     const circCenterY = canvasHeight / 2;
 
     const pi = 3.141592;
 
-    const radius = 120;
+    const radius = 100;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -994,8 +994,8 @@ function ViewerTool() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const canvasWidth = 320;
-    const canvasHeight = 320;
+    const canvasWidth = 300;
+    const canvasHeight = 270;
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
@@ -1005,13 +1005,13 @@ function ViewerTool() {
     // --- Mouse events for main circle ---
     function handleMouseDown(event: MouseEvent) {
 
-      const canvasWidth = 320;
-      const canvasHeight = 320;
+      const canvasWidth = 300;
+      const canvasHeight = 270;
 
       const circCenterX = canvasWidth / 2;
       const circCenterY = canvasHeight / 2;
 
-      const radius = 120;
+      const radius = 100;
 
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1049,14 +1049,14 @@ function ViewerTool() {
     }
     function handleMouseMove(event: MouseEvent) {
 
-      const canvasWidth = 320;
-      const canvasHeight = 320;
+      const canvasWidth = 300;
+      const canvasHeight = 280;
 
       const circCenterX = canvasWidth / 2;
       const circCenterY = canvasHeight / 2;
 
 
-      const radius = 120;
+      const radius = 100;
 
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1264,34 +1264,34 @@ function ViewerTool() {
         <div className="container1 w-fit justify-center mx-auto flex flex-row mt-2">
           <div id="column1" className=" ml-20 w-fit rounded-lg">
             <div className="rounded-lg border-2 border-black bg-white">
-              <h2 className="text-center text-[22px] mt-2 underline">Sun Info - Year View</h2>
+              <h2 className="text-center text-[18px] mt-2 underline">Sun Info - Year View</h2>
               <canvas
                 id="seasonsCanvas"
                 ref={canvasRef}
                 width={450}
                 height={400}
-                className="border-x-2 border-t-2 rounded-lg border-white mb-[7px]"
+                className="border-x-2 border-t-2 rounded-lg border-none mb-[3px]"
                 style={{ border: '0px solid #ccc' }}
               />
               
               <hr className='border-[#444444]'/>
 
-              <div className="flex flex-row border-white border-0">
+              <div className="flex flex-row border-none border-0">
 
-                <div id="bottom-features" className="border-x-2 border-b-2 rounded-lg border-white w-full">
+                <div id="bottom-features" className="border-x-2 border-b-2 rounded-lg border-none w-full">
 
-                  <div id="formattedDate" className="info text-center mt-1 mb-1" ref={formattedDateRef}></div>
-                  <p className="text-center underline mt-[4px] mb-1 text-[18px]">Sun Information:</p>
-                  <div id="sunlightPercentage" className="info text-center" ref={sunlightPercentageRef}></div>
-                  <div id="avgSunlightPercentage" className="info text-center" ref={avgSunlightPercentageRef}></div>
-                  <div id="sunElevationAngle" className="info text-center" ref={sunElevationAngleRef}></div>
-                  <div id="daylightPercentage" className="info text-center"></div>
-                  <div id="daylightLength" className="info text-center" ref={daylightLengthRef}></div>
+                  <div id="formattedDate" className="info text-center mt-1 mb-0" ref={formattedDateRef}></div>
+                  <p className="text-center underline mt-[0px] mb-1 text-[16.2px]">Sun Information:</p>
+                  <div id="sunlightPercentage" className="info text-center text-[14.8px]" ref={sunlightPercentageRef}></div>
+                  <div id="avgSunlightPercentage" className="info text-center text-[15px]" ref={avgSunlightPercentageRef}></div>
+                  <div id="sunElevationAngle" className="info text-center text-[15px]" ref={sunElevationAngleRef}></div>
+                  <div id="daylightPercentage" className="info text-center text-[15px]"></div>
+                  <div id="daylightLength" className="info text-center text-[15px]" ref={daylightLengthRef}></div>
                 
                   <div className="mx-auto w-fit mt-1 mb-2">
                     <button
                       id="setToTodayButton"
-                      className="color2Text px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                      className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
                       onClick={handleSetToToday}
                     >
                       Set to Today
@@ -1350,26 +1350,26 @@ function ViewerTool() {
             </div>
           </div>
           <div className="middleColumn border-2 rounded-lg h-fit mt-[0px] ml-2 w-[600px] pl-[11px] bg-white pb-3">
-            <h2 className="text-center underline text-[20px] mt-2">Sun Info - Day View</h2>
+            <h2 className="text-center underline text-[18px] mt-3">Sun Info - Day View</h2>
             <div className="dayViewTool">
               {/* Time selected display */}
               <canvas
                 ref={sunAngleCanvasRef}
                 width={540}
-                height={300}
-                style={{ border: '1px solid #ccc', margin: '16px 0' }}
+                height={230}
+                className='mx-auto mt-3 border-2 border-black rounded-lg'
               />
-              <div className="mx-auto w-fit mb-2.5">
+              <div className="mx-auto w-fit mt-4 mb-2.5">
                 <button
                   id="setToNowButton"
-                  className="color2Text px-5 py-2 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[16px]"
+                  className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
                   onClick={handleSetToNow}
                 >
                   Set to Now
                 </button>
               </div>
-              <div id="dayViewTimeSelected" className="text-center text-[16px] mt-2" ref={dayViewTimeSelectedRef}></div>
-              <div id="dayViewCurrentSunAngle" className="text-center text-[16px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
+              <div id="dayViewTimeSelected" className="text-center text-[15px] mt-2" ref={dayViewTimeSelectedRef}></div>
+              <div id="dayViewCurrentSunAngle" className="text-center text-[15px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
             </div>
           </div>
           <div className="rightColumn ml-2">
@@ -1387,34 +1387,34 @@ function ViewerTool() {
                 </select>
               </div>
               <p className="mt-[7px] text-center underline text-[17px]">Sun & Sunlight Information:</p>
-              <p className="mt-2 underline text-center text-[16px]">Year-round Daily-Peak Sun Intensities:</p>
-              <div className="text-left w-fit mx-auto mt-[8px]">
+              <p className="mt-2 underline text-center text-[15px]">Year-round Daily-Peak Sun Intensities:</p>
+              <div className="text-left w-fit mx-auto mt-[4px]">
                 <p className="mt-2">Year's Highest: _____ˍ100%</p>
                 <p className="">75th Percentile: ____ˍ80.0%</p>
                 <p className="">Average: ___________ˍ59.9%</p>
                 <p className="">25th Percentile: ˍ____40.0%</p>
                 <p className="">Year's Lowest: ______ˍ19.7%</p>
               </div>
-              <p className="mt-[8px] underline text-center text-[16px]">24hr Average Sunlight Intensities</p>
-              <div className="w-fit mx-auto mt-2">
+              <p className="mt-[5px] underline text-center text-[15px]">24hr Average Sunlight Intensities</p>
+              <div className="w-fit mx-auto mt-1">
                 <p className="">Year's Highest: _____63.7%</p>
                 <p className="">Average: __________38.1%</p>
                 <p className="">Year's Lowest: _____ˍ12.5%</p>
               </div>
-              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-peak Sun Elevation:</p>
-              <div className="w-fit mx-auto mt-[5px]">
+              <p className="mt-[5px] underline text-center text-[15px]">Year-round Daily-peak Sun Elevation:</p>
+              <div className="w-fit mx-auto mt-[4px]">
                 <p className="">Highest: ______61.5°</p>
                 <p className="">Average: ______38.5°</p>
                 <p className="">Lowest: ______ˍ15.5°</p>
               </div>
-              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daily-Peak True Sun Intensities</p>
-              <div className="w-fit mx-auto mt-2">
+              <p className="mt-[5px] underline text-center text-[15px]">Year-round Daily-Peak True Sun Intensities</p>
+              <div className="w-fit mx-auto mt-1">
                 <p className="">Highest ≈ _____ˍ900W/m²</p>
                 <p className="">Average ≈ _____ˍ537.5W/m²</p>
                 <p className="">Lowest ≈ ______175W/m²</p>
               </div>
-              <p className="mt-[8px] underline text-center text-[16px]">Year-round Daylight Lengths:</p>
-              <div className="w-fit mx-auto mt-2">
+              <p className="mt-[5px] underline text-center text-[15px]">Year-round Daylight Lengths:</p>
+              <div className="w-fit mx-auto mt-1">
                 <p className="">Highest: _____16hrs 32mins</p>
                 <p className="">Average: _____11hrs 0 mins</p>
                 <p className="">Lowest: ______6hrs 32mins</p>
@@ -1429,12 +1429,12 @@ function ViewerTool() {
           </div>
 
           <button
-              onClick={toggleTheme}
-              aria-label="Toggle dark mode"
-              className="w-16 h-16 mr-8 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
-              style={{ fontSize: 24 }}
-            >
-              {darkThemeEnabled ? "🌙" : "☀️"}
+            onClick={toggleTheme}
+            aria-label="Toggle dark mode"
+            className="w-16 h-16 mr-8 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+            style={{ fontSize: 24 }}
+          >
+            {darkThemeEnabled ? "🌙" : "☀️"}
           </button>
         </div>
       </div>

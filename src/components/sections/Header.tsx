@@ -91,14 +91,14 @@ function Header({ dataUpdate, setDataUpdate}) {
         className="flex justify-between p-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200">
         { session ? 
           <>
-            <Link to="/home" className='mr-6 ml-5 text-4xl'>SeasonsViewer</Link>
+            <Link to="/home" className='mr-6 ml-5 text-[29px]'>SeasonsViewer</Link>
             <div className='justify-end flex flex-row mt-1'>
 
               { location.pathname == '/home' ?
-                <Link to="/home" className='mr-2 text-2xl flex mt-0.5'><MdCheckBox size={30} className='mr-1'/>
-                <p className='MobileHidden'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> :
-                <Link to="/home" className='mr-2 text-2xl flex mt-0.5'><MdOutlineCheckBox size={30} className='mr-1'/>
-                <p className='MobileHidden'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> }
+                <Link to="/home" className='mr-2 text-3xl flex mt-0.5'><MdCheckBox size={30} className='mr-1'/>
+                <p className='MobileHidden text-[20px]'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> :
+                <Link to="/home" className='mr-2 text-3xl flex mt-0.5'><MdOutlineCheckBox size={30} className='mr-1'/>
+                <p className='MobileHidden text-[20px]'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> }
 
              
               { <button
