@@ -147,96 +147,43 @@ function ViewerTool() {
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
-    const drawCoords = [1, 2, 3, 4 ,5]
+    const sectorCoords = [
+      [3.65, 5.77], // strong yellow
+      [5.77, 6.3], // lighter yellow, right
+      [6.3, 6.9], // lighter blue, right
+      [6.8, 8.95], // dark blue
+      [8.9, 9.44], // lighter blue, left
+      [9.44, 10] // lighter yellow, left
+    ];
+
+    const colorsList = [yellow1, yellow2, blue2, blue1, blue2, yellow2]
 
 
     function drawShadedSectors(weeksFromJune21) {
 
-      
-      drawCoords.forEach((coord) => {
+      const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
 
+      console.log(radsFromJun21)
+
+      
+      sectorCoords.forEach((coord, index) => {
         console.log(coord)
 
-      })
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(circCenterX, circCenterY);
+        ctx.arc(circCenterX, circCenterY, radius - 1, coord[0] + radsFromJun21, coord[1] + radsFromJun21, false);
 
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 3.65, 5.77, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow1; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 5.77, 6.3, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 6.3, 6.8, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 6.8, 8.9, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue1; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 8.9, 9.44, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 9.44, 10, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
+        ctx.closePath();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = colorsList[index]; // light yellow
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.restore();
       
-
-
-
-    }
+      }
+    
+    )}
 
     const canvasWidth = 300;
     const canvasHeight = 270;
@@ -351,9 +298,9 @@ function ViewerTool() {
 
       // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
       // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
-      
 
       drawShadedSectors(0)
+      
 
       intensities.forEach((intensity) => {
         const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
@@ -457,76 +404,8 @@ function ViewerTool() {
 
       // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
       // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 3.65 + coeff, 5.77 + coeff, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow1; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 5.77 + coeff, 6.3 + coeff, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 6.3 + coeff, 6.8 + coeff, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 6.8 + coeff, 8.9 + coeff, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue1;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 8.9 + coeff, 9.44 + coeff, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 9.44 + coeff, 10 + coeff, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
+     
+      drawShadedSectors(2.5)
 
       intensities.forEach((intensity) => {
         const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
@@ -605,7 +484,7 @@ function ViewerTool() {
     
     if (markerType === "tempBased") {
       // These are the target peak intensities
-      const intensities = [0.8, 0.595, 0.4];
+      const intensities = [0.8, 0.6122, 0.415];
       // The formula for peak intensity is: 19.7 + ((100 - 19.7) * sunlightCoeff)
       // Solve for sunlightCoeff: sunlightCoeff = (peak - 19.7) / (100 - 19.7)
       // For each intensity, calculate the corresponding dayOfYear offset from June 21st
@@ -637,79 +516,9 @@ function ViewerTool() {
       /// THESE MARKINGS ARE FOR THE FIRST CHECKBOX
 
       // --- SHADE: Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3] (red) ---
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 7.45, 9.55, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue1; // red
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 12.68, 13.21, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // red
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
 
 
-      
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 13.21, 13.73, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // red
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      // --- SHADE: Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5] (purple) ---
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 4.3, 6.4, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow1; // purple
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 9.55, 10.1, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // red
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 10.1, 10.6, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // red
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
- 
+      drawShadedSectors(5)
 
       // Draw yellow dashes (lines) at the calculated angles
       ctx.save();
