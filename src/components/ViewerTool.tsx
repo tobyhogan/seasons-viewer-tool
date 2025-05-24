@@ -3,8 +3,6 @@ import { useAppContext } from "../app/appContext"; // Add this import
 
 function ViewerTool() {
 
-  console.log("hi5")
-
   const yellow1 = '#ffff00' // strong yellow
   const yellow2 = '#ffff99' // weaker yellow
   const blue1 = '#4444aa' //dark blue
@@ -145,14 +143,12 @@ function ViewerTool() {
     };
   }
 
-  console.log("hi4")
 
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
     const drawCoords = [1, 2, 3, 4 ,5]
 
-    console.log("hi2")
 
     function drawShadedSectors(weeksFromJune21) {
 
@@ -160,12 +156,9 @@ function ViewerTool() {
       drawCoords.forEach((coord) => {
 
         console.log(coord)
-        console.log("hi")
-        window.alert("hello world")
 
       })
 
-      console.log("hi1")
 
 
       ctx.save();
