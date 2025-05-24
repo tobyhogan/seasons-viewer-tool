@@ -1,0 +1,16 @@
+
+
+
+      let markerAngles: number[] = [];
+
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.3) / (1 - 0.3);
+        const cosVal = sunlightCoeff * 2 - 0.5;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays ) % totalDays) * (2 * Math.PI / totalDays) + 3;
+        markerAngles.push(angle);
+      });
+      // Add top and bottom (June 21st and Dec 21st)
+      markerAngles.unshift(-Math.PI / 2); // top
+      markerAngles.push(Math.PI / 2); // bottom

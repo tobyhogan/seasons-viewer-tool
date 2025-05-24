@@ -19,6 +19,8 @@ import '@mantine/dates/styles.css';
 
 function Home({title, dataUpdate, setDataUpdate}) {
 
+  console.log("hi6")
+
 
   return (
 

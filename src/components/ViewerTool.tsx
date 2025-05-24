@@ -3,6 +3,8 @@ import { useAppContext } from "../app/appContext"; // Add this import
 
 function ViewerTool() {
 
+  console.log("hi5")
+
   const yellow1 = '#ffff00' // strong yellow
   const yellow2 = '#ffff99' // weaker yellow
   const blue1 = '#4444aa' //dark blue
@@ -143,8 +145,105 @@ function ViewerTool() {
     };
   }
 
+  console.log("hi4")
+
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
+
+    const drawCoords = [1, 2, 3, 4 ,5]
+
+    console.log("hi2")
+
+    function drawShadedSectors(weeksFromJune21) {
+
+      
+      drawCoords.forEach((coord) => {
+
+        console.log(coord)
+        console.log("hi")
+        window.alert("hello world")
+
+      })
+
+      console.log("hi1")
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 3.65, 5.77, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = yellow1; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 5.77, 6.3, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = yellow2; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 6.3, 6.8, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = blue2; // light yellow
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 6.8, 8.9, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = blue1; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 8.9, 9.44, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = blue2; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(circCenterX, circCenterY);
+      ctx.arc(circCenterX, circCenterY, radius - 1, 9.44, 10, false);
+      ctx.closePath();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = yellow2; // light blue
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      
+
+
+
+    }
 
     const canvasWidth = 300;
     const canvasHeight = 270;
@@ -253,95 +352,15 @@ function ViewerTool() {
       const june21 = getJune21DayOfYear(year);
 
       // --- NEW: Calculate angles for the three top and three bottom dashes ---
-      let markerAngles: number[] = [];
-
-      intensities.forEach((intensity) => {
-        const sunlightCoeff = (intensity - 0.3) / (1 - 0.3);
-        const cosVal = sunlightCoeff * 2 - 0.5;
-        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
-        let markerDay = (june21 + Math.round(offset)) % totalDays;
-        const angle = -Math.PI / 2 + ((markerDay - june21 + totalDays ) % totalDays) * (2 * Math.PI / totalDays) + 3;
-        markerAngles.push(angle);
-      });
-      // Add top and bottom (June 21st and Dec 21st)
-      markerAngles.unshift(-Math.PI / 2); // top
-      markerAngles.push(Math.PI / 2); // bottom
 
 
       //THESE MARKINGS ARE FOR THE SECOND CHECKBOX
 
       // --- NEW: Shade sectors between the top three dashes (light yellow) and bottom three dashes (light blue) ---
       // Top three dashes: markerAngles[0], markerAngles[1], markerAngles[2], markerAngles[3]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 3.65, 5.77, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow1; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      
 
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 5.77, 6.3, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 6.3, 6.8, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // light yellow
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-      // Bottom three dashes: markerAngles[3], markerAngles[4], markerAngles[5]
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 6.8, 8.9, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue1; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 8.9, 9.44, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = blue2; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
-
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(circCenterX, circCenterY);
-      ctx.arc(circCenterX, circCenterY, radius - 1, 9.44, 10, false);
-      ctx.closePath();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = yellow2; // light blue
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      drawShadedSectors(0)
 
       intensities.forEach((intensity) => {
         const sunlightCoeff = (intensity - 0.197) / (1 - 0.197); // 0.197 = 19.7/100
