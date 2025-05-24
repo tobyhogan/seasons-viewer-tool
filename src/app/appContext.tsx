@@ -44,18 +44,20 @@ const AppContextProvider = ({ children }) => {
           .select()
           .eq('id', session!.user.id)
 
+        if (data && data.length > 0) {
+          var darkThemeEnabledDb = data[0].dark_theme_enabled
 
-        var darkThemeEnabledDb = data![0].dark_theme_enabled
-
-        if (darkThemeEnabledDb) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.remove('light');
-          setDarkThemeEnabled(true)
-        } else if (!darkThemeEnabledDb) {
-          document.documentElement.classList.add('light');
-          document.documentElement.classList.remove('dark');
-          setDarkThemeEnabled(false)
+          if (darkThemeEnabledDb) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            setDarkThemeEnabled(true)
+          } else if (!darkThemeEnabledDb) {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+            setDarkThemeEnabled(false)
+          }
         }
+        // else: do nothing if no data found
       }
       initializeTheme()
     }
