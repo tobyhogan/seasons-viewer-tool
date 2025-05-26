@@ -1092,7 +1092,7 @@ function ViewerTool() {
         <div className="container1 w-fit justify-center mx-auto flex flex-row mt-2">
           <div id="column1" className=" ml-20 w-fit rounded-lg">
             <div className="rounded-lg border-2 border-black bg-white">
-              <h2 className="text-center text-[18px] mt-2 underline">Sun Info - Year View</h2>
+              <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
               <canvas
                 id="seasonsCanvas"
                 ref={canvasRef}
