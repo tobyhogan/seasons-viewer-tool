@@ -36,6 +36,7 @@ function ViewerTool() {
   const formattedDateRef = useRef<HTMLDivElement>(null);
   const sunlightPercentageRef = useRef<HTMLDivElement>(null);
   const avgSunlightPercentageRef = useRef<HTMLDivElement>(null);
+  const temperaturePercentageRef = useRef<HTMLDivElement>(null);
   const daylightLengthRef = useRef<HTMLDivElement>(null);
   const daylightPercentageRef = useRef<HTMLDivElement>(null);
   
@@ -812,6 +813,7 @@ function ViewerTool() {
     if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Sun Intensity: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
     if (sunElevationAngleRef.current) sunElevationAngleRef.current.textContent = `Highest Sun Elevation: ${roundSpec((15.5 + calculateSunlightPercentage(dayOfYear, totalDays) * (61.5 - 15.5)), 1)}°`;
     if (daylightLengthRef.current) daylightLengthRef.current.textContent = `Daylight Time: ${roundSpec((6.5 + (calculateSunlightPercentage(dayOfYear, totalDays) * (16.5 - 6.5))), 1)} Hours`;
+    if (temperaturePercentageRef.current) temperaturePercentageRef.current.textContent = `Relative Temperature: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear - (365 * (5.5/52)), totalDays))), 1)}%`;
     if (daylightPercentageRef.current) daylightPercentageRef.current.textContent = `Daylight Percentage: ${roundSpec(calculateSunlightPercentage(dayOfYear, totalDays) * 100, 1)}%`;
     drawCircleAndDot(dayOfYear, totalDays);
   }, [drawCircleAndDot]);
@@ -1112,6 +1114,7 @@ function ViewerTool() {
                   <div id="avgSunlightPercentage" className="info text-center text-[15px]" ref={avgSunlightPercentageRef}></div>
                   <div id="sunElevationAngle" className="info text-center text-[15px]" ref={sunElevationAngleRef}></div>
                   <div id="daylightPercentage" className="info text-center text-[15px]"></div>
+                  <div id="temperaturePercentage" className="info text-center text-[15px]" ref={temperaturePercentageRef}></div>
                   <div id="daylightLength" className="info text-center text-[15px]" ref={daylightLengthRef}></div>
                 
                   <div className="mx-auto w-fit mt-1 mb-2">
