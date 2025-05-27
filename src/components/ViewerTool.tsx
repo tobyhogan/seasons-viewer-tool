@@ -226,6 +226,16 @@ function ViewerTool() {
     const sw = { x: circCenterX - diag, y: circCenterY + diag };
     const se = { x: circCenterX + diag, y: circCenterY + diag };
 
+    // Helper to draw a perpendicular marker at (x, y) with angle theta
+    const drawDiagonalMarker = (x: number, y: number, angle: number, len: number) => {
+        const dx = Math.cos(angle) * len / 2;
+        const dy = Math.sin(angle) * len / 2;
+        ctx.beginPath();
+        ctx.moveTo(x - dx, y - dy);
+        ctx.lineTo(x + dx, y + dy);
+        ctx.stroke();
+    };
+
     // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
     if (markerType === "timeBased") {
       ctx.save();
@@ -261,16 +271,6 @@ function ViewerTool() {
       ctx.save();
       ctx.strokeStyle = colors.blueLight;
       ctx.lineWidth = 2;
-
-      // Helper to draw a perpendicular marker at (x, y) with angle theta
-      function drawDiagonalMarker(x: number, y: number, angle: number, len: number) {
-          const dx = Math.cos(angle) * len / 2;
-          const dy = Math.sin(angle) * len / 2;
-          ctx.beginPath();
-          ctx.moveTo(x - dx, y - dy);
-          ctx.lineTo(x + dx, y + dy);
-          ctx.stroke();
-      }
 
       // NW: angle = -3 * Math.PI / 4 (perpendicular to radius at NW)
       drawDiagonalMarker(nw.x - 1, nw.y - 1, -3 * Math.PI / 4, 8 + 3);
@@ -1085,12 +1085,12 @@ function ViewerTool() {
 
   // --- Render ---
   return (
-    <div className={`${darkThemeEnabled ? "dark" : "light"}`}>
-      <div className="w-min bg-gray-50 flex flex-row">
+    <div className={`${darkThemeEnabled ? "dark" : "light"} mx-auto bg-gray-50`}>
+      <div className="w-min flex flex-row mx-auto">
         {/* Toggle Dark Mode Button in top right */}
         
-        <div className="container1 w-fit justify-center mt-2 flex">
-          <div id="column1" className=" ml-20 w-fit rounded-lg">
+        <div className="container1 w-max justify-center mt-2 flex">
+          <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
             <div className="rounded-lg border-2 border-black bg-white">
               <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
               <canvas
@@ -1178,7 +1178,7 @@ function ViewerTool() {
                 </div>
             </div>
           </div>
-          <div className="middleColumn border-2 rounded-lg h-fit mt-[0px] ml-2 w-[600px] pl-[11px] bg-white pb-3">
+          <div className="middleColumn border-2 rounded-lg h-fit mt-[0px] ml-2 w-[600px] pl-[11px] bg-white pb-3 mx-auto mb-2">
             <h2 className="text-center underline text-[18px] mt-3">Sun Info - Day View</h2>
             <div className="dayViewTool">
               {/* Time selected display */}
@@ -1202,8 +1202,8 @@ function ViewerTool() {
             </div>
           </div>
           <div className="rightColumn ml-2">
-            <div className="border-2 h-fit rounded-lg p-4 w-fit bg-white">
-              <div className="mb-2">
+            <div className="border-2 h-fit rounded-lg p-4 w-fit bg-white mx-auto mb-2">
+              <div className="mb-2 mx-auto">
                 <label htmlFor="pet-select">Location Chosen:</label>
                 <select
                   name="location"
@@ -1257,15 +1257,15 @@ function ViewerTool() {
             </div>
           </div>
 
-          <button
-            onClick={toggleTheme}
-            aria-label="Toggle dark mode"
-            className="w-16 h-16 mr-8 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
-            style={{ fontSize: 24 }}
-          >
-            {darkThemeEnabled ? "🌙" : "☀️"}
-          </button>
         </div>
+        <button
+          onClick={toggleTheme}
+          aria-label="Toggle dark mode"
+          className="w-16 h-16 mr-8 mt-2.5 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+          style={{ fontSize: 24 }}
+        >
+          {darkThemeEnabled ? "🌙" : "☀️"}
+        </button>
       </div>
     </div>
   );
