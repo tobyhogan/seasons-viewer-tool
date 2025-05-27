@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppContext } from "../app/appContext"; // Add this import
 
+import { IoMdMoon, IoMdSunny } from "react-icons/io";
+
 function ViewerTool() {
 
   const yellow1 = '#ffff00' // strong yellow
@@ -149,17 +151,17 @@ function ViewerTool() {
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
     const sectorCoords = [
-      [3.65, 5.77], // strong yellow
-      [5.77, 6.3], // lighter yellow, right
-      [6.3, 6.9], // lighter blue, right
-      [6.8, 8.95], // dark blue
-      [8.9, 9.44], // lighter blue, left
-      [9.44, 10] // lighter yellow, left
+      [3.65, 5.77, yellow1], // strong yellow
+      [5.77, 6.3, yellow2], // lighter yellow, right
+      [6.3, 6.9, blue2], // lighter blue, right
+      [6.8, 8.95, blue1], // dark blue
+      [8.9, 9.44, blue2], // lighter blue, left
+      [9.44, 10, yellow2] // lighter yellow, left
     ];
     
     
     
-    const colorsList = [yellow1, yellow2, blue2, blue1, blue2, yellow2]
+    //const colorsList = [yellow1, yellow2, blue2, blue1, blue2, yellow2]
 
 
     function drawMarkersAndSectors(weeksFromJune21) {
@@ -176,7 +178,7 @@ function ViewerTool() {
   
         ctx.closePath();
         ctx.globalAlpha = 1;
-        ctx.fillStyle = colorsList[index]; // light yellow
+        ctx.fillStyle = sectorCoords[index][2]; // light yellow
         ctx.fill();
         ctx.globalAlpha = 1;
         ctx.restore();
@@ -209,7 +211,7 @@ function ViewerTool() {
         const angleMirror = angle + Math.PI;
 
         ctx.save();
-        ctx.strokeStyle = colors.red;
+        ctx.strokeStyle = "red";
         ctx.lineWidth = 2;
         const dashLen = 13;
 
@@ -235,7 +237,7 @@ function ViewerTool() {
       });
 
       ctx.save();
-      ctx.strokeStyle = colors.red;
+      ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
       const dashLen = 13;
 
@@ -349,7 +351,7 @@ function ViewerTool() {
       ctx.restore();
 
       ctx.save();
-      ctx.strokeStyle = colors.blueLight;
+      ctx.strokeStyle = colors.blue;
       ctx.lineWidth = 2;
 
       // NW: angle = -3 * Math.PI / 4 (perpendicular to radius at NW)
@@ -604,7 +606,7 @@ function ViewerTool() {
     if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Sun Intensity: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
     if (sunElevationAngleRef.current) sunElevationAngleRef.current.textContent = `Highest Sun Elevation: ${roundSpec((15.5 + calculateSunlightPercentage(dayOfYear, totalDays) * (61.5 - 15.5)), 1)}°`;
     if (daylightLengthRef.current) daylightLengthRef.current.textContent = `Daylight Time: ${roundSpec((6.5 + (calculateSunlightPercentage(dayOfYear, totalDays) * (16.5 - 6.5))), 1)} Hours`;
-    if (temperaturePercentageRef.current) temperaturePercentageRef.current.textContent = `Relative Temperature: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear - (365 * (5.5/52)), totalDays))), 1)}%`;
+    if (temperaturePercentageRef.current) temperaturePercentageRef.current.textContent = `24hr Relative Temperature: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear - (365 * (5.5/52)), totalDays))), 1)}%`;
     if (daylightPercentageRef.current) daylightPercentageRef.current.textContent = `Daylight Percentage: ${roundSpec(calculateSunlightPercentage(dayOfYear, totalDays) * 100, 1)}%`;
     drawCircleAndDot(dayOfYear, totalDays);
   }, [drawCircleAndDot]);
@@ -880,7 +882,7 @@ function ViewerTool() {
       <div className="w-min flex flex-row mx-auto">
         {/* Toggle Dark Mode Button in top right */}
         
-        <div className="container1 w-max justify-center mt-2 flex">
+        <div className="container1 w-max justify-center mt-2 flex h-max bg-gray-50">
           <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
             <div className="rounded-lg border-2 border-black bg-white">
               <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
@@ -951,7 +953,7 @@ function ViewerTool() {
                         checked={markerType === "intensityBased"}
                         onChange={() => setMarkerType("intensityBased")}
                       />
-                      Peak Sun Intesnsity / Daylight Time
+                      Peak Sun Intensity / Daylight Time
                     </label>
                     <label className="flex items-center gap-2 text-sm">
                       <input
@@ -1052,10 +1054,12 @@ function ViewerTool() {
         <button
           onClick={toggleTheme}
           aria-label="Toggle dark mode"
-          className="w-16 h-16 mr-8 mt-2.5 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+          className="w-14 h-14 mt-2.5 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
           style={{ fontSize: 24 }}
         >
-          {darkThemeEnabled ? "🌙" : "☀️"}
+          <div className='mx-auto w-fit'>
+            {darkThemeEnabled ? <IoMdMoon size={24}/> : <IoMdSunny size={28}/>}
+          </div>
         </button>
       </div>
     </div>
