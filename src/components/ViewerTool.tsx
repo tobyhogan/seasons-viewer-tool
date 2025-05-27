@@ -1085,8 +1085,8 @@ function ViewerTool() {
 
   // --- Render ---
   return (
-    <div className={darkThemeEnabled ? "dark" : "light"}>
-      <div className="w-screen  bg-gray-50 flex flex-row">
+    <div className={`${darkThemeEnabled ? "dark" : "light"}`}>
+      <div className="w-min bg-gray-50 flex flex-row">
         {/* Toggle Dark Mode Button in top right */}
         
         <div className="container1 w-fit justify-center mx-auto flex flex-row mt-2">
