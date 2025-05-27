@@ -150,22 +150,53 @@ function ViewerTool() {
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
 
-    const sectorCoords = [
-      [3.65, 5.77, yellow1], // strong yellow
-      [5.77, 6.3, yellow2], // lighter yellow, right
-      [6.3, 6.9, blue2], // lighter blue, right
-      [6.8, 8.95, blue1], // dark blue
-      [8.9, 9.44, blue2], // lighter blue, left
-      [9.44, 10, yellow2] // lighter yellow, left
-    ];
-    
+
+
     
     
     //const colorsList = [yellow1, yellow2, blue2, blue1, blue2, yellow2]
-
-
+    
+    
     function drawMarkersAndSectors(weeksFromJune21) {
+      
+      const sectorCoords: [number, number, string][] = [
+        [3.65, 5.77, yellow1], // strong yellow
+        [5.77, 6.3, yellow2], // lighter yellow, right
+        [5.77, 6.3, yellow2], // lighter yellow, right
+        [6.3, 6.9, blue2], // lighter blue, right
+        [6.8, 8.95, blue1], // dark blue
+        [8.9, 9.44, blue2], // lighter blue, left
+        [9.44, 10, yellow2] // lighter yellow, left
+      ];
+      
+      const intensities = [0.8, 0.595, 0.4];
 
+
+      const coords2 = [];
+
+
+      // the below function is supposed to generate coordinates for the sectors based on the input intensitie percentiles
+      
+  
+      intensities.forEach((intensity) => {
+  
+        const year = new Date().getFullYear();
+        const june21 = getJune21DayOfYear(year);
+        const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
+        
+
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+        const cosVal = sunlightCoeff * 2 - 1;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays)) + radsFromJun21;
+        const angleMirror = angle + Math.PI;
+
+        coords2.push(angle, angle + 2)
+  
+      })
+
+      
       const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
       
       sectorCoords.forEach((coord, index) => {
@@ -178,7 +209,7 @@ function ViewerTool() {
   
         ctx.closePath();
         ctx.globalAlpha = 1;
-        ctx.fillStyle = sectorCoords[index][2]; // light yellow
+        ctx.fillStyle = coord[2]; // light yellow
         ctx.fill();
         ctx.globalAlpha = 1;
         ctx.restore();
@@ -186,7 +217,6 @@ function ViewerTool() {
       })
 
 
-      const intensities = [0.8, 0.595, 0.4];
       const year = new Date().getFullYear();
       const june21 = getJune21DayOfYear(year);
 
