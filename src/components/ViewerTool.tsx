@@ -1089,7 +1089,7 @@ function ViewerTool() {
       <div className="w-min bg-gray-50 flex flex-row">
         {/* Toggle Dark Mode Button in top right */}
         
-        <div className="container1 w-fit justify-center mx-auto flex flex-row mt-2">
+        <div className="container1 w-fit justify-center mt-2 flex">
           <div id="column1" className=" ml-20 w-fit rounded-lg">
             <div className="rounded-lg border-2 border-black bg-white">
               <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
