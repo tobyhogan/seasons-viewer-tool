@@ -983,7 +983,7 @@ function ViewerTool() {
                         checked={markerType === "intensityBased"}
                         onChange={() => setMarkerType("intensityBased")}
                       />
-                      Peak Sun Intensity / Daylight Time
+                      Daily Peak Sun Intensity / Daylight Time
                     </label>
                     <label className="flex items-center gap-2 text-sm">
                       <input
