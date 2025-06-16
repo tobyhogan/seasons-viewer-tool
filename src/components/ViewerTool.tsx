@@ -632,7 +632,7 @@ function ViewerTool() {
   const updateDisplay = useCallback((dayOfYear: number, totalDays: number, year: number) => {
     // ...existing code...
     if (formattedDateRef.current) formattedDateRef.current.textContent = `Day Selected: ${formatDate(dayOfYear, year)}`;
-    if (sunlightPercentageRef.current) sunlightPercentageRef.current.textContent = `Peak Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
+    if (sunlightPercentageRef.current) sunlightPercentageRef.current.textContent = `Daily Peak Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
     if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Sun Intensity: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
     if (sunElevationAngleRef.current) sunElevationAngleRef.current.textContent = `Highest Sun Elevation: ${roundSpec((15.5 + calculateSunlightPercentage(dayOfYear, totalDays) * (61.5 - 15.5)), 1)}°`;
     if (daylightLengthRef.current) daylightLengthRef.current.textContent = `Daylight Time: ${roundSpec((6.5 + (calculateSunlightPercentage(dayOfYear, totalDays) * (16.5 - 6.5))), 1)} Hours`;
