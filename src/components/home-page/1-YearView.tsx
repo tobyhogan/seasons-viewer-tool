@@ -111,106 +111,78 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
   // --- Drawing functions ---
   const drawCircleAndDot = useCallback((dayOfYear: number, totalDays: number) => {
-    function drawMarkersAndSectors(weeksFromJune21: number) {
-      const sectorCoords: [number, number, string][] = [
-        [3.65, 5.77, yellow1], // strong yellow
-        [5.77, 6.3, yellow2], // lighter yellow, right
-        [5.77, 6.3, yellow2], // lighter yellow, right
-        [6.3, 6.9, blue2], // lighter blue, right
-        [6.8, 8.95, blue1], // dark blue
-        [8.9, 9.44, blue2], // lighter blue, left
-        [9.44, 10, yellow2] // lighter yellow, left
+    // Helper functions for gradient coloring
+    function hexToRgb(hex: string): [number, number, number] {
+      hex = hex.replace('#', '');
+      if (hex.length === 3) {
+        hex = hex.split('').map(x => x + x).join('');
+      }
+      const num = parseInt(hex, 16);
+      return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+    }
+
+    function lerpColor(rgb1: [number, number, number], rgb2: [number, number, number], t: number): [number, number, number] {
+      return [
+        Math.round(rgb1[0] + (rgb2[0] - rgb1[0]) * t),
+        Math.round(rgb1[1] + (rgb2[1] - rgb1[1]) * t),
+        Math.round(rgb1[2] + (rgb2[2] - rgb1[2]) * t)
       ];
-      
-      const intensities = [0.8, 0.595, 0.4];
-      const coords2 = [];
-      
-      intensities.forEach((intensity) => {
-        const year = new Date().getFullYear();
-        const june21 = getJune21DayOfYear(year);
-        const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
-        
-        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
-        const cosVal = sunlightCoeff * 2 - 1;
-        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
-        let markerDay = (june21 + Math.round(offset)) % totalDays;
-        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays)) + radsFromJun21;
-        const angleMirror = angle + Math.PI;
+    }
 
-        coords2.push(angle, angle + 2)
-      })
+    function rgbToHex(rgb: [number, number, number]): string {
+      return '#' + rgb.map(x => x.toString(16).padStart(2, '0')).join('');
+    }
 
+    function getSectorColor(angle: number, summer1: string, summer2: string, winter1: string, winter2: string): string {
+      // Calculate the y-coordinate at the circumference for this angle
+      const y = circCenterY + radius * Math.sin(angle);
+      // Normalize y to [0,1]: 0 at bottom, 1 at top
+      const yNorm = 1 - ((y - (circCenterY - radius)) / (2 * radius));
+      
+      // Top half: summer, Bottom half: winter
+      if (yNorm >= 0.5) {
+        // Top half: interpolate summer2 (bottom) to summer1 (top)
+        const t = (yNorm - 0.5) / 0.5;
+        const c1 = hexToRgb(summer2);
+        const c2 = hexToRgb(summer1);
+        return rgbToHex(lerpColor(c1, c2, t));
+      } else {
+        // Bottom half: interpolate winter2 (top of bottom) to winter1 (bottom)
+        const t = yNorm / 0.5;
+        const c1 = hexToRgb(winter1);
+        const c2 = hexToRgb(winter2);
+        return rgbToHex(lerpColor(c1, c2, t));
+      }
+    }
+
+    function drawGradientSectors(weeksFromJune21: number) {
+      const numSectors = 64; // Number of sectors for smooth gradient
+      const summer1 = "#ffff00"; // bright yellow (top)
+      const summer2 = "#ffa8a8"; // light pink (mid-top)
+      const winter2 = "#ffa8a8"; // light pink (mid-bottom)
+      const winter1 = "#0077ff"; // blue (bottom)
+      
       const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
       
-      sectorCoords.forEach((coord, index) => {
+      for (let i = 0; i < numSectors; i++) {
+        const angle1 = -Math.PI / 2 + i * 2 * Math.PI / numSectors + radsFromJun21;
+        const angle2 = -Math.PI / 2 + (i + 1) * 2 * Math.PI / numSectors + radsFromJun21;
+        
+        // Use the midpoint angle for color calculation
+        let midAngle = (angle1 + angle2) / 2;
+        if (angle2 < angle1) midAngle += Math.PI;
+        
+        const color = getSectorColor(midAngle, summer1, summer2, winter1, winter2);
+        
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(circCenterX, circCenterY);
-        ctx.arc(circCenterX, circCenterY, radius - 1, coord[0] + radsFromJun21, coord[1] + radsFromJun21, false);
-
+        ctx.arc(circCenterX, circCenterY, radius - 1, angle1, angle2);
         ctx.closePath();
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = coord[2]; // light yellow
+        ctx.fillStyle = color;
         ctx.fill();
-        ctx.globalAlpha = 1;
         ctx.restore();
-      })
-
-      const year = new Date().getFullYear();
-      const june21 = getJune21DayOfYear(year);
-      
-      intensities.forEach((intensity) => {
-        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
-        const cosVal = sunlightCoeff * 2 - 1;
-        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
-        let markerDay = (june21 + Math.round(offset)) % totalDays;
-        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays)) + radsFromJun21;
-        const angleMirror = angle + Math.PI;
-
-        ctx.save();
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 2;
-        const dashLen = 13;
-
-        function drawIntensityMarkers(angle: number) {
-          const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
-          const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
-          const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
-          const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-        }
-
-        drawIntensityMarkers(angle)
-        drawIntensityMarkers(angleMirror)
-
-        ctx.restore();
-      });
-
-      ctx.save();
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 2;
-      const dashLen = 13;
-
-      function drawTopAndBottomMarkers(coeff: number) {
-        const angleTop = (coeff * Math.PI * 0.5) + radsFromJun21;
-
-        const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
-        const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
-        const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
-        const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
-
-        ctx.beginPath();
-        ctx.moveTo(x1Top, y1Top);
-        ctx.lineTo(x2Top, y2Top);
-        ctx.stroke();
       }
-
-      drawTopAndBottomMarkers(1);
-      drawTopAndBottomMarkers(-1);
-      ctx.restore();
     }
 
     const canvasWidth = 300;
@@ -228,6 +200,10 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Always draw the gradient background first
+    drawGradientSectors(0); // Always use default position for the gradient background
+
+    // Draw the circle outline on top of the gradient
     ctx.save();
     ctx.strokeStyle = colors.circle;
     ctx.lineWidth = 2;
@@ -307,16 +283,194 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
       ctx.restore();
     }
 
+    // Draw additional markers based on marker type
     if (markerType === "intensityBased") {
-      drawMarkersAndSectors(0)
+      // Draw intensity markers only (gradient background already drawn)
+      const intensities = [0.8, 0.595, 0.4];
+      const year = new Date().getFullYear();
+      const june21 = getJune21DayOfYear(year);
+      const weeksFromJune21 = 0;
+      const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
+      
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+        const cosVal = sunlightCoeff * 2 - 1;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays)) + radsFromJun21;
+        const angleMirror = angle + Math.PI;
+
+        ctx.save();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        const dashLen = 13;
+
+        function drawIntensityMarkers(angle: number) {
+          const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
+          const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
+          const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
+          const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+
+        drawIntensityMarkers(angle)
+        drawIntensityMarkers(angleMirror)
+
+        ctx.restore();
+      });
+
+      // Draw top and bottom markers
+      ctx.save();
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      const dashLen = 13;
+
+      const drawTopAndBottomMarkers = (coeff: number) => {
+        const angleTop = (coeff * Math.PI * 0.5) + radsFromJun21;
+
+        const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
+        const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
+        const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
+        const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
+
+        ctx.beginPath();
+        ctx.moveTo(x1Top, y1Top);
+        ctx.lineTo(x2Top, y2Top);
+        ctx.stroke();
+      };
+
+      drawTopAndBottomMarkers(1);
+      drawTopAndBottomMarkers(-1);
+      ctx.restore();
     }
 
     if (markerType === "tempAndIntensityBased") {
-      drawMarkersAndSectors(2.5)
+      // Draw intensity markers with temperature offset
+      const intensities = [0.8, 0.595, 0.4];
+      const year = new Date().getFullYear();
+      const june21 = getJune21DayOfYear(year);
+      const weeksFromJune21 = 2.5;
+      const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
+      
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+        const cosVal = sunlightCoeff * 2 - 1;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays)) + radsFromJun21;
+        const angleMirror = angle + Math.PI;
+
+        ctx.save();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        const dashLen = 13;
+
+        function drawIntensityMarkers(angle: number) {
+          const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
+          const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
+          const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
+          const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+
+        drawIntensityMarkers(angle)
+        drawIntensityMarkers(angleMirror)
+
+        ctx.restore();
+      });
+
+      // Draw top and bottom markers
+      ctx.save();
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      const dashLen = 13;
+
+      const drawTopAndBottomMarkers = (coeff: number) => {
+        const angleTop = (coeff * Math.PI * 0.5) + radsFromJun21;
+
+        const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
+        const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
+        const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
+        const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
+
+        ctx.beginPath();
+        ctx.moveTo(x1Top, y1Top);
+        ctx.lineTo(x2Top, y2Top);
+        ctx.stroke();
+      };
+
+      drawTopAndBottomMarkers(1);
+      drawTopAndBottomMarkers(-1);
+      ctx.restore();
     }
     
     if (markerType === "tempBased") {
-      drawMarkersAndSectors(5)
+      // Draw intensity markers with temperature offset
+      const intensities = [0.8, 0.595, 0.4];
+      const year = new Date().getFullYear();
+      const june21 = getJune21DayOfYear(year);
+      const weeksFromJune21 = 5;
+      const radsFromJun21 = (weeksFromJune21 / 52) * 2 * Math.PI;
+      
+      intensities.forEach((intensity) => {
+        const sunlightCoeff = (intensity - 0.197) / (1 - 0.197);
+        const cosVal = sunlightCoeff * 2 - 1;
+        let offset = Math.acos(cosVal) * totalDays / (2 * Math.PI);
+        let markerDay = (june21 + Math.round(offset)) % totalDays;
+        const angle = (-Math.PI / 2 + ((markerDay - june21 + totalDays) % totalDays) * (2 * Math.PI / totalDays)) + radsFromJun21;
+        const angleMirror = angle + Math.PI;
+
+        ctx.save();
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 2;
+        const dashLen = 13;
+
+        function drawIntensityMarkers(angle: number) {
+          const x1 = circCenterX + (radius - dashLen / 2) * Math.cos(angle);
+          const y1 = circCenterY + (radius - dashLen / 2) * Math.sin(angle);
+          const x2 = circCenterX + (radius + dashLen / 2) * Math.cos(angle);
+          const y2 = circCenterY + (radius + dashLen / 2) * Math.sin(angle);
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        }
+
+        drawIntensityMarkers(angle)
+        drawIntensityMarkers(angleMirror)
+
+        ctx.restore();
+      });
+
+      // Draw top and bottom markers
+      ctx.save();
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      const dashLen = 13;
+
+      const drawTopAndBottomMarkers = (coeff: number) => {
+        const angleTop = (coeff * Math.PI * 0.5) + radsFromJun21;
+
+        const x1Top = circCenterX + (radius - dashLen / 2) * Math.cos(angleTop);
+        const y1Top = circCenterY + (radius - dashLen / 2) * Math.sin(angleTop);
+        const x2Top = circCenterX + (radius + dashLen / 2) * Math.cos(angleTop);
+        const y2Top = circCenterY + (radius + dashLen / 2) * Math.sin(angleTop);
+
+        ctx.beginPath();
+        ctx.moveTo(x1Top, y1Top);
+        ctx.lineTo(x2Top, y2Top);
+        ctx.stroke();
+      };
+
+      drawTopAndBottomMarkers(1);
+      drawTopAndBottomMarkers(-1);
+      ctx.restore();
     }
 
     ctx.font = `${radius * 0.1}px Arial`;
