@@ -338,27 +338,40 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
   };
 
   return (
-    <div className="middleColumn border-2 rounded-lg h-fit mt-[0px] ml-2 w-[600px] pl-[11px] bg-white pb-3 mx-auto mb-2">
-      <h2 className="text-center underline text-[18px] mt-3">Sun Info - Day View</h2>
-      <div className="dayViewTool">
-        {/* Time selected display */}
-        <canvas
-          ref={sunAngleCanvasRef}
-          width={540}
-          height={230}
-          className='mx-auto mt-3 border-2 border-black rounded-lg'
-        />
-        <div className="mx-auto w-fit mt-4 mb-2.5">
-          <button
-            id="setToNowButton"
-            className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
-            onClick={handleSetToNow}
-          >
-            Set to Now
-          </button>
+    <div className="w-fit mx-auto mb-2 animate-fade-in">
+      <div className="modern-card shadow-modern-lg hover:shadow-modern-lg transition-all duration-300 w-[600px]">
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-700 px-6 py-4 rounded-t-2xl">
+          <h2 className="text-center text-xl font-semibold text-gray-800 dark:text-gray-100">
+            🌅 Sun Info - Day View
+          </h2>
         </div>
-        <div id="dayViewTimeSelected" className="text-center text-[15px] mt-2" ref={dayViewTimeSelectedRef}></div>
-        <div id="dayViewCurrentSunAngle" className="text-center text-[15px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
+        <div className="p-6">
+          <div className="dayViewTool">
+            <canvas
+              ref={sunAngleCanvasRef}
+              width={540}
+              height={230}
+              className="mx-auto rounded-xl shadow-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+            />
+            
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-700 dark:to-gray-600 rounded-xl p-4 mt-4">
+              <div className="text-center space-y-2">
+                <div id="dayViewTimeSelected" className="font-medium text-gray-700 dark:text-gray-200" ref={dayViewTimeSelectedRef}></div>
+                <div id="dayViewCurrentSunAngle" className="font-medium text-gray-700 dark:text-gray-200" ref={dayViewCurrentSunAngleRef}></div>
+              </div>
+              
+              <div className="text-center mt-4">
+                <button
+                  id="setToNowButton"
+                  className="btn-success px-6 py-3 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                  onClick={handleSetToNow}
+                >
+                  🕐 Set to Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

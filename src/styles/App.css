@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --gray050: #fcfcfc;
@@ -25,158 +25,304 @@
   --gray875: #101010;
   --gray900: #101010;
   --gray950: #090909;
+  
+  /* Modern color palette */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  
+  --success-50: #f0fdf4;
+  --success-500: #22c55e;
+  --success-600: #16a34a;
+  
+  --warning-50: #fffbeb;
+  --warning-500: #f59e0b;
+  
+  --error-50: #fef2f2;
+  --error-500: #ef4444;
 }
 
 
 * {
-
   margin: 0;
   padding: 0;
-  font-family: 'Nunito', sans-serif;
-
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-sizing: border-box;
 }
 
-/*
-body {
-  background-color: var(--main-bg-color);
-  --main-bg-color: white;
-  }
-  */
-  
-@media only screen and (max-width: 1380px) {
+/* Smooth scrolling and modern base styles */
+html {
+  scroll-behavior: smooth;
+}
 
+body {
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Modern responsive design */
+@media only screen and (max-width: 1380px) {
   .container1 {
     flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
   }
-
-  
 }
-
 
 @media only screen and (min-width: 1380px) {
-
-
   .container1 {
     flex-direction: row;
+    gap: 2rem;
+    padding: 2rem;
   }
-
-
-
-
 }
 
-
-  
+/* Modern light theme */
 .light {
-
-  @media only screen and (max-width: 650px) {
-
-    
-  }
-  
-  @media only screen and (min-width: 651px) {
-    
-    
-  }
-
-
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  transition: all 0.3s ease;
 }
 
-
-
+/* Modern dark theme */
 .dark {
-
-  background-color: rgb(28, 28, 28);
-  
-  color: #e0e0e0;
-  border: white;
-  accent-color: black;
-
-
-  @media only screen and (max-width: 650px) {
-
-    
-  }
-
-  @media only screen and (min-width: 651px) {
-
-    
-  }
-
-  
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+  transition: all 0.3s ease;
 }
 
-/*
-
-.PfpNavPopup {
-  li:hover {
-    text-decoration: underline;
-    }
-    }
-    
-*/
+/* Modern typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
 
 p {
   font-size: 14px;
-  text-decoration: none;
+  line-height: 1.7;
+  color: inherit;
 }
 
-h3 {
-  text-align: center;
-  font-size: larger;
-}
-
-    
+/* Modern button styles */
 button {
-  border: 1px solid;
-  border-radius: 7px;
-  padding: 4px;
+  font-family: inherit;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
 
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Modern form elements */
+input[type="radio"] {
+  accent-color: var(--primary-500);
+  transform: scale(1.1);
+}
+
+select {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 
 
+/* Modern theme system */
 body.dark, .dark .w-screen, .dark .bg-gray-50 {
-  background-color: #181818 !important;
-  color: #e0e0e0 !important;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  color: #e2e8f0 !important;
 }
 
 body.light, .light .w-screen, .light .bg-gray-50 {
-  background-color: #fcfcfc !important;
-  color: #23272f !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  color: #1e293b !important;
 }
 
+/* Modern card styles */
+.modern-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.dark .modern-card {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modern-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Modern button variants */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+  box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(34, 197, 94, 0.3);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, var(--success-600) 0%, #059669 100%);
+  box-shadow: 0 6px 20px 0 rgba(34, 197, 94, 0.4);
+}
+
+/* Color overrides for compatibility */
 .light .colorOverride {
-  color: none !important;
-  border: none !important;
-  background-color: none !important;
+  color: inherit !important;
+  border: inherit !important;
+  background-color: inherit !important;
 }
 
 .light .color2Text {
   color: white !important;
 }
 
-/* Make sure all text in .dark is light, and in .light is dark */
+/* Enhanced text colors */
 .dark, .dark * {
-  color: #e0e0e0 !important;
+  color: #e2e8f0 !important;
 }
 
 .light, .light * {
-  color: #23272f !important;
+  color: #1e293b !important;
 }
 
-/* Fix for Mantine and Tailwind bg-white in dark mode */
+/* Modern border styles */
 .dark .bg-white, .dark.bg-white,
 .dark .border-2, .dark.border-2 {
-  background-color: #23272f !important;
-  color: #e0e0e0 !important;
-  border-color: #444 !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+  backdrop-filter: blur(12px) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
 }
 
-/* Fix for Mantine and Tailwind bg-white in light mode */
 .light .bg-white, .light.bg-white,
 .light .border-2, .light.border-2 {
-  background-color: #fff !important;
-  color: #23272f !important;
-  border-color: #bbb !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(12px) !important;
+  color: #1e293b !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px !important;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out;
+}
+
+/* Modern focus states */
+.focus-modern:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  border-color: var(--primary-500);
+}
+
+/* Enhanced shadows */
+.shadow-modern {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-modern-lg {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.dark .shadow-modern {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.dark .shadow-modern-lg {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
 }

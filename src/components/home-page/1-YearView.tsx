@@ -666,85 +666,102 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
   };
 
   return (
-    <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
-      <div className="rounded-lg border-2 border-black bg-white">
-        <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
-        <canvas
-          id="seasonsCanvas"
-          ref={canvasRef}
-          width={450}
-          height={400}
-          className="border-x-2 border-t-2 rounded-lg border-none mb-[3px]"
-          style={{ border: '0px solid #ccc' }}
-        />
-        
-        <hr className='border-[#444444]'/>
-
-        <div className="flex flex-row border-none border-0">
-          <div id="bottom-features" className="border-x-2 border-b-2 rounded-lg border-none w-full">
-            <div id="formattedDate" className="info text-center mt-1 mb-0" ref={formattedDateRef}></div>
-            <p className="text-center underline mt-[0px] mb-1 text-[16.2px]">Day Information:</p>
-            <div id="sunlightPercentage" className="info text-center text-[14.8px]" ref={sunlightPercentageRef}></div>
-            <div id="avgSunlightPercentage" className="info text-center text-[15px]" ref={avgSunlightPercentageRef}></div>
-            <div id="sunElevationAngle" className="info text-center text-[15px]" ref={sunElevationAngleRef}></div>
-            <div id="daylightPercentage" className="info text-center text-[15px]"></div>
-            <div id="temperaturePercentage" className="info text-center text-[15px]" ref={temperaturePercentageRef}></div>
-            <div id="daylightLength" className="info text-center text-[15px]" ref={daylightLengthRef}></div>
+    <div id="column1" className="w-fit mx-auto mb-2 animate-fade-in">
+      <div className="modern-card shadow-modern-lg hover:shadow-modern-lg transition-all duration-300">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 px-6 py-4 rounded-t-2xl">
+          <h2 className="text-center text-xl font-semibold text-gray-800 dark:text-gray-100 mb-0">
+            🌞 Sun Info - Year View
+          </h2>
+        </div>
+        <div className="p-6">
+          <canvas
+            id="seasonsCanvas"
+            ref={canvasRef}
+            width={450}
+            height={400}
+            className="mb-4 rounded-xl shadow-lg"
+          />
           
-            <div className="mx-auto w-fit mt-1 mb-2">
-              <button
-                id="setToTodayButton"
-                className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
-                onClick={handleSetToToday}
-              >
-                Set to Today
-              </button>
-            </div>
+          <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+            <div id="bottom-features" className="space-y-4">
+              <div id="formattedDate" className="text-center font-medium text-lg text-gray-700 dark:text-gray-200" ref={formattedDateRef}></div>
+              
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-gray-700 dark:to-gray-600 rounded-xl p-4">
+                <p className="text-center font-semibold text-gray-800 dark:text-gray-100 mb-3 text-base">
+                  📊 Day Information
+                </p>
+                <div className="space-y-2 text-sm">
+                  <div id="sunlightPercentage" className="text-center" ref={sunlightPercentageRef}></div>
+                  <div id="avgSunlightPercentage" className="text-center" ref={avgSunlightPercentageRef}></div>
+                  <div id="sunElevationAngle" className="text-center" ref={sunElevationAngleRef}></div>
+                  <div id="temperaturePercentage" className="text-center" ref={temperaturePercentageRef}></div>
+                  <div id="daylightLength" className="text-center" ref={daylightLengthRef}></div>
+                </div>
+              </div>
+            
+              <div className="text-center">
+                <button
+                  id="setToTodayButton"
+                  className="btn-success px-6 py-3 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
+                  onClick={handleSetToToday}
+                >
+                  📅 Set to Today
+                </button>
+              </div>
 
-            <hr className='border-t-1 border-[#888888] w-full'/>
-
-            <p className='mx-auto pr-4 ml-8 pt-1'>Data View: </p>
-            <div className='pl-12 pb-1'>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="markerType"
-                  id="radioMarkers4"
-                  checked={markerType === "tempAndIntensityBased"}
-                  onChange={() => setMarkerType("tempAndIntensityBased")}
-                />
-                Tempertaure-Intensity-Average
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="markerType"
-                  id="tempBasedMarkers"
-                  checked={markerType === "tempBased"}
-                  onChange={() => setMarkerType("tempBased")}
-                />
-                Temperature-based
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="markerType"
-                  id="intensityBasedMarkers"
-                  checked={markerType === "intensityBased"}
-                  onChange={() => setMarkerType("intensityBased")}
-                />
-                Daily Peak Sun Intensity / Daylight Time
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="radio"
-                  name="markerType"
-                  id="timeBasedMarkers"
-                  checked={markerType === "timeBased"}
-                  onChange={() => setMarkerType("timeBased")}
-                />
-                Time-based
-              </label>
+              <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-600 rounded-xl p-4">
+                  <p className="font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                    🎯 Data View Options:
+                  </p>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-white dark:hover:bg-gray-600 p-2 rounded-lg transition-colors">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="radioMarkers4"
+                        checked={markerType === "tempAndIntensityBased"}
+                        onChange={() => setMarkerType("tempAndIntensityBased")}
+                        className="w-4 h-4"
+                      />
+                      <span className="font-medium">🌡️ Temperature-Intensity-Average</span>
+                    </label>
+                    <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-white dark:hover:bg-gray-600 p-2 rounded-lg transition-colors">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="tempBasedMarkers"
+                        checked={markerType === "tempBased"}
+                        onChange={() => setMarkerType("tempBased")}
+                        className="w-4 h-4"
+                      />
+                      <span className="font-medium">🌡️ Temperature-based</span>
+                    </label>
+                    <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-white dark:hover:bg-gray-600 p-2 rounded-lg transition-colors">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="intensityBasedMarkers"
+                        checked={markerType === "intensityBased"}
+                        onChange={() => setMarkerType("intensityBased")}
+                        className="w-4 h-4"
+                      />
+                      <span className="font-medium">☀️ Daily Peak Sun Intensity / Daylight Time</span>
+                    </label>
+                    <label className="flex items-center gap-3 text-sm cursor-pointer hover:bg-white dark:hover:bg-gray-600 p-2 rounded-lg transition-colors">
+                      <input
+                        type="radio"
+                        name="markerType"
+                        id="timeBasedMarkers"
+                        checked={markerType === "timeBased"}
+                        onChange={() => setMarkerType("timeBased")}
+                        className="w-4 h-4"
+                      />
+                      <span className="font-medium">⏰ Time-based</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

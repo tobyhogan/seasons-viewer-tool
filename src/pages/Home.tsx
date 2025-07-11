@@ -28,33 +28,39 @@ function ViewerTool() {
 
   // --- Render ---
   return (
-    <div className={`${darkThemeEnabled ? "dark" : "light"} mx-auto bg-gray-50`}>
-      <div className="w-min flex flex-row mx-auto">
-        <div className="container1 w-max justify-center mt-2 flex h-max bg-gray-50">
-          <YearView 
-            currentDayOfYear={currentDayOfYear}
-            setCurrentDayOfYear={setCurrentDayOfYear}
-            markerType={markerType}
-            setMarkerType={setMarkerType}
-            darkThemeEnabled={darkThemeEnabled}
-          />
-          <DayView 
-            sunCurveHour={sunCurveHour}
-            setSunCurveHour={setSunCurveHour}
-            darkThemeEnabled={darkThemeEnabled}
-          />
-          <SunInformation />
-        </div>
-        <button
-          onClick={toggleTheme}
-          aria-label="Toggle dark mode"
-          className="w-14 h-14 mt-2.5 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
-          style={{ fontSize: 24 }}
-        >
-          <div className='mx-auto w-fit'>
-            {darkThemeEnabled ? <IoMdMoon size={24}/> : <IoMdSunny size={28}/>}
+    <div className={`${darkThemeEnabled ? "dark" : "light"} min-h-screen transition-all duration-500`}>
+      <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col lg:flex-row justify-center items-start gap-8">
+            <div className="container1 flex flex-col lg:flex-row justify-center items-start gap-6 bg-white/40 dark:bg-gray-800/40 backdrop-blur-lg rounded-3xl p-6 shadow-2xl border border-white/20 dark:border-gray-700/30">
+              <YearView 
+                currentDayOfYear={currentDayOfYear}
+                setCurrentDayOfYear={setCurrentDayOfYear}
+                markerType={markerType}
+                setMarkerType={setMarkerType}
+                darkThemeEnabled={darkThemeEnabled}
+              />
+              <DayView 
+                sunCurveHour={sunCurveHour}
+                setSunCurveHour={setSunCurveHour}
+                darkThemeEnabled={darkThemeEnabled}
+              />
+              <SunInformation />
+            </div>
+            
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle dark mode"
+              className="fixed top-6 right-6 w-14 h-14 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg text-gray-700 dark:text-gray-200 shadow-lg hover:shadow-xl border border-gray-200/50 dark:border-gray-600/50 transition-all duration-300 hover:scale-110 group z-50"
+            >
+              <div className="flex items-center justify-center w-full h-full">
+                <div className="transition-transform duration-300 group-hover:rotate-12">
+                  {darkThemeEnabled ? <IoMdMoon size={24}/> : <IoMdSunny size={26}/>}
+                </div>
+              </div>
+            </button>
           </div>
-        </button>
+        </div>
       </div>
     </div>
   );
