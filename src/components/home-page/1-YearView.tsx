@@ -168,11 +168,14 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
         const angle1 = -Math.PI / 2 + i * 2 * Math.PI / numSectors + radsFromJun21;
         const angle2 = -Math.PI / 2 + (i + 1) * 2 * Math.PI / numSectors + radsFromJun21;
         
-        // Use the midpoint angle for color calculation
+        // Use the midpoint angle for color calculation, but subtract the rotation offset
+        // so we get the color based on the original position before rotation
         let midAngle = (angle1 + angle2) / 2;
         if (angle2 < angle1) midAngle += Math.PI;
         
-        const color = getSectorColor(midAngle, summer1, summer2, winter1, winter2);
+        // Calculate color based on the non-rotated position
+        const colorAngle = midAngle - radsFromJun21;
+        const color = getSectorColor(colorAngle, summer1, summer2, winter1, winter2);
         
         ctx.save();
         ctx.beginPath();
@@ -200,8 +203,19 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Always draw the gradient background first
-    drawGradientSectors(0); // Always use default position for the gradient background
+    // Draw the gradient background first, with rotation based on marker type
+    let weeksOffset = 0;
+    if (markerType === "tempBased") {
+      weeksOffset = 5;
+    } else if (markerType === "tempAndIntensityBased") {
+      weeksOffset = 2.5;
+    } else if (markerType === "intensityBased") {
+      weeksOffset = 0;
+    } else if (markerType === "timeBased") {
+      weeksOffset = 0;
+    }
+    
+    drawGradientSectors(weeksOffset);
 
     // Draw the circle outline on top of the gradient
     ctx.save();
