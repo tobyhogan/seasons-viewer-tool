@@ -1,0 +1,109 @@
+
+function YearView () {
+
+  
+
+
+
+
+  return (
+
+    <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
+      <div className="rounded-lg border-2 border-black bg-white">
+        <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
+        <canvas
+          id="seasonsCanvas"
+          ref={canvasRef}
+          width={450}
+          height={400}
+          className="border-x-2 border-t-2 rounded-lg border-none mb-[3px]"
+          style={{ border: '0px solid #ccc' }}
+        />
+        
+        <hr className='border-[#444444]'/>
+
+        <div className="flex flex-row border-none border-0">
+
+          <div id="bottom-features" className="border-x-2 border-b-2 rounded-lg border-none w-full">
+
+            <div id="formattedDate" className="info text-center mt-1 mb-0" ref={formattedDateRef}></div>
+            <p className="text-center underline mt-[0px] mb-1 text-[16.2px]">Day Information:</p>
+            <div id="sunlightPercentage" className="info text-center text-[14.8px]" ref={sunlightPercentageRef}></div>
+            <div id="avgSunlightPercentage" className="info text-center text-[15px]" ref={avgSunlightPercentageRef}></div>
+            <div id="sunElevationAngle" className="info text-center text-[15px]" ref={sunElevationAngleRef}></div>
+            <div id="daylightPercentage" className="info text-center text-[15px]"></div>
+            <div id="temperaturePercentage" className="info text-center text-[15px]" ref={temperaturePercentageRef}></div>
+            <div id="daylightLength" className="info text-center text-[15px]" ref={daylightLengthRef}></div>
+          
+            <div className="mx-auto w-fit mt-1 mb-2">
+              <button
+                id="setToTodayButton"
+                className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
+                onClick={handleSetToToday}
+              >
+                Set to Today
+              </button>
+            </div>
+
+            <hr className='border-t-1 border-[#888888] w-full'/>
+
+
+            <p className='mx-auto pr-4 ml-8 pt-1'>Data View: </p>
+            <div className='pl-12 pb-1'>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="markerType"
+                  id="radioMarkers4"
+                  checked={markerType === "tempAndIntensityBased"}
+                  onChange={() => setMarkerType("tempAndIntensityBased")}
+                />
+                Tempertaure-Intensity-Average
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="markerType"
+                  id="tempBasedMarkers"
+                  checked={markerType === "tempBased"}
+                  onChange={() => setMarkerType("tempBased")}
+                />
+                Temperature-based
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="markerType"
+                  id="intensityBasedMarkers"
+                  checked={markerType === "intensityBased"}
+                  onChange={() => setMarkerType("intensityBased")}
+                />
+                Daily Peak Sun Intensity / Daylight Time
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name="markerType"
+                  id="timeBasedMarkers"
+                  checked={markerType === "timeBased"}
+                  onChange={() => setMarkerType("timeBased")}
+                />
+                Time-based
+              </label>
+
+            </div>
+          </div>
+          </div>
+      </div>
+    </div>
+
+
+
+  )
+
+
+
+}
+
+
+
