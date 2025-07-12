@@ -2,6 +2,8 @@
 
 - change color of tick marks on circle from red to black
 
+- change colour of circles to white on the day viewer and the year viewer, white with black outline?
+
 - update rest of accents from green to blue etc , see if a more faded blue would look better on
 the buttons?
 
