@@ -91,11 +91,7 @@ function Header({ dataUpdate, setDataUpdate}) {
         className="flex justify-between px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
         { session ? 
           <>
-            <div>
-              <Link to="/home" className='mr-6 ml-6 text-[30.5px]'>SeasonsViewer</Link>
-
-              <p></p>
-            </div>
+            <Link to="/home" className='mr-6 ml-6 text-[30.5px]'>SeasonsViewer</Link>
             <div className='justify-end flex flex-row mt-1'>
 
               { location.pathname == '/home' ?
