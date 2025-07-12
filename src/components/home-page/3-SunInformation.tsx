@@ -118,12 +118,16 @@ function SunInformation() {
           </div>
         </div>
       </div>
+
+
       <div className="hidden border-2 h-fit mt-4 rounded-lg p-4 w-fit bg-white">
         <p>Three variables to track:</p>
         <p>- Maximum Intensity of Sun</p>
         <p>- Day Length</p>
         <p>- Maximum Height of Sun in Sky</p>
       </div>
+
+      
     </div>
   );
 }

@@ -79,6 +79,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     const sunlightCoeff = ((sunlight + 1) / 2);
 
     return sunlightCoeff;
+    
   }
 
   function formatDate(dayOfYear: number, year: number) {
@@ -538,7 +539,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     if (temperaturePercentageRef.current) temperaturePercentageRef.current.textContent = `24hr Relative Temperature: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear - (365 * (5.5/52)), totalDays))), 1)}%`;
     if (daylightPercentageRef.current) daylightPercentageRef.current.textContent = `Daylight Percentage: ${roundSpec(calculateSunlightPercentage(dayOfYear, totalDays) * 100, 1)}%`;
     drawCircleAndDot(dayOfYear, totalDays);
-    
+
   }, [drawCircleAndDot]);
 
   // --- Main effect for drawing and event listeners ---
