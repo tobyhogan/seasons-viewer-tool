@@ -13,6 +13,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
   // Day view info
   const dayViewTimeSelectedRef = useRef<HTMLDivElement>(null);
   const dayViewCurrentSunAngleRef = useRef<HTMLDivElement>(null);
+  const dayViewCurrentSunRelIntensityRef = useRef<HTMLDivElement>(null);
 
   // Drag state
   const draggingSunDot = useRef(false);
@@ -160,6 +161,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
             Math.sin(lat * toRad) * Math.sin(decl * toRad) +
             Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
         ) * (radius / Math.PI);
+
         return elevation;
     }
 
@@ -218,8 +220,16 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     // --- NEW: Update the current sun angle text in the day view ---
     if (dayViewCurrentSunAngleRef.current) {
         const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
-        dayViewCurrentSunAngleRef.current.textContent = `Current sun angle: ${roundSpec(dotAngle, 1)}°`;
+        dayViewCurrentSunAngleRef.current.textContent = `Current Sun Angle: ${roundSpec(dotAngle, 1)}°`;
     }
+
+    // 
+
+    if (dayViewCurrentSunRelIntensityRef.current) {
+        const relIntensity = 8;
+        dayViewCurrentSunRelIntensityRef.current.textContent = `Relative Sun Intensity: ${relIntensity}`;
+    }
+
   }, [sunCurveHour]);
 
   // --- Effect for sun angle graph ---
@@ -359,6 +369,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         </div>
         <div id="dayViewTimeSelected" className="text-center text-[15px] mt-2" ref={dayViewTimeSelectedRef}></div>
         <div id="dayViewCurrentSunAngle" className="text-center text-[15px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
+        <div id="dayViewCurrentSunRelIntensity" className="text-center text-[15px] mt-1" ref={dayViewCurrentSunRelIntensityRef}></div>
       </div>
     </div>
   );

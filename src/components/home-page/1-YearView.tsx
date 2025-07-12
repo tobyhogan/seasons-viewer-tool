@@ -529,6 +529,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
   // --- Update info display ---
   const updateDisplay = useCallback((dayOfYear: number, totalDays: number, year: number) => {
+
     if (formattedDateRef.current) formattedDateRef.current.textContent = `Day Selected: ${formatDate(dayOfYear, year)}`;
     if (sunlightPercentageRef.current) sunlightPercentageRef.current.textContent = `Daily Peak Sun Intensity: ${roundSpec((19.7 + ((100 - 19.7) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
     if (avgSunlightPercentageRef.current) avgSunlightPercentageRef.current.textContent = `24hr Average Sun Intensity: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear, totalDays))), 1)}%`;
@@ -537,6 +538,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     if (temperaturePercentageRef.current) temperaturePercentageRef.current.textContent = `24hr Relative Temperature: ${roundSpec((15.8 + ((100 - 15.8) * calculateSunlightPercentage(dayOfYear - (365 * (5.5/52)), totalDays))), 1)}%`;
     if (daylightPercentageRef.current) daylightPercentageRef.current.textContent = `Daylight Percentage: ${roundSpec(calculateSunlightPercentage(dayOfYear, totalDays) * 100, 1)}%`;
     drawCircleAndDot(dayOfYear, totalDays);
+    
   }, [drawCircleAndDot]);
 
   // --- Main effect for drawing and event listeners ---
