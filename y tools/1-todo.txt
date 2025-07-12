@@ -1,0 +1,9 @@
+
+
+- change color of tick marks on circle from red to black
+
+- update rest of accents from green to blue etc , see if a more faded blue would look better on
+the buttons?
+
+
+- fix seasons viewer alignment on header
