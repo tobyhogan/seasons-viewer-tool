@@ -86,9 +86,9 @@ function Header({ dataUpdate, setDataUpdate}) {
 
   
   return (
-    <div className='bg-[#eaeaea] dark:bg-grayNew-825 w-screen'>
+    <div className='bg-[#e7e7e7] dark:bg-grayNew-825 w-screen'>
       <nav
-        className="flex justify-between px-3 py-2.5 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
+        className="flex justify-between px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
         { session ? 
           <>
             <Link to="/home" className='mr-6 ml-6 text-[30.5px]'>SeasonsViewer</Link>

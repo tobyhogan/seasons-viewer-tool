@@ -178,5 +178,5 @@ body.light, .light .w-screen, .light .bg-gray-50 {
 .light .border-2, .light.border-2 {
   background-color: #fff !important;
   color: #23272f !important;
-  border-color: #bbb !important;
+  border-color: #d0d0d0 !important;
 }

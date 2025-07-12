@@ -28,7 +28,7 @@ function ViewerTool() {
 
   // --- Render ---
   return (
-    <div className={`${darkThemeEnabled ? "dark" : "light"} mx-auto bg-gray-50`}>
+    <div className={`${darkThemeEnabled ? "dark" : "light"} mx-auto bg-[#f2f2f2]`}>
       <div className="w-min flex flex-row mx-auto">
         <div className="container1 w-max justify-center mt-2 flex h-max">
           <YearView 
@@ -48,7 +48,7 @@ function ViewerTool() {
         <button
           onClick={toggleTheme}
           aria-label="Toggle dark mode"
-          className="w-14 h-14 mt-2.5 rounded-md bg-gray-circCenterY ml-2 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
+          className="w-14 h-14 mt-2.5 rounded-md bg-gray-circCenterY ml-2 bg-gray-50 text-gray-800 shadow hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
           style={{ fontSize: 24 }}
         >
           <div className='mx-auto w-fit'>
