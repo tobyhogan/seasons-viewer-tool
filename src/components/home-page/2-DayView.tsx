@@ -183,17 +183,28 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         const solarTime = hours + timeOffset;
         // Hour angle
         const hourAngle = (solarTime - 12) * 15;
-        // Convert degrees to radians
-        const toRad = Math.PI / radius;
+        // Convert degrees to radians - FIXED
+        const toRad = Math.PI / 180;
         
-        // Calculate elevation
-        var intensity = Math.asin(
+        // Calculate elevation angle in degrees
+        const elevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(decl * toRad) +
             Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
-
-          ) * (radius / Math.PI);
-
-        intensity = intensity / 90;
+        );
+        
+        // Solar intensity is proportional to sine of elevation angle
+        const rawIntensity = Math.max(0, Math.sin(elevationRad));
+        
+        // Calculate maximum possible intensity for this location (summer solstice)
+        const maxDecl = 23.44; // Maximum declination on June 21st
+        const maxElevationRad = Math.asin(
+            Math.sin(lat * toRad) * Math.sin(maxDecl * toRad) +
+            Math.cos(lat * toRad) * Math.cos(maxDecl * toRad)
+        );
+        const maxIntensity = Math.sin(maxElevationRad);
+        
+        // Normalize to get percentage relative to location's maximum
+        const intensity = rawIntensity / maxIntensity;
 
         return intensity;
     }
@@ -205,8 +216,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.lineWidth = 2;
     ctx.beginPath();
     let first = true;
+    const today = new Date(); // Move this up here
     for (let h = 0; h <= 24; h += 0.01) { // smaller step for smoother curve
-        const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0)); // h may be fractional
+        const date = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, h * 60, 0)); // Use today's date
         const angle = Math.max(-18, Math.min(90, solarElevationAngle(date, 51.5074, -0.1278)));
         const x = leftMargin + (h / 24) * graphWidth;
         const y = radius - ((angle + 18) / 108) * 160;
@@ -221,7 +233,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
     // Draw draggable dot on the curve
     const dotHour = sunCurveHour;
-    const dotDate = new Date(Date.UTC(2023, 4, 15, 0, dotHour * 60, 0));
+    const dotDate = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, dotHour * 60, 0));
     const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
     const dotX = leftMargin + (dotHour / 24) * graphWidth;
     const dotY = radius - ((dotAngle + 18) / 108) * 160;
@@ -257,7 +269,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
         var angle = sunIntensityAtTime(dotDate, 51.5074, -0.1278);
 
-        angle = Math.max(-18, Math.min(90, angle) * 90);
+        angle = Math.max(-18, Math.min(61.5, angle) * 61.5);
         
         dayViewCurrentSunAngleRef.current.textContent = `Current Sun Angle: ${roundSpec(angle, 1)}°`;
     }
