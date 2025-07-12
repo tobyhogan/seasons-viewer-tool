@@ -38,12 +38,12 @@ function App() {
           <NavBar dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></NavBar>
           <div className=''>
             <Routes>
-              { session ? <Route path="/" element={<Home title={"Habit" + tabSuffix} dataUpdate={undefined} setDataUpdate={undefined}></Home>} /> : 
-                <Route path="/" element={<Home title={"Habit" + tabSuffix} dataUpdate={undefined} setDataUpdate={undefined}></Home>} /> }
+              { session ? <Route path="/" element={<Home />} /> : 
+                <Route path="/" element={<Home />} /> }
 
               <Route path="*" element={<Page404 title={"404 Page" + tabSuffix}></Page404>} /> 
               <Route path="/landing" element={<Landing title={"Welcome" + tabSuffix}></Landing>} />
-              <Route path="/home" element={<PrivateRoute><Home title={"Home" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Home></PrivateRoute>}/>
+              <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>}/>
               <Route path="/analytics" element={<PrivateRoute><Analytics title={"Analytics" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Analytics></PrivateRoute>} />
               <Route path="/account" element={<PrivateRoute><Account title={"Your Account" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Account></PrivateRoute>} />
               <Route path="/settings" element={<PrivateRoute><Settings title={"Settings" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Settings></PrivateRoute>}/>
