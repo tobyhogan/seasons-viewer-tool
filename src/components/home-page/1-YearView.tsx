@@ -14,6 +14,15 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
   const blue1 = '#4444aa' //dark blue
   const blue2 = '#6666cc'// lighter blue
 
+  /*
+
+  const yellow1 = '#ffff00' // strong yellow
+  const yellow2 = '#ffff99' // weaker yellow
+  const blue1 = '#4444aa' //dark blue
+  const blue2 = '#6666cc'// lighter blue
+
+  */
+
   // --- State and refs ---
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

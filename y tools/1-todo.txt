@@ -4,6 +4,8 @@
 
 - change colour of circles to white on the day viewer and the year viewer, white with black outline?
 
+- test different colours e.g. whtie in middle of circle for yellow-blue gradient?
+
 - update rest of accents from green to blue etc , see if a more faded blue would look better on
 the buttons?
 
