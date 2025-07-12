@@ -667,7 +667,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
   return (
     <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
-      <div className="rounded-lg border-2 border-black bg-white">
+      <div className="rounded-lg border-2">
         <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
         <canvas
           id="seasonsCanvas"
@@ -675,7 +675,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
           width={450}
           height={400}
           className="border-x-2 border-t-2 rounded-lg border-none mb-[3px]"
-          style={{ border: '0px solid #ccc' }}
+          style={{ border: '0px solid #000' }}
         />
         
         <hr className='border-[#444444]'/>

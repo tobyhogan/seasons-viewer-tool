@@ -30,7 +30,7 @@ function ViewerTool() {
   return (
     <div className={`${darkThemeEnabled ? "dark" : "light"} mx-auto bg-gray-50`}>
       <div className="w-min flex flex-row mx-auto">
-        <div className="container1 w-max justify-center mt-2 flex h-max bg-gray-50">
+        <div className="container1 w-max justify-center mt-2 flex h-max">
           <YearView 
             currentDayOfYear={currentDayOfYear}
             setCurrentDayOfYear={setCurrentDayOfYear}
