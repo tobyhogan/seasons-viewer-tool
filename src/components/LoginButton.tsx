@@ -44,7 +44,7 @@ export default function LoginButton({ dataUpdate, setDataUpdate}) {
       {session ? (
         <>
           <button
-            className="py-1 px-2 border-none bg-gray-200 dark:text-grayNew-300 dark:bg-grayNew-650 dark:font-medium"
+            className="py-1 px-2 border-none bg-gray-300 dark:text-grayNew-300 dark:bg-grayNew-650 dark:font-medium"
             onClick={() => {
 
               const { error }: any = supabase.auth.signOut();
@@ -72,7 +72,7 @@ export default function LoginButton({ dataUpdate, setDataUpdate}) {
       ) : (
         <>
           <button
-            className="py-1 px-2 border-none bg-gray-200 dark:text-grayNew-800 dark:font-medium"
+            className="py-1 px-2 border-none bg-[#d4d4d4] dark:text-grayNew-800 dark:font-medium"
             onClick={() => {
 
               //console.log('ok2')
