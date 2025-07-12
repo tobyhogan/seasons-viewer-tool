@@ -351,7 +351,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         <div className="mx-auto w-fit mt-4 mb-2.5">
           <button
             id="setToNowButton"
-            className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
+            className="color2Text px-5 py-[6px] bg-[#6a73d0] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
             onClick={handleSetToNow}
           >
             Set to Now

@@ -691,10 +691,10 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
             <div id="temperaturePercentage" className="info text-center text-[15px]" ref={temperaturePercentageRef}></div>
             <div id="daylightLength" className="info text-center text-[15px]" ref={daylightLengthRef}></div>
           
-            <div className="mx-auto w-fit mt-1 mb-2">
+            <div className="mx-auto w-fit mt-[5px] mb-[7px]">
               <button
                 id="setToTodayButton"
-                className="color2Text px-5 py-1.5 bg-[#09bb4b] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
+                className="color2Text px-4 py-[6px] bg-[#6a73d0] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
                 onClick={handleSetToToday}
               >
                 Set to Today
