@@ -98,23 +98,23 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     // Move "Time" label below the numbers
     ctx.fillText('Time', leftMargin + graphWidth / 2, 210);
 
-    // Y-axis ticks (angle)
-    for (let a = -18; a <= 90; a += 36) {
-        const y = radius - ((a + 18) / 108) * 160;
+    // Y-axis ticks (intensity percentage)
+    for (let i = 0; i <= 100; i += 20) {
+        const y = radius - (i / 100) * 160;
         ctx.beginPath();
         ctx.moveTo(leftMargin - 5, y);
         ctx.lineTo(leftMargin, y);
         ctx.stroke();
-        ctx.fillText(a.toString(), leftMargin - 30, y + 4);
+        ctx.fillText(i.toString() + '%', leftMargin - 35, y + 4);
     }
 
-    // --- Add horizontal y-axis title "Sun angle" ---
+    // --- Add horizontal y-axis title "Sun Intensity" ---
     ctx.save();
     ctx.font = '14px sans-serif';
     ctx.fillStyle = colors.axisLabel;
     ctx.textAlign = 'center';
     // Place the label horizontally, left of the y-axis, vertically centered
-    ctx.fillText('Sun', leftMargin - 55, 100);
+    ctx.fillText('Sun', leftMargin - 60, 95);
     ctx.restore();
 
     ctx.save();
@@ -122,11 +122,11 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.fillStyle = colors.axisLabel;
     ctx.textAlign = 'center';
     // Place the label horizontally, left of the y-axis, vertically centered
-    ctx.fillText('Angle', leftMargin - 55, 115);
+    ctx.fillText('Intensity', leftMargin - 60, 110);
     ctx.restore();
 
-    // Draw dotted line at zero degrees
-    const zeroY = radius - ((0 + 18) / 108) * 160;
+    // Draw dotted line at zero intensity
+    const zeroY = radius;
     ctx.save();
     ctx.setLineDash([4, 4]);
     ctx.strokeStyle = colors.axisDotted;
@@ -137,8 +137,8 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.setLineDash([]);
     ctx.restore();
 
-    // Sun position calculation for London, May 15th
-    // London: lat 51.5074, lon -0.1278, May 15th
+    // Sun position calculation for London
+    // London: lat 51.5074, lon -0.1278
     // We'll use a simple solar position formula for demonstration (not precise for all cases)
     
     function solarElevationAngle(date: Date, lat: number, lon: number) {
@@ -214,16 +214,16 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
 
 
-    // Plot sun angle for each hour (use smaller step for smoothness)
+    // Plot sun intensity for each hour (use smaller step for smoothness)
     ctx.strokeStyle = colors.yellow;
     ctx.lineWidth = 2;
     ctx.beginPath();
     let first = true;
     for (let h = 0; h <= 24; h += 0.01) { // smaller step for smoother curve
         const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, h * 60, 0)); // Use selected date
-        const angle = Math.max(-18, Math.min(90, solarElevationAngle(date, 51.5074, -0.1278)));
+        const intensity = sunIntensityAtTime(date, 51.5074, -0.1278) * 100; // Convert to percentage
         const x = leftMargin + (h / 24) * graphWidth;
-        const y = radius - ((angle + 18) / 108) * 160;
+        const y = radius - (intensity / 100) * 160; // Map 0-100% to graph height
         if (first) {
             ctx.moveTo(x, y);
             first = false;
@@ -236,9 +236,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     // Draw draggable dot on the curve
     const dotHour = sunCurveHour;
     const dotDate = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, dotHour * 60, 0));
-    const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
+    const dotIntensity = sunIntensityAtTime(dotDate, 51.5074, -0.1278) * 100; // Convert to percentage
     const dotX = leftMargin + (dotHour / 24) * graphWidth;
-    const dotY = radius - ((dotAngle + 18) / 108) * 160;
+    const dotY = radius - (dotIntensity / 100) * 160;
 
     // --- NEW: Draw horizontal dotted line at dotY ---
     ctx.save();
@@ -268,12 +268,10 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     }
     // --- NEW: Update the current sun angle text in the day view ---
     if (dayViewCurrentSunAngleRef.current) {
-
-        var angle = sunIntensityAtTime(dotDate, 51.5074, -0.1278);
-
-        angle = Math.max(-18, Math.min(61.5, angle) * 61.5);
+        var angle = solarElevationAngle(dotDate, 51.5074, -0.1278);
+        angle = Math.max(-90, Math.min(90, angle)); // Clamp to reasonable angle range
         
-        dayViewCurrentSunAngleRef.current.textContent = `Current Sun Angle: ${roundSpec(angle, 1)}°`;
+        dayViewCurrentSunAngleRef.current.textContent = `Sun Angle: ${roundSpec(angle, 1)}°`;
     }
 
     // 
@@ -289,11 +287,11 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
   }, [sunCurveHour, selectedDate]); // Add selectedDate to dependencies
 
-  // --- Effect for sun angle graph ---
+  // --- Effect for sun intensity graph ---
   useEffect(() => {
     drawSunAngleGraph();
 
-    // --- Add drag functionality for the sun angle dot ---
+    // --- Add drag functionality for the sun intensity dot ---
     const canvas = sunAngleCanvasRef.current;
     if (!canvas) return;
 
@@ -302,8 +300,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
       const leftMargin = 80;
       const graphWidth = 380;
       const radius = 180;
-      // Sun position calculation for London, May 15th
-      function solarElevationAngle(date: Date, lat: number, lon: number) {
+      
+      // Calculate sun intensity for the given hour
+      function calculateSunIntensity(date: Date, lat: number, lon: number) {
         const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
         const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
         const diff = date.getTime() - start.getTime();
@@ -313,17 +312,25 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         const timeOffset = (lon / 15);
         const solarTime = hours + timeOffset;
         const hourAngle = (solarTime - 12) * 15;
-        const toRad = Math.PI / radius;
-        const elevation = Math.asin(
-          Math.sin(51.5074 * toRad) * Math.sin(decl * toRad) +
-          Math.cos(51.5074 * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
-        ) * (radius / Math.PI);
-        return Math.max(-18, Math.min(90, elevation));
+        const toRad = Math.PI / 180;
+        const elevationRad = Math.asin(
+            Math.sin(lat * toRad) * Math.sin(decl * toRad) +
+            Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
+        );
+        const rawIntensity = Math.max(0, Math.sin(elevationRad));
+        const maxDecl = 23.44;
+        const maxElevationRad = Math.asin(
+            Math.sin(lat * toRad) * Math.sin(maxDecl * toRad) +
+            Math.cos(lat * toRad) * Math.cos(maxDecl * toRad)
+        );
+        const maxIntensity = Math.sin(maxElevationRad);
+        return rawIntensity / maxIntensity;
       }
+      
       const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, hour * 60, 0));
-      const angle = solarElevationAngle(date, 51.5074, -0.1278);
+      const intensity = calculateSunIntensity(date, 51.5074, -0.1278) * 100; // Convert to percentage
       const x = leftMargin + (hour / 24) * graphWidth;
-      const y = radius - ((angle + 18) / 108) * 160;
+      const y = radius - (intensity / 100) * 160; // Map 0-100% to graph height
       return { x, y };
     }
 
@@ -426,7 +433,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
       <h2 className="text-center underline text-[18px] mt-3">Sun Info - Day View</h2>
       
       <div className="dayViewTool">
-        {/* Time selected display */}
+        {/* Sun intensity graph */}
         <canvas
           ref={sunAngleCanvasRef}
           width={540}
