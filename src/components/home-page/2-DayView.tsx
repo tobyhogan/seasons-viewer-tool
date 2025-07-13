@@ -65,7 +65,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     const colors = getCanvasColors();
 
     // --- CHANGED: Increase left margin from 40 to 80 ---
-    const leftMargin = 80;
+    const leftMargin = 95;
     const rightMargin = 40;
     const graphWidth = 380; // was 340, now 380 for similar right margin
     // Axes
@@ -86,7 +86,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.fillStyle = colors.axisLabel;
     ctx.font = '12px sans-serif';
     // X-axis ticks (hours)
-    for (let h = 0; h <= 24; h += 6) {
+    for (let h = 0; h <= 24; h += 1) {
         const x = leftMargin + (h / 24) * graphWidth;
         ctx.beginPath();
         ctx.moveTo(x, radius);
@@ -114,7 +114,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.fillStyle = colors.axisLabel;
     ctx.textAlign = 'center';
     // Place the label horizontally, left of the y-axis, vertically centered
-    ctx.fillText('Sun', leftMargin - 60, 95);
+    ctx.fillText('Sun', leftMargin - 63, 95);
     ctx.restore();
 
     ctx.save();
@@ -122,7 +122,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.fillStyle = colors.axisLabel;
     ctx.textAlign = 'center';
     // Place the label horizontally, left of the y-axis, vertically centered
-    ctx.fillText('Intensity', leftMargin - 60, 110);
+    ctx.fillText('Intensity', leftMargin - 63, 110);
     ctx.restore();
 
     // Draw dotted line at zero intensity
