@@ -3,6 +3,9 @@
 to-do:
 
 
+- just go through the day view code, see if I can organise it and understand how it's made ... 
+
+
 
 - change colour of circles to white on the day viewer and the year viewer, white with black outline?
 

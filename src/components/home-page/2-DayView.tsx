@@ -51,6 +51,8 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
 
+  // Draw Sun Angle Graph is here
+
   const drawSunAngleGraph = useCallback(() => {
     const radius = 180;
 
@@ -85,7 +87,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     // Labels
     ctx.fillStyle = colors.axisLabel;
     ctx.font = '12px sans-serif';
+
     // X-axis ticks (hours)
+
     for (let h = 0; h <= 24; h += 1) {
         const x = leftMargin + (h / 24) * graphWidth;
         ctx.beginPath();
@@ -139,7 +143,10 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
     // Sun position calculation for London
     // London: lat 51.5074, lon -0.1278
+
     // We'll use a simple solar position formula for demonstration (not precise for all cases)
+
+    // this is within drawSunAngleGraph
     
     function solarElevationAngle(date: Date, lat: number, lon: number) {
       // Simple calculation without timezone complications
