@@ -228,7 +228,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
 
 
-    // Plot sun intensity for each hour (use small step for smooth curve)
+    // Plot sun intensity CURVE for each hour (use small step for smooth curve)
+
+
     ctx.strokeStyle = colors.yellow;
     ctx.lineWidth = 2;
     ctx.beginPath();
