@@ -1,6 +1,8 @@
 
 
-- change color of tick marks on circle from red to black
+to-do:
+
+
 
 - change colour of circles to white on the day viewer and the year viewer, white with black outline?
 
@@ -10,8 +12,21 @@
 the buttons?
 
 
-- fix seasons viewer alignment on header
+
 
 
 - add relative daily sun intensity e.g. 80% at 14:00 and then 20% at like midnight or whatever
 for each day, this will also allow you to see the time of day for a given intensity etc ... 
+
+    - this is implemented, but it needs to be fixed to work properly
+
+
+
+
+
+done:
+
+
+- change color of tick marks on circle from red to black
+
+- fix seasons viewer alignment on header
