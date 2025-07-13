@@ -429,8 +429,8 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
   const handleSetToNow = () => {
     const now = new Date();
-    const utcHour = now.getUTCHours() + now.getUTCMinutes() / 60;
-    setSunCurveHour(utcHour);
+    const localHour = now.getHours() + now.getMinutes() / 60;
+    setSunCurveHour(localHour);
     setSelectedDate(new Date()); // Also set selected date to today
     drawSunAngleGraph();
   };
