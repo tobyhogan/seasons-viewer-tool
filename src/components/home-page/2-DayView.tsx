@@ -9,6 +9,9 @@ interface DayViewProps {
 function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewProps) {
   // --- State and refs ---
   const sunAngleCanvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Selected date state - defaults to today
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   // Day view info
   const dayViewTimeSelectedRef = useRef<HTMLDivElement>(null);
@@ -216,9 +219,8 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.lineWidth = 2;
     ctx.beginPath();
     let first = true;
-    const today = new Date(); // Move this up here
     for (let h = 0; h <= 24; h += 0.01) { // smaller step for smoother curve
-        const date = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, h * 60, 0)); // Use today's date
+        const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, h * 60, 0)); // Use selected date
         const angle = Math.max(-18, Math.min(90, solarElevationAngle(date, 51.5074, -0.1278)));
         const x = leftMargin + (h / 24) * graphWidth;
         const y = radius - ((angle + 18) / 108) * 160;
@@ -233,7 +235,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
     // Draw draggable dot on the curve
     const dotHour = sunCurveHour;
-    const dotDate = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, dotHour * 60, 0));
+    const dotDate = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, dotHour * 60, 0));
     const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
     const dotX = leftMargin + (dotHour / 24) * graphWidth;
     const dotY = radius - ((dotAngle + 18) / 108) * 160;
@@ -285,7 +287,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         dayViewCurrentSunRelIntensityRef.current.textContent = `Relative Sun Intensity: ${relIntensity}%`;
     }
 
-  }, [sunCurveHour]);
+  }, [sunCurveHour, selectedDate]); // Add selectedDate to dependencies
 
   // --- Effect for sun angle graph ---
   useEffect(() => {
@@ -318,7 +320,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         ) * (radius / Math.PI);
         return Math.max(-18, Math.min(90, elevation));
       }
-      const date = new Date(Date.UTC(2023, 4, 15, 0, hour * 60, 0));
+      const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, hour * 60, 0));
       const angle = solarElevationAngle(date, 51.5074, -0.1278);
       const x = leftMargin + (hour / 24) * graphWidth;
       const y = radius - ((angle + 18) / 108) * 160;
@@ -381,7 +383,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
       canvas.removeEventListener('mouseup', handleMouseUp);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [sunCurveHour, drawSunAngleGraph]);
+  }, [sunCurveHour, drawSunAngleGraph, setSunCurveHour, selectedDate]); // Add selectedDate and setSunCurveHour to dependencies
 
   // --- Effect for dark mode toggle ---
   useEffect(() => {
@@ -399,12 +401,30 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     const now = new Date();
     const utcHour = now.getUTCHours() + now.getUTCMinutes() / 60;
     setSunCurveHour(utcHour);
+    setSelectedDate(new Date()); // Also set selected date to today
     drawSunAngleGraph();
   };
+
+  // Helper function to format date for input field
+  const formatDateForInput = (date: Date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Handle date change from input
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(event.target.value);
+    setSelectedDate(newDate);
+  };
+
+
 
   return (
     <div className="middleColumn border-2 rounded-lg h-fit mt-[0px] ml-2 w-[600px] pl-[11px] bg-white pb-3 mx-auto mb-2">
       <h2 className="text-center underline text-[18px] mt-3">Sun Info - Day View</h2>
+      
       <div className="dayViewTool">
         {/* Time selected display */}
         <canvas
@@ -413,6 +433,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
           height={230}
           className='mx-auto mt-3 border-2 border-black rounded-lg'
         />
+        
+        {/* Day Selector Section - moved below graph */}
+
         <div className="mx-auto w-fit mt-4 mb-2.5">
           <button
             id="setToNowButton"
@@ -423,6 +446,28 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
           </button>
         </div>
         <div id="dayViewTimeSelected" className="text-center text-[15px] mt-2" ref={dayViewTimeSelectedRef}></div>
+        <div className="mx-auto w-fit mt-4 mb-4 rounded-lg">
+          
+          {/* Date Input */}
+          <div className="mb-3 text-center">
+            <label htmlFor="date-input" className="block font-medium mb-1">Selected Date:</label>
+            <input
+              id="date-input"
+              type="date"
+              value={formatDateForInput(selectedDate)}
+              onChange={handleDateChange}
+              className="border border-gray-400 rounded px-2 py-1 text-sm"
+            />
+          </div>
+        </div>
+        <div className="text-center text-[15px] mt-1 font-medium text-blue-600">
+          Selected Date: {selectedDate.toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </div>
         <div id="dayViewCurrentSunAngle" className="text-center text-[15px] mt-1" ref={dayViewCurrentSunAngleRef}></div>
         <div id="dayViewCurrentSunRelIntensity" className="text-center text-[15px] mt-1" ref={dayViewCurrentSunRelIntensityRef}></div>
       </div>
