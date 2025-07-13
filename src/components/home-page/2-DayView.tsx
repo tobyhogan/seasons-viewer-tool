@@ -142,8 +142,9 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     // We'll use a simple solar position formula for demonstration (not precise for all cases)
     
     function solarElevationAngle(date: Date, lat: number, lon: number) {
-      // Convert date to UTC decimal hours
+      // Simple calculation without timezone complications
       const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+      
       // Day of year
       const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
       const diff = date.getTime() - start.getTime();
@@ -152,26 +153,27 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
       // Declination of the sun
       const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
-      // Time correction for longitude
-      const timeOffset = (lon / 15);
-      // Solar time
-      const solarTime = hours + timeOffset;
+      
+      // Simple solar time calculation
+      const solarTime = hours;
+      
       // Hour angle
       const hourAngle = (solarTime - 12) * 15;
       // Convert degrees to radians
-      const toRad = Math.PI / radius;
+      const toRad = Math.PI / 180;
       // Calculate elevation
       const elevation = Math.asin(
           Math.sin(lat * toRad) * Math.sin(decl * toRad) +
           Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
-      ) * (radius / Math.PI);
+      ) * (180 / Math.PI); // Convert back to degrees
 
       return elevation;
     }
 
     function sunIntensityAtTime(date: Date, lat: number, lon: number) {
-        // Convert date to UTC decimal hours
+        // For London, we need to convert from the hour input (which represents local time) to solar time
         const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+        
         // Day of year
         const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
         const diff = date.getTime() - start.getTime();
@@ -180,25 +182,30 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
         // Declination of the sun
         const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
-        // Time correction for longitude
-        const timeOffset = (lon / 15);
-        // Solar time
-        const solarTime = hours + timeOffset;
-        // Hour angle
+        
+        // For London: longitude correction only (no timezone offset since we want local solar time)
+        // London is at 0° longitude, so no longitude correction needed
+        const solarTime = hours; // Keep it simple for now
+        
+        // Hour angle (degrees from solar noon)
         const hourAngle = (solarTime - 12) * 15;
-        // Convert degrees to radians - FIXED
+        
+        // Convert degrees to radians
         const toRad = Math.PI / 180;
         
-        // Calculate elevation angle in degrees
+        // Calculate elevation angle in radians
         const elevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(decl * toRad) +
             Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
         );
         
-        // Solar intensity is proportional to sine of elevation angle
-        const rawIntensity = Math.max(0, Math.sin(elevationRad));
+        // Convert elevation to degrees
+        const elevationDeg = elevationRad * (180 / Math.PI);
         
-        // Calculate maximum possible intensity for this location (summer solstice)
+        // Solar intensity is 0 when sun is below horizon, proportional to sine of elevation when above
+        const rawIntensity = elevationDeg > 0 ? Math.sin(elevationRad) : 0;
+        
+        // Calculate maximum possible intensity for this location (summer solstice at solar noon)
         const maxDecl = 23.44; // Maximum declination on June 21st
         const maxElevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(maxDecl * toRad) +
@@ -214,21 +221,27 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
 
 
-    // Plot sun intensity for each hour (use smaller step for smoothness)
+    // Plot sun intensity for each hour (use small step for smooth curve)
     ctx.strokeStyle = colors.yellow;
     ctx.lineWidth = 2;
     ctx.beginPath();
     let first = true;
-    for (let h = 0; h <= 24; h += 0.01) { // smaller step for smoother curve
-        const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, h * 60, 0)); // Use selected date
+    
+    for (let h = 0; h <= 24; h += 0.01) { // Much smaller increment for smooth curve
+        const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, h * 60, 0));
         const intensity = sunIntensityAtTime(date, 51.5074, -0.1278) * 100; // Convert to percentage
+        
         const x = leftMargin + (h / 24) * graphWidth;
         const y = radius - (intensity / 100) * 160; // Map 0-100% to graph height
+        
+        // Ensure y coordinates are within bounds
+        const clampedY = Math.max(20, Math.min(radius, y));
+        
         if (first) {
-            ctx.moveTo(x, y);
+            ctx.moveTo(x, clampedY);
             first = false;
         } else {
-            ctx.lineTo(x, y);
+            ctx.lineTo(x, clampedY);
         }
     }
     ctx.stroke();
@@ -303,21 +316,24 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
       
       // Calculate sun intensity for the given hour
       function calculateSunIntensity(date: Date, lat: number, lon: number) {
+        // Simplified calculation matching the main functions
         const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
+        
         const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
         const diff = date.getTime() - start.getTime();
         const oneDay = 1000 * 60 * 60 * 24;
         const dayOfYear = Math.floor(diff / oneDay);
         const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
-        const timeOffset = (lon / 15);
-        const solarTime = hours + timeOffset;
+        
+        const solarTime = hours;
         const hourAngle = (solarTime - 12) * 15;
         const toRad = Math.PI / 180;
         const elevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(decl * toRad) +
             Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
         );
-        const rawIntensity = Math.max(0, Math.sin(elevationRad));
+        const elevationDeg = elevationRad * (180 / Math.PI);
+        const rawIntensity = elevationDeg > 0 ? Math.sin(elevationRad) : 0;
         const maxDecl = 23.44;
         const maxElevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(maxDecl * toRad) +
