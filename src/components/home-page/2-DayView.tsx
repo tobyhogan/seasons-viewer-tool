@@ -35,12 +35,12 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
       blue: isDark ? '#7ecbff' : '#0074d9',
       blueLight: isDark ? '#b3e0ff' : '#7ecbff',
       red: isDark ? '#ff8a80' : '#e53935',
-      yellow: isDark ? '#20e648' : '#1e9636',
+      yellow: isDark ? '#20e648' : '#4444cc',
       green: isDark ? '#7fff9f' : '#09bb4b',
       axis: isDark ? '#e0e6f0' : '#23272f',
-      axisLabel: isDark ? '#e0e6f0' : '#23272f',
+      axisLabel: isDark ? '#e0e6f0' : 'black',
       axisDotted: isDark ? '#b3b3b3' : '#888',
-      dotOutline: isDark ? '#e0e6f0' : '#23272f',
+      dotOutline: isDark ? '#e0e6f0' : 'black',
       bg: isDark ? '#23272f' : '#fff'
     };
   }
@@ -96,7 +96,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     }
 
     // Move "Time" label below the numbers
-    ctx.fillText('Time', leftMargin + graphWidth / 2, 210);
+    ctx.fillText('Hour of Day', (leftMargin + graphWidth / 2) - 30, 212);
 
     // Y-axis ticks (intensity percentage)
     for (let i = 0; i <= 100; i += 20) {
@@ -256,7 +256,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     // --- NEW: Draw horizontal dotted line at dotY ---
     ctx.save();
     ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = colors.green;
+    ctx.strokeStyle = "blue";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(leftMargin, dotY);
@@ -268,7 +268,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     ctx.save();
     ctx.beginPath();
     ctx.arc(dotX, dotY, 6, 0, 2 * Math.PI);
-    ctx.fillStyle = colors.green;
+    ctx.fillStyle = "#6a6aff"
     ctx.strokeStyle = colors.dotOutline;
     ctx.lineWidth = 2;
     ctx.fill();

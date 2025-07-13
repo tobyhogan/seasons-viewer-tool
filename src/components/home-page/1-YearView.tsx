@@ -262,7 +262,8 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     // Draw blue markers (perpendicular to circle) and diagonal markers if enabled
     if (markerType === "timeBased") {
       ctx.save();
-      ctx.strokeStyle = colors.blue;
+      ctx.strokeStyle = '#000;'
+      // ctx.strokeStyle = colors.blue;
       ctx.lineWidth = 2;
       const blueMarkerLen = 13;
       // Top marker (vertical)
@@ -292,7 +293,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
       ctx.restore();
 
       ctx.save();
-      ctx.strokeStyle = colors.blue;
+      ctx.strokeStyle = '#000';
       ctx.lineWidth = 2;
 
       // NW: angle = -3 * Math.PI / 4 (perpendicular to radius at NW)
@@ -325,7 +326,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
         const angleMirror = angle + Math.PI;
 
         ctx.save();
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         const dashLen = 13;
 
@@ -348,7 +349,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
       // Draw top and bottom markers
       ctx.save();
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "black";
       ctx.lineWidth = 2;
       const dashLen = 13;
 
@@ -388,7 +389,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
         const angleMirror = angle + Math.PI;
 
         ctx.save();
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         const dashLen = 13;
 
@@ -411,7 +412,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
       // Draw top and bottom markers
       ctx.save();
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "black";
       ctx.lineWidth = 2;
       const dashLen = 13;
 
@@ -451,7 +452,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
         const angleMirror = angle + Math.PI;
 
         ctx.save();
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         const dashLen = 13;
 
@@ -474,7 +475,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
       // Draw top and bottom markers
       ctx.save();
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "black";
       ctx.lineWidth = 2;
       const dashLen = 13;
 
@@ -522,7 +523,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     ctx.save();
     ctx.beginPath();
     ctx.arc(dotX, dotY, radius * 0.07, 0, 2 * Math.PI);
-    ctx.fillStyle = colors.green;
+    ctx.fillStyle = "black"
     ctx.lineWidth = 2;
     ctx.fill();
     ctx.restore();
@@ -715,8 +716,8 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
             <hr className='border-t-1 border-[#888888] w-full'/>
 
-            <p className='mx-auto pr-4 ml-8 pt-1'>Data View: </p>
-            <div className='pl-12 pb-1'>
+            <p className='mx-auto pr-4 ml-7 pt-1'>Data View: </p>
+            <div className='pl-8 pb-1'>
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="radio"

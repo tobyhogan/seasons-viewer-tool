@@ -167,7 +167,9 @@ function Header({ dataUpdate, setDataUpdate}) {
           : 
           <>
             <Link to="/home" className='mr-6 ml-6 text-4xl'>SeasonsViewer</Link>
-            <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
+            <div className='flex mr-6'>
+              <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
+            </div>
           </> 
         }
       </nav>

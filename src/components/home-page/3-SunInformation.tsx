@@ -4,7 +4,7 @@ function SunInformation() {
   return (
     <div className="rightColumn ml-2">
       <div className="border-2 h-fit rounded-lg p-4 w-fit bg-white mx-auto mb-2">
-        <div className="mb-2 mx-auto">
+        <div className="ml-5 mx-auto">
           <label htmlFor="pet-select" className='mr-3'>Location Chosen:</label>
           <select
             name="location"
@@ -16,9 +16,9 @@ function SunInformation() {
             <option value="tokyo">&nbsp;Tokyo&nbsp;</option>
           </select>
         </div>
-        <p className="mt-[7px] text-center underline text-[17px]">Sun & Sunlight Information:</p>
-        <p className="mt-2 underline text-center text-[15px]">Year-round Daily-Peak Sun Intensities:</p>
-        <div className="text-left w-fit mx-auto mt-[4px] min-w-[280px]">
+        <p className="mt-1 text-center underline text-[16.8px]">Sun & Sunlight Information:</p>
+        <p className="mt-1 underline text-center text-[15px]">Year-round Daily-Peak Sun Intensities:</p>
+        <div className="text-left w-fit mx-auto mt-[4px] min-w-[280px] [&>div>span]:text-[14.0px]">
           <div className="mt-2 flex">
             <span>Year's Highest:</span>
             <span className="flex-1 border-b border-dotted border-black mx-1 mb-1"></span>
