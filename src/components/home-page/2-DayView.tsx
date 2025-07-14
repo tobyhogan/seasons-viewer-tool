@@ -180,7 +180,7 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     function sunIntensityAtTime(date: Date, lat: number, lon: number) {
         // For London, we need to convert from the hour input (which represents local time) to solar time
         const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
-        
+
         // Day of year
         const start = new Date(Date.UTC(date.getUTCFullYear(), 0, 0));
         const diff = date.getTime() - start.getTime();
@@ -189,39 +189,44 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
         // Declination of the sun
         const decl = 23.44 * Math.sin((2 * Math.PI / 365) * (dayOfYear - 81));
-        
+
         // For London: longitude correction only (no timezone offset since we want local solar time)
         // London is at 0° longitude, so no longitude correction needed
         const solarTime = hours; // Keep it simple for now
-        
+
         // Hour angle (degrees from solar noon)
         const hourAngle = (solarTime - 12) * 15;
-        
+
         // Convert degrees to radians
         const toRad = Math.PI / 180;
-        
+
         // Calculate elevation angle in radians
         const elevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(decl * toRad) +
             Math.cos(lat * toRad) * Math.cos(decl * toRad) * Math.cos(hourAngle * toRad)
         );
-        
-        // Convert elevation to degrees
-        const elevationDeg = elevationRad * (180 / Math.PI);
-        
-        // Solar intensity is 0 when sun is below horizon, proportional to sine of elevation when above
-        const rawIntensity = elevationDeg > 0 ? Math.sin(elevationRad) : 0;
-        
+
+        // Solar constant (W/m^2)
+        const I0 = 1000;
+        // Atmospheric extinction coefficient (typical clear sky)
+        const k = 0.18;
+
+        // If sun is below horizon, intensity is zero
+        if (elevationRad <= 0) return 0;
+
+        // Air mass effect: intensity = I0 * sin(elevation) * exp(-k / sin(elevation))
+        const intensityWm2 = I0 * Math.sin(elevationRad) * Math.exp(-k / Math.sin(elevationRad));
+
         // Calculate maximum possible intensity for this location (summer solstice at solar noon)
         const maxDecl = 23.44; // Maximum declination on June 21st
         const maxElevationRad = Math.asin(
             Math.sin(lat * toRad) * Math.sin(maxDecl * toRad) +
             Math.cos(lat * toRad) * Math.cos(maxDecl * toRad)
         );
-        const maxIntensity = Math.sin(maxElevationRad);
-        
+        const maxIntensityWm2 = I0 * Math.sin(maxElevationRad) * Math.exp(-k / Math.sin(maxElevationRad));
+
         // Normalize to get percentage relative to location's maximum
-        const intensity = rawIntensity / maxIntensity;
+        const intensity = intensityWm2 / maxIntensityWm2;
 
         return intensity;
     }
@@ -237,7 +242,8 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
     let first = true;
     
     for (let h = 0; h <= 24; h += 0.01) { // Much smaller increment for smooth curve
-        const date = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, h * 60, 0));
+        // Construct date in local time (not UTC)
+        const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), Math.floor(h), (h % 1) * 60, 0);
         const intensity = sunIntensityAtTime(date, 51.5074, -0.1278) * 100; // Convert to percentage
         
         const x = leftMargin + (h / 24) * graphWidth;
@@ -257,7 +263,8 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
 
     // Draw draggable dot on the curve
     const dotHour = sunCurveHour;
-    const dotDate = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, dotHour * 60, 0));
+    // Construct date in local time (not UTC)
+    const dotDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), Math.floor(dotHour), (dotHour % 1) * 60, 0);
     const dotIntensity = sunIntensityAtTime(dotDate, 51.5074, -0.1278) * 100; // Convert to percentage
     const dotX = leftMargin + (dotHour / 24) * graphWidth;
     const dotY = radius - (dotIntensity / 100) * 160;
