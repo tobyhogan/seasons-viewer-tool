@@ -4,6 +4,7 @@ function Page2() {
   const [brightness, setBrightness] = useState<number>(30);
   const [results, setResults] = useState<Array<{date: Date, times: string[]}>>([]);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [timeOfDay, setTimeOfDay] = useState<'morning' | 'evening' | 'both'>('both');
 
   // Solar calculation functions (copied from DayView component)
   function sunIntensityAtTime(date: Date, lat: number, lon: number) {
@@ -94,6 +95,11 @@ function Page2() {
         const h = Math.floor(bestHour);
         const m = Math.round((bestHour % 1) * 60);
         const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        
+        // Filter based on time of day selection
+        if (timeOfDay === 'morning' && h >= 12) continue;
+        if (timeOfDay === 'evening' && h < 12) continue;
+        
         times.push(timeStr);
       }
     }
@@ -133,9 +139,9 @@ function Page2() {
   };
 
   useEffect(() => {
-    // Calculate on component mount
+    // Calculate on component mount and when timeOfDay changes
     calculateBrightnessTimes();
-  }, []);
+  }, [timeOfDay]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
@@ -168,10 +174,47 @@ function Page2() {
             />
             <span className="text-gray-700 dark:text-gray-300">%</span>
             
+            <div className="flex items-center gap-4 ml-6">
+              <span className="text-gray-700 dark:text-gray-300 font-medium">Show:</span>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="timeOfDay"
+                  value="both"
+                  checked={timeOfDay === 'both'}
+                  onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-gray-700 dark:text-gray-300">Both</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="timeOfDay"
+                  value="morning"
+                  checked={timeOfDay === 'morning'}
+                  onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-gray-700 dark:text-gray-300">Morning</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="timeOfDay"
+                  value="evening"
+                  checked={timeOfDay === 'evening'}
+                  onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-gray-700 dark:text-gray-300">Evening</span>
+              </label>
+            </div>
+            
             <button
               onClick={calculateBrightnessTimes}
               disabled={isCalculating}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md font-medium transition-colors"
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md font-medium transition-colors ml-6"
             >
               {isCalculating ? 'Calculating...' : 'Calculate'}
             </button>
@@ -180,7 +223,7 @@ function Page2() {
           {results.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Times when sky brightness is {brightness}% (next 30 days):
+                Times when sky brightness is {brightness}% ({timeOfDay === 'both' ? 'all day' : timeOfDay}) - next 30 days:
               </h3>
               
               <div className="max-h-96 overflow-y-auto bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
