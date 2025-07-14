@@ -197,7 +197,7 @@ function Header({ dataUpdate, setDataUpdate}) {
           <>
             {/* Left side: Logo and Navigation (when not logged in) */}
             <div className="flex items-center">
-              <Link to="/home" className='mr-6 text-4xl'>SeasonsViewer</Link>
+              <Link to="/main-dashboard" className='mr-6 text-4xl'>SeasonsViewer</Link>
               
               {/* Page Navigation Links */}
               <div className='flex items-center space-x-4'>
