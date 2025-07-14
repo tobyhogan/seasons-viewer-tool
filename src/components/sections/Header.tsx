@@ -87,53 +87,47 @@ function Header({ dataUpdate, setDataUpdate}) {
   
   return (
     <div className='bg-[#e7e7e7] dark:bg-grayNew-825 w-screen'>
-
-
-      <nav
-        className="flex justify-between items-center px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
-
+      <nav className="flex justify-between items-center px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
+        
+        {/* Left side: Logo and Navigation Links */}
         <div className="flex items-center">
-            <Link to="/main-dashboard" className='ml-6 text-4xl'>SeasonsViewer</Link>
+          <Link to="/main-dashboard" className='ml-6 mr-8 text-4xl'>SeasonsViewer</Link>
+          
+          {/* Page Navigation Links */}
+          <div className='flex items-center space-x-4'>
+            <Link 
+              to="/main-dashboard" 
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                location.pathname === '/main-dashboard' || location.pathname === '/home' ? 
+                'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
+                'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              Main Dashboard
+            </Link>
+            <Link 
+              to="/page2" 
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                location.pathname === '/page2' ? 
+                'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
+                'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              Page2
+            </Link>
+          </div>
+        </div>
 
-
+        {/* Right side: User controls or Login button */}
         { session ? 
           <>
-            {/* Left side: Logo and Navigation */}
-
-              {/* Page Navigation Links */}
-              <div className='flex items-center space-x-4'>
-                <Link 
-                  to="/main-dashboard" 
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === '/main-dashboard' || location.pathname === '/home' ? 
-                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
-                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  Main Dashboard
-                </Link>
-                <Link 
-                  to="/page2" 
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === '/page2' ? 
-                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
-                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  Page2
-                </Link>
-              </div>
-            
-            {/* Right side: User controls */}
             <div className='flex flex-row items-center'>
-
               { location.pathname == '/home' ?
                 <Link to="/home" className='mr-2 text-3xl flex mt-0.5'><MdCheckBox size={30} className='mr-1'/>
                 <p className='MobileHidden text-[20px]'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> :
                 <Link to="/home" className='mr-2 text-3xl flex mt-0.5'><MdOutlineCheckBox size={30} className='mr-1'/>
                 <p className='MobileHidden text-[20px]'>Viewer Page</p><div className='MobileHidden mr-4' /></Link> }
 
-             
               { <button
                   onClick={() => {setPfpNavShown(pfpNavShown => !pfpNavShown)}}
                   className='colorOverride border-none mr-3 ml-3'
@@ -148,18 +142,14 @@ function Header({ dataUpdate, setDataUpdate}) {
 
                 <div ref={wrapperRef} className='PfpNavPopup w-48 h-48 absolute mt-12 mr-[1.8vw] bg-grayNew-100 dark:bg-grayNew-800 rounded-md border-1 border-grayNew-400'>
                   <ul className='mt-6 ml-4 text-[16px] [&>li]:mt-2'>
-
-
                     <li className='text-grayNew-600 dark:text-grayNew-200 hover:underline'><Link
                       to="/account"
                       onClick={() => {setPfpNavShown(false)}} 
                       className='flex'
                     >
-
                       { location.pathname == '/account' ? <MdAccountCircle size={22} className='mr-1'/> :
                         <MdOutlineAccountCircle size={22} className='mr-1'/>
                       }
-                      
                       Your Account</Link></li>
 
                     <li className='text-grayNew-600 dark:text-grayNew-200 hover:underline'><Link
@@ -167,12 +157,10 @@ function Header({ dataUpdate, setDataUpdate}) {
                       onClick={() => {setPfpNavShown(false)}} 
                       className='flex'
                     >
-
                     { location.pathname == '/settings' ? 
                       <MdSettings size={22} className='mr-1' /> :
                       <MdOutlineSettings size={22} className='mr-1'/>
                     }
-
                       Settings</Link></li>
                     
                     <div className='ml-1.5'>
@@ -189,52 +177,17 @@ function Header({ dataUpdate, setDataUpdate}) {
                         </a>
                       </li>
                     </div>
-
                   </ul>
-
                 </div>}
-
-
             </div>
           </>
           : 
           <>
-            {/* Left side: Logo and Navigation (when not logged in) */}
-            
-              
-              {/* Page Navigation Links */}
-              <div className='flex items-center space-x-4'>
-                <Link 
-                  to="/main-dashboard" 
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === '/main-dashboard' || location.pathname === '/home' ? 
-                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
-                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  Main Dashboard
-                </Link>
-                <Link 
-                  to="/page2" 
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === '/page2' ? 
-                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
-                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  Page2
-                </Link>
-              </div>
-            
-            {/* Right side: Login button */}
+            <div className='flex mr-6'>
+              <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
+            </div>
           </> 
         }
-
-
-          <div className='flex mr-10'>
-            <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
-          </div>
-        </div>
       </nav>
     </div>
   )
