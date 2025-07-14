@@ -475,20 +475,20 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
         
         {/* Day Selector Section - moved below graph */}
 
-        <div className="mx-auto w-fit mt-4 mb-2.5">
+        <div className="mx-auto w-fit mt-4">
           <button
             id="setToNowButton"
             className="color2Text px-5 py-[6px] bg-[#6a73d0] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
             onClick={handleSetToNow}
           >
-            Set to Now
+            Set to Now/Today
           </button>
         </div>
         <div id="dayViewTimeSelected" className="text-center text-[15px] mt-2" ref={dayViewTimeSelectedRef}></div>
-        <div className="mx-auto w-fit mt-4 mb-4 rounded-lg">
+        <div className="mx-auto w-fit rounded-lg">
           
           {/* Date Input */}
-          <div className="mb-3 text-center">
+          <div className="mt-3 text-center">
             <label htmlFor="date-input" className="block font-medium mb-1">Selected Date:</label>
             <input
               id="date-input"
@@ -498,8 +498,17 @@ function DayView({ sunCurveHour, setSunCurveHour, darkThemeEnabled }: DayViewPro
               className="border border-gray-400 rounded px-2 py-1 text-sm"
             />
           </div>
+          {/*
+          <button
+            id="setToNowButton"
+            className="color2Text mt-3 px-5 py-[6px] bg-[#6a73d0] rounded-md text-white text-md cursor-pointer font-semibold text-[15px]"
+            onClick={handleSetToNow}
+          >
+            Set to Current Date
+          </button>
+          */}
         </div>
-        <div className="text-center text-[15px] mt-1 font-medium text-blue-600">
+        <div className="text-center text-[15px] mt-3 font-medium text-blue-600">
           Selected Date: {selectedDate.toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
