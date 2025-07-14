@@ -274,7 +274,7 @@ function Page2() {
             />
             
             {mode === 'brightness-to-time' && (
-              <div className="flex items-center gap-4 ml-6">
+              <div className="flex items-center gap-4 ml-4">
                 <span className="text-gray-700 dark:text-gray-300 font-medium">Show:</span>
                 <label className="flex items-center gap-2">
                   <input
@@ -315,7 +315,7 @@ function Page2() {
             <button
               onClick={calculateBrightnessTimes}
               disabled={isCalculating}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md font-medium transition-colors ml-6"
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md font-medium transition-colors ml-1"
             >
               {isCalculating ? 'Calculating...' : 'Calculate'}
             </button>
