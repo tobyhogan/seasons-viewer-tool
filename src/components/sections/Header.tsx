@@ -87,14 +87,19 @@ function Header({ dataUpdate, setDataUpdate}) {
   
   return (
     <div className='bg-[#e7e7e7] dark:bg-grayNew-825 w-screen'>
+
+
       <nav
         className="flex justify-between items-center px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
+
+        <div className="flex items-center">
+            <Link to="/main-dashboard" className='ml-6 text-4xl'>SeasonsViewer</Link>
+
+
         { session ? 
           <>
             {/* Left side: Logo and Navigation */}
-            <div className="flex items-center">
-              <Link to="/home" className='mr-6 text-[30.5px]'>SeasonsViewer</Link>
-              
+
               {/* Page Navigation Links */}
               <div className='flex items-center space-x-4'>
                 <Link 
@@ -118,7 +123,6 @@ function Header({ dataUpdate, setDataUpdate}) {
                   Page2
                 </Link>
               </div>
-            </div>
             
             {/* Right side: User controls */}
             <div className='flex flex-row items-center'>
@@ -196,8 +200,7 @@ function Header({ dataUpdate, setDataUpdate}) {
           : 
           <>
             {/* Left side: Logo and Navigation (when not logged in) */}
-            <div className="flex items-center">
-              <Link to="/main-dashboard" className='mr-6 text-4xl'>SeasonsViewer</Link>
+            
               
               {/* Page Navigation Links */}
               <div className='flex items-center space-x-4'>
@@ -222,14 +225,16 @@ function Header({ dataUpdate, setDataUpdate}) {
                   Page2
                 </Link>
               </div>
-            </div>
             
             {/* Right side: Login button */}
-            <div className='flex'>
-              <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
-            </div>
           </> 
         }
+
+
+          <div className='flex mr-10'>
+            <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
+          </div>
+        </div>
       </nav>
     </div>
   )
