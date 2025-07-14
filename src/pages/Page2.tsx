@@ -226,7 +226,7 @@ function Page2() {
                 Times when sky brightness is {brightness}% ({timeOfDay === 'both' ? 'all day' : timeOfDay}) - next 30 days:
               </h3>
               
-              <div className="max-h-96 overflow-y-auto bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                 <div className="space-y-1">
                   {results.map((result, index) => (
                     <div key={index} className="flex items-center justify-between py-1 px-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
