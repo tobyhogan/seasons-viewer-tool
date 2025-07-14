@@ -3,8 +3,12 @@ import React, { useState, useEffect } from 'react';
 function Page2() {
   const [brightness, setBrightness] = useState<number>(30);
   const [results, setResults] = useState<Array<{date: Date, times: string[]}>>([]);
+  const [reverseResults, setReverseResults] = useState<Array<{date: Date, brightness: number}>>([]);
   const [isCalculating, setIsCalculating] = useState(false);
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'evening' | 'both'>('both');
+  const [numberOfDays, setNumberOfDays] = useState<number>(30);
+  const [mode, setMode] = useState<'brightness-to-time' | 'time-to-brightness'>('brightness-to-time');
+  const [targetTime, setTargetTime] = useState<string>('12:00');
 
   // Solar calculation functions (copied from DayView component)
   function sunIntensityAtTime(date: Date, lat: number, lon: number) {
@@ -109,26 +113,60 @@ function Page2() {
 
   const calculateBrightnessTimes = () => {
     setIsCalculating(true);
-    const resultsArray: Array<{date: Date, times: string[]}> = [];
-    const today = new Date();
     
-    // Calculate for next 30 days
-    for (let i = 0; i < 30; i++) {
-      const currentDate = new Date(today);
-      currentDate.setDate(today.getDate() + i);
+    if (mode === 'brightness-to-time') {
+      // Original functionality: find times for brightness
+      const resultsArray: Array<{date: Date, times: string[]}> = [];
+      const today = new Date();
       
-      const times = findTimesForBrightness(currentDate, brightness);
+      for (let i = 0; i < numberOfDays; i++) {
+        const currentDate = new Date(today);
+        currentDate.setDate(today.getDate() + i);
+        
+        const times = findTimesForBrightness(currentDate, brightness);
+        
+        if (times.length > 0) {
+          resultsArray.push({
+            date: new Date(currentDate),
+            times: times
+          });
+        }
+      }
       
-      if (times.length > 0) {
-        resultsArray.push({
+      setResults(resultsArray);
+      setReverseResults([]);
+    } else {
+      // New functionality: find brightness for time
+      const reverseResultsArray: Array<{date: Date, brightness: number}> = [];
+      const today = new Date();
+      
+      for (let i = 0; i < numberOfDays; i++) {
+        const currentDate = new Date(today);
+        currentDate.setDate(today.getDate() + i);
+        
+        const brightness = getBrightnessAtTime(currentDate, targetTime);
+        
+        reverseResultsArray.push({
           date: new Date(currentDate),
-          times: times
+          brightness: brightness
         });
       }
+      
+      setReverseResults(reverseResultsArray);
+      setResults([]);
     }
     
-    setResults(resultsArray);
     setIsCalculating(false);
+  };
+
+  const getBrightnessAtTime = (date: Date, timeStr: string): number => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const testDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes, 0);
+    const lat = 51.5074; // London latitude
+    const lon = -0.1278; // London longitude
+    
+    const intensity = sunIntensityAtTime(testDate, lat, lon) * 100;
+    return Math.round(intensity * 10) / 10; // Round to 1 decimal place
   };
 
   const formatDate = (date: Date) => {
@@ -139,9 +177,9 @@ function Page2() {
   };
 
   useEffect(() => {
-    // Calculate on component mount and when timeOfDay changes
+    // Calculate on component mount and when timeOfDay or mode changes
     calculateBrightnessTimes();
-  }, [timeOfDay]);
+  }, [timeOfDay, mode]);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -158,60 +196,121 @@ function Page2() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md px-4 py-1 mt-3">
           
           <p className="text-gray-700 dark:text-gray-300 mt-3 text-[15px]">
-            Enter a brightness percentage (relative to solar noon on June 21st) and see when that brightness occurs over the next 30 days.
+            {mode === 'brightness-to-time' 
+              ? 'Enter a brightness percentage and see when that brightness occurs over the next days.'
+              : 'Enter a time and see the brightness levels at that time over the next days.'
+            }
           </p>
+
+          {/* Mode Selection */}
+          <div className="flex items-center gap-6 mt-3 mb-4">
+            <span className="text-gray-700 dark:text-gray-300 font-medium">Mode:</span>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="mode"
+                value="brightness-to-time"
+                checked={mode === 'brightness-to-time'}
+                onChange={(e) => setMode(e.target.value as 'brightness-to-time' | 'time-to-brightness')}
+                className="text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-gray-700 dark:text-gray-300">Brightness → Times</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="mode"
+                value="time-to-brightness"
+                checked={mode === 'time-to-brightness'}
+                onChange={(e) => setMode(e.target.value as 'brightness-to-time' | 'time-to-brightness')}
+                className="text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-gray-700 dark:text-gray-300">Time → Brightness</span>
+            </label>
+          </div>
           
-          <div className="flex items-center gap-4 mt-[1px]">
-            <label className="text-gray-700 dark:text-gray-300 font-medium">
-              Brightness:
+          <div className="flex items-center gap-4 mt-[1px] mb-3">
+            {mode === 'brightness-to-time' ? (
+              <>
+                <label className="text-gray-700 dark:text-gray-300 font-medium">
+                  Brightness:
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={brightness}
+                  onChange={(e) => setBrightness(Number(e.target.value))}
+                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent w-20"
+                />
+                <span className="text-gray-700 dark:text-gray-300">%</span>
+              </>
+            ) : (
+              <>
+                <label className="text-gray-700 dark:text-gray-300 font-medium">
+                  Time:
+                </label>
+                <input
+                  type="time"
+                  value={targetTime}
+                  onChange={(e) => setTargetTime(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </>
+            )}
+            
+            <label className="text-gray-700 dark:text-gray-300 font-medium ml-4">
+              Days:
             </label>
             <input
               type="number"
-              min="0"
-              max="100"
+              min="1"
+              max="365"
               step="1"
-              value={brightness}
-              onChange={(e) => setBrightness(Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={numberOfDays}
+              onChange={(e) => setNumberOfDays(Number(e.target.value))}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent w-20"
             />
-            <span className="text-gray-700 dark:text-gray-300">%</span>
             
-            <div className="flex items-center gap-4 ml-6">
-              <span className="text-gray-700 dark:text-gray-300 font-medium">Show:</span>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="timeOfDay"
-                  value="both"
-                  checked={timeOfDay === 'both'}
-                  onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-gray-700 dark:text-gray-300">Both</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="timeOfDay"
-                  value="morning"
-                  checked={timeOfDay === 'morning'}
-                  onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-gray-700 dark:text-gray-300">Morning</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="timeOfDay"
-                  value="evening"
-                  checked={timeOfDay === 'evening'}
-                  onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-gray-700 dark:text-gray-300">Evening</span>
-              </label>
-            </div>
+            {mode === 'brightness-to-time' && (
+              <div className="flex items-center gap-4 ml-6">
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Show:</span>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="timeOfDay"
+                    value="both"
+                    checked={timeOfDay === 'both'}
+                    onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-gray-700 dark:text-gray-300">Both</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="timeOfDay"
+                    value="morning"
+                    checked={timeOfDay === 'morning'}
+                    onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-gray-700 dark:text-gray-300">Morning</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="timeOfDay"
+                    value="evening"
+                    checked={timeOfDay === 'evening'}
+                    onChange={(e) => setTimeOfDay(e.target.value as 'morning' | 'evening' | 'both')}
+                    className="text-blue-600 focus:ring-blue-500"
+                  />
+                  <span className="text-gray-700 dark:text-gray-300">Evening</span>
+                </label>
+              </div>
+            )}
             
             <button
               onClick={calculateBrightnessTimes}
@@ -222,10 +321,11 @@ function Page2() {
             </button>
           </div>
 
-          {results.length > 0 && (
+          {/* Results for Brightness → Times */}
+          {results.length > 0 && mode === 'brightness-to-time' && (
             <div className="space-y-3 mt-2">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Times when sky brightness is {brightness}% ({timeOfDay === 'both' ? 'all day' : timeOfDay}) - next 30 days:
+                Times when sky brightness is {brightness}% ({timeOfDay === 'both' ? 'all day' : timeOfDay}) - next {numberOfDays} days:
               </h3>
               
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
@@ -252,9 +352,35 @@ function Page2() {
               
               {results.length === 0 && !isCalculating && (
                 <p className="text-gray-600 dark:text-gray-400 italic">
-                  No times found for {brightness}% brightness in the next 30 days. Try a different brightness value.
+                  No times found for {brightness}% brightness in the next {numberOfDays} days. Try a different brightness value.
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Results for Time → Brightness */}
+          {reverseResults.length > 0 && mode === 'time-to-brightness' && (
+            <div className="space-y-3 mt-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Sky brightness at {targetTime} - next {numberOfDays} days:
+              </h3>
+              
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                <div className="space-y-1">
+                  {reverseResults.map((result, index) => (
+                    <div key={index} className="flex items-center justify-between py-1 px-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
+                      <span className="font-medium text-gray-900 dark:text-white text-sm min-w-16">
+                        {formatDate(result.date)}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded text-sm font-mono">
+                          {result.brightness}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -274,7 +400,10 @@ function Page2() {
               • Times are shown in local time and account for atmospheric effects
             </p>
             <p>
-              • The tool finds times within ±1% of your target brightness for precise results
+              • In "Brightness → Times" mode: finds times within ±1% of target brightness for precise results
+            </p>
+            <p>
+              • In "Time → Brightness" mode: shows exact brightness percentage at the specified time each day
             </p>
           </div>
         </div>
