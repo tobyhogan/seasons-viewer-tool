@@ -144,22 +144,24 @@ function Page2() {
   }, [timeOfDay]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+        {/*
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white pt-4 ml-1">
           Sky Brightness Tool
         </h1>
-        
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Find Times for Specific Sky Brightness
+        */}
+          <h2 className="text-[27px] font-semibold text-gray-900 dark:text-white mt-1 ml-2">
+            Sky Brightness Tool
           </h2>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md px-4 py-1 mt-3">
           
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
+          <p className="text-gray-700 dark:text-gray-300 mt-3 text-[15px]">
             Enter a brightness percentage (relative to solar noon on June 21st) and see when that brightness occurs over the next 30 days.
           </p>
           
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-4 mt-[1px]">
             <label className="text-gray-700 dark:text-gray-300 font-medium">
               Brightness:
             </label>
@@ -221,7 +223,7 @@ function Page2() {
           </div>
 
           {results.length > 0 && (
-            <div className="space-y-3">
+            <div className="space-y-3 mt-2">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Times when sky brightness is {brightness}% ({timeOfDay === 'both' ? 'all day' : timeOfDay}) - next 30 days:
               </h3>
