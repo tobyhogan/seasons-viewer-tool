@@ -21,6 +21,7 @@ import Home from '../pages/Home.tsx'
 import Analytics from '../pages/Analytics.tsx';
 import Account from '../pages/Account.tsx'
 import Settings from '../pages/Settings.tsx';
+import Page2 from '../pages/Page2.tsx';
 
 
 
@@ -44,6 +45,8 @@ function App() {
               <Route path="*" element={<Page404 title={"404 Page" + tabSuffix}></Page404>} /> 
               <Route path="/landing" element={<Landing title={"Welcome" + tabSuffix}></Landing>} />
               <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>}/>
+              <Route path="/main-dashboard" element={<Home />}/>
+              <Route path="/page2" element={<Page2 />}/>
               <Route path="/analytics" element={<PrivateRoute><Analytics title={"Analytics" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Analytics></PrivateRoute>} />
               <Route path="/account" element={<PrivateRoute><Account title={"Your Account" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Account></PrivateRoute>} />
               <Route path="/settings" element={<PrivateRoute><Settings title={"Settings" + tabSuffix} dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}></Settings></PrivateRoute>}/>

@@ -88,11 +88,40 @@ function Header({ dataUpdate, setDataUpdate}) {
   return (
     <div className='bg-[#e7e7e7] dark:bg-grayNew-825 w-screen'>
       <nav
-        className="flex justify-between px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
+        className="flex justify-between items-center px-3 py-3 border-b-2 border-gray-100 dark:border-grayNew-825 text-grayNew-550 dark:text-grayNew-200 w-full">
         { session ? 
           <>
-            <Link to="/home" className='mr-6 ml-6 text-[30.5px]'>SeasonsViewer</Link>
-            <div className='justify-end flex flex-row mt-1'>
+            {/* Left side: Logo and Navigation */}
+            <div className="flex items-center">
+              <Link to="/home" className='mr-6 text-[30.5px]'>SeasonsViewer</Link>
+              
+              {/* Page Navigation Links */}
+              <div className='flex items-center space-x-4'>
+                <Link 
+                  to="/main-dashboard" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === '/main-dashboard' || location.pathname === '/home' ? 
+                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
+                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  Main Dashboard
+                </Link>
+                <Link 
+                  to="/page2" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === '/page2' ? 
+                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
+                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  Page2
+                </Link>
+              </div>
+            </div>
+            
+            {/* Right side: User controls */}
+            <div className='flex flex-row items-center'>
 
               { location.pathname == '/home' ?
                 <Link to="/home" className='mr-2 text-3xl flex mt-0.5'><MdCheckBox size={30} className='mr-1'/>
@@ -166,8 +195,37 @@ function Header({ dataUpdate, setDataUpdate}) {
           </>
           : 
           <>
-            <Link to="/home" className='mr-6 ml-6 text-4xl'>SeasonsViewer</Link>
-            <div className='flex mr-6'>
+            {/* Left side: Logo and Navigation (when not logged in) */}
+            <div className="flex items-center">
+              <Link to="/home" className='mr-6 text-4xl'>SeasonsViewer</Link>
+              
+              {/* Page Navigation Links */}
+              <div className='flex items-center space-x-4'>
+                <Link 
+                  to="/main-dashboard" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === '/main-dashboard' || location.pathname === '/home' ? 
+                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
+                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  Main Dashboard
+                </Link>
+                <Link 
+                  to="/page2" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    location.pathname === '/page2' ? 
+                    'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 
+                    'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  Page2
+                </Link>
+              </div>
+            </div>
+            
+            {/* Right side: Login button */}
+            <div className='flex'>
               <LoginButton dataUpdate={dataUpdate} setDataUpdate={setDataUpdate}/>
             </div>
           </> 
