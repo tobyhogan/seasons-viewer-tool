@@ -113,7 +113,7 @@ function Header({ dataUpdate, setDataUpdate}) {
                 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              Page2
+              Sky Brightness Tool
             </Link>
           </div>
         </div>
