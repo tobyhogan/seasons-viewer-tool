@@ -25,6 +25,10 @@ for each day, this will also allow you to see the time of day for a given intens
 
 
 
+ideas:
+
+- I could experiment with letting the user pick the cutoff points for the sun etc, let them choose the gradient method or the hard cutoff
+points at 25% etc, but they could let them have it be like 33% etc, or a slider or something etc ??? 
 
 
 done:
