@@ -111,7 +111,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
 
   // viewImplementation can be 0 or 1
 
-  const viewImplementation = 0;
+  const viewImplementation = 1;
 
 
   return (
