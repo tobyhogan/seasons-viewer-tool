@@ -208,13 +208,18 @@ function InteractiveYearCircleV2({
       });
     }
 
-    const canvasWidth = 300;
-    const canvasHeight = 270;
+    const divisionFactor = 1;
+
+    const canvasWidth = 300 / divisionFactor;
+    const canvasHeight = 270 / divisionFactor ;
+
     const circCenterX = canvasWidth / 2;
     const circCenterY = canvasHeight / 2;
-    const radius = 100;
+
+    const radius = 100 / divisionFactor;
 
     const canvas = canvasRef.current;
+
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -382,125 +387,7 @@ function InteractiveYearCircleV2({
     ctx.restore();
   }, [markerType]);
 
-  const drawSunAngleGraph = useCallback(() => {
-    const radius = 180;
-    const canvas = sunAngleCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const colors = getCanvasColors();
-    const config = getSunAngleCanvasConfig();
-
-    // Axes
-    ctx.strokeStyle = colors.axis;
-    ctx.lineWidth = 1;
-    // X-axis (time)
-    ctx.beginPath();
-    ctx.moveTo(config.leftMargin, radius);
-    ctx.lineTo(config.leftMargin + config.graphWidth, radius);
-    ctx.stroke();
-    // Y-axis (angle)
-    ctx.beginPath();
-    ctx.moveTo(config.leftMargin, radius);
-    ctx.lineTo(config.leftMargin, 20);
-    ctx.stroke();
-
-    // Labels and ticks
-    ctx.fillStyle = colors.axisLabel;
-    ctx.font = '12px sans-serif';
-    
-    // X-axis ticks (hours)
-    for (let h = 0; h <= 24; h += 6) {
-      const x = config.leftMargin + (h / 24) * config.graphWidth;
-      ctx.beginPath();
-      ctx.moveTo(x, radius);
-      ctx.lineTo(x, 185);
-      ctx.stroke();
-      ctx.fillText(h.toString(), x - 6, 195);
-    }
-    ctx.fillText('Time', config.leftMargin + config.graphWidth / 2, 210);
-
-    // Y-axis ticks (angle)
-    for (let a = -18; a <= 90; a += 36) {
-      const y = radius - ((a + 18) / 108) * 160;
-      ctx.beginPath();
-      ctx.moveTo(config.leftMargin - 5, y);
-      ctx.lineTo(config.leftMargin, y);
-      ctx.stroke();
-      ctx.fillText(a.toString(), config.leftMargin - 30, y + 4);
-    }
-
-    // Y-axis title
-    ctx.save();
-    ctx.font = '14px sans-serif';
-    ctx.fillStyle = colors.axisLabel;
-    ctx.textAlign = 'center';
-    ctx.fillText('Sun', config.leftMargin - 55, 100);
-    ctx.fillText('Angle', config.leftMargin - 55, 115);
-    ctx.restore();
-
-    // Draw dotted line at zero degrees
-    const zeroY = radius - ((0 + 18) / 108) * 160;
-    ctx.save();
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = colors.axisDotted;
-    ctx.beginPath();
-    ctx.moveTo(config.leftMargin, zeroY);
-    ctx.lineTo(config.leftMargin + config.graphWidth, zeroY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.restore();
-
-    // Plot sun angle curve
-    ctx.strokeStyle = colors.yellow;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    let first = true;
-    for (let h = 0; h <= 24; h += 0.01) {
-      const date = new Date(Date.UTC(2023, 4, 15, 0, h * 60, 0));
-      const angle = Math.max(-18, Math.min(90, solarElevationAngle(date, 51.5074, -0.1278)));
-      const x = config.leftMargin + (h / 24) * config.graphWidth;
-      const y = radius - ((angle + 18) / 108) * 160;
-      if (first) {
-        ctx.moveTo(x, y);
-        first = false;
-      } else {
-        ctx.lineTo(x, y);
-      }
-    }
-    ctx.stroke();
-
-    // Draw draggable dot on the curve
-    const dotDate = new Date(Date.UTC(2023, 4, 15, 0, sunCurveHour * 60, 0));
-    const dotAngle = Math.max(-18, Math.min(90, solarElevationAngle(dotDate, 51.5074, -0.1278)));
-    const dotX = config.leftMargin + (sunCurveHour / 24) * config.graphWidth;
-    const dotY = radius - ((dotAngle + 18) / 108) * 160;
-
-    // Draw horizontal dotted line at dotY
-    ctx.save();
-    ctx.setLineDash([4, 4]);
-    ctx.strokeStyle = colors.green;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(config.leftMargin, dotY);
-    ctx.lineTo(config.leftMargin + config.graphWidth, dotY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.restore();
-
-    // Draw the dot
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(dotX, dotY, 6, 0, 2 * Math.PI);
-    ctx.fillStyle = colors.green;
-    ctx.strokeStyle = colors.dotOutline;
-    ctx.lineWidth = 2;
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
-  }, [sunCurveHour]);
+  
 
   // Solar elevation angle calculation helper
   function solarElevationAngle(date: Date, lat: number, lon: number) {
@@ -661,54 +548,7 @@ function InteractiveYearCircleV2({
   }, [currentDayOfYear, onDisplayUpdate, handleCircleMouseDown, handleCircleMouseMove, handleMouseUp]);
 
   // --- Effect for sun angle graph ---
-  useEffect(() => {
-    drawSunAngleGraph();
-
-    const canvas = sunAngleCanvasRef.current;
-    if (!canvas) return;
-
-    function handleMouseDown(event: MouseEvent) {
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = event.clientX - rect.left;
-      const mouseY = event.clientY - rect.top;
-      if (isOverSunDot(mouseX, mouseY)) {
-        draggingSunDot.current = true;
-        canvas.style.cursor = 'grabbing';
-      }
-    }
-
-    function handleMouseMove(event: MouseEvent) {
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = event.clientX - rect.left;
-      const mouseY = event.clientY - rect.top;
-      
-      if (draggingSunDot.current) {
-        const config = getSunAngleCanvasConfig();
-        let hour = ((mouseX - config.leftMargin) / config.graphWidth) * 24;
-        hour = Math.max(0, Math.min(24, hour));
-        setSunCurveHour(hour);
-      } else {
-        canvas.style.cursor = isOverSunDot(mouseX, mouseY) ? 'pointer' : 'default';
-      }
-    }
-
-    function handleMouseLeave() {
-      draggingSunDot.current = false;
-      canvas.style.cursor = 'default';
-    }
-
-    canvas.addEventListener('mousedown', handleMouseDown);
-    canvas.addEventListener('mousemove', handleMouseMove);
-    canvas.addEventListener('mouseup', handleMouseUp);
-    canvas.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      canvas.removeEventListener('mousedown', handleMouseDown);
-      canvas.removeEventListener('mousemove', handleMouseMove);
-      canvas.removeEventListener('mouseup', handleMouseUp);
-      canvas.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [sunCurveHour, drawSunAngleGraph, handleMouseUp]);
+  
 
   // --- Effect for dark mode toggle ---
   useEffect(() => {
@@ -716,15 +556,13 @@ function InteractiveYearCircleV2({
     const observer = new MutationObserver(() => {
       const totalDays = getTotalDaysInYear(new Date());
       onDisplayUpdate(currentDayOfYear, totalDays, new Date().getFullYear());
-      drawSunAngleGraph();
     });
     observer.observe(htmlEl, { attributes: true, attributeFilter: ['class'] });
     // Force redraw on darkThemeEnabled change
     const totalDays = getTotalDaysInYear(new Date());
     onDisplayUpdate(currentDayOfYear, totalDays, new Date().getFullYear());
-    drawSunAngleGraph();
     return () => observer.disconnect();
-  }, [currentDayOfYear, onDisplayUpdate, drawSunAngleGraph, darkThemeEnabled]);
+  }, [currentDayOfYear, onDisplayUpdate, darkThemeEnabled]);
 
 
   // --- Add: Helper to calculate day of year from angle on the circle ---
@@ -742,25 +580,28 @@ function InteractiveYearCircleV2({
 
   // --- Render ---
   return (
-    <div className="flex flex-col">
       <canvas
         id="seasonsCanvas"
         ref={canvasRef}
-        width={450}
-        height={400}
+        width={300}
+        height={270}
         className="border-x-2 border-t-2 rounded-lg border-none mb-[3px]"
         style={{ border: '0px solid #ccc' }}
       />
-      <canvas
-        id="sunAngleCanvas"
-        ref={sunAngleCanvasRef}
-        width={500}
-        height={220}
-        className="border-2 border-black bg-white"
-        style={{ border: '1px solid #ccc' }}
-      />
-    </div>
+
   );
 }
 
 export default InteractiveYearCircleV2;
+
+
+
+
+
+/*
+
+ARCHIVE:
+
+
+
+*/

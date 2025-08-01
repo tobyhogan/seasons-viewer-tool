@@ -108,7 +108,10 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     updateDisplay(currentDayOfYear, totalDays, today.getFullYear());
   };
 
-  const viewImplementation = false;
+
+  // viewImplementation can be 0 or 1
+
+  const viewImplementation = 0;
 
 
   return (
