@@ -108,7 +108,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     updateDisplay(currentDayOfYear, totalDays, today.getFullYear());
   };
 
-  const viewImplementation = "v2";
+  const viewImplementation = false;
 
 
   return (
@@ -116,7 +116,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
       <div className="rounded-lg border-2">
         <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
 
-        {viewImplementation == "v1" ? (
+        {viewImplementation ? (
           <InteractiveYearCircleV1 
             currentDayOfYear={currentDayOfYear}
             setCurrentDayOfYear={setCurrentDayOfYear}
