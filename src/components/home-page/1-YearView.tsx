@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import InteractiveYearCircleV1 from './1-year-view/InteractiveYearCircleV1';
+import InteractiveYearCircleV2 from './1-year-view/InteractiveYearCircleV2';
 
 interface YearViewProps {
   currentDayOfYear: number;
@@ -10,6 +11,7 @@ interface YearViewProps {
 }
 
 function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarkerType, darkThemeEnabled }: YearViewProps) {
+
   const yellow1 = '#ffff00' // strong yellow
   const yellow2 = '#ffff99' // weaker yellow
   const blue1 = '#4444aa' //dark blue
@@ -106,17 +108,31 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     updateDisplay(currentDayOfYear, totalDays, today.getFullYear());
   };
 
+  const viewImplementation = "v2";
+
+
   return (
     <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
       <div className="rounded-lg border-2">
         <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
-        <InteractiveYearCircleV1 
-          currentDayOfYear={currentDayOfYear}
-          setCurrentDayOfYear={setCurrentDayOfYear}
-          markerType={markerType}
-          darkThemeEnabled={darkThemeEnabled}
-          onDisplayUpdate={updateDisplay}
-        />
+
+        {viewImplementation == "v1" ? (
+          <InteractiveYearCircleV1 
+            currentDayOfYear={currentDayOfYear}
+            setCurrentDayOfYear={setCurrentDayOfYear}
+            markerType={markerType}
+            darkThemeEnabled={darkThemeEnabled}
+            onDisplayUpdate={updateDisplay}
+          />
+        ) : (
+          <InteractiveYearCircleV2 
+            currentDayOfYear={currentDayOfYear}
+            setCurrentDayOfYear={setCurrentDayOfYear}
+            markerType={markerType}
+            darkThemeEnabled={darkThemeEnabled}
+            onDisplayUpdate={updateDisplay}
+          />
+        )}
         
         <hr className='border-[#444444]'/>
 
