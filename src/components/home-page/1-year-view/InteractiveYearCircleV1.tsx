@@ -8,7 +8,7 @@ interface InteractiveYearCircleProps {
   onDisplayUpdate: (dayOfYear: number, totalDays: number, year: number) => void;
 }
 
-function InteractiveYearCircle({ 
+function InteractiveYearCircleV1({ 
   currentDayOfYear, 
   setCurrentDayOfYear, 
   markerType, 
@@ -620,4 +620,4 @@ function InteractiveYearCircle({
   );
 }
 
-export default InteractiveYearCircle;
+export default InteractiveYearCircleV1;

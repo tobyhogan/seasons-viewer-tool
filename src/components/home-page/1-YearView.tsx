@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import InteractiveYearCircle from './1-year-view/InteractiveYearCircle';
+import InteractiveYearCircleV1 from './1-year-view/InteractiveYearCircleV1';
 
 interface YearViewProps {
   currentDayOfYear: number;
@@ -110,7 +110,7 @@ function YearView({ currentDayOfYear, setCurrentDayOfYear, markerType, setMarker
     <div id="column1" className="w-fit rounded-lg mx-auto mb-2">
       <div className="rounded-lg border-2">
         <h2 className="text-center text-[18px] mt-2 mb-[-9px] underline">Sun Info - Year View</h2>
-        <InteractiveYearCircle 
+        <InteractiveYearCircleV1 
           currentDayOfYear={currentDayOfYear}
           setCurrentDayOfYear={setCurrentDayOfYear}
           markerType={markerType}
